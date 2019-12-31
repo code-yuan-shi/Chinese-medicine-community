@@ -1,0 +1,10 @@
+insert into category(catename) values ('提问');
+insert into category(catename) values ('分享');
+insert into category(catename) values ('讨论');
+insert into category(catename) values ('建议');
+insert into category(catename) values ('公告');
+insert into category(catename) values ('动态');
+insert into kind(kindname,category_id) values ('java',1);
+insert into kind(kindname,category_id) values ('asp',1);
+insert into kind(kindname,category_id) values ('c',1);
+insert into kind(kindname,category_id) values ('phython',1);

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbgu.zmz.community.mapper.UserExtMapper">
+  <select id="getTopUsers" resultType="com.bbgu.zmz.community.model.WeekList">
+   select u.name,u.avatar_url,c.user_id, count(*) as comment_num from comment c
+    left join user u on u.account_id = c.user_id
+    GROUP BY c.user_id
+    order by comment_num desc
+    limit 0,12
+  </select>
+</mapper>

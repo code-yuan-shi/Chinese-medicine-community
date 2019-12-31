@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbgu.zmz.community.mapper.TopicinfoExtMapper">
+  <resultMap id="BaseResultMap" type="com.bbgu.zmz.community.model.TopicinfoExt">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="TOPIC_CREATE" jdbcType="BIGINT" property="topicCreate" />
+    <result column="TOPIC_MODIFIED" jdbcType="BIGINT" property="topicModified" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="CATEGORY_ID" jdbcType="BIGINT" property="categoryId" />
+    <result column="KIND_ID" jdbcType="BIGINT" property="kindId" />
+    <result column="VIEW_COUNT" jdbcType="INTEGER" property="viewCount" />
+    <result column="IS_GOOD" jdbcType="INTEGER" property="isGood" />
+    <result column="IS_END" jdbcType="INTEGER" property="isEnd" />
+    <result column="IS_TOP" jdbcType="INTEGER" property="isTop" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="EXPERIENCE" jdbcType="BIGINT" property="experience" />
+    <result column="comment_num" jdbcType="BIGINT" property="commentNum" />
+  </resultMap>
+  <update id="incView" parameterType="com.bbgu.zmz.community.model.Topicinfo">
+    update TOPICINFO
+    set
+      VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="getTop10Topics" resultMap="BaseResultMap">
+        SELECT
+			t.id,
+			t.title,
+			IFNULL(commentinfo.comment_num,0) comment_num
+		FROM
+			topicinfo t
+		LEFT JOIN (
+			SELECT
+				c.topic_id,
+				count(*) comment_num
+			FROM
+				comment c
+			WHERE
+				DATE_SUB(CURDATE(), INTERVAL 7 DAY) <![CDATA[ <= ]]> c.comment_create
+			GROUP BY
+				c.topic_id
+		) commentinfo ON commentinfo.topic_id = t.id
+		ORDER BY
+			commentinfo.comment_num DESC
+		limit 0,10
+  </select>
+</mapper>

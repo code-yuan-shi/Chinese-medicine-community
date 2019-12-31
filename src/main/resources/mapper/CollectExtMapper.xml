@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbgu.zmz.community.mapper.CollectExtMapper">
+  <delete id="delCollectInfo" parameterType="java.util.Map">
+      delete from collect where topic_id = #{topicid} and user_id = #{userid}
+  </delete>
+
+  <select id="getIsCollectInfo" parameterType="java.util.Map" resultType="int">
+      select count(*) from collect where topic_id = #{topicid} and user_id = #{userid}
+  </select>
+</mapper>
