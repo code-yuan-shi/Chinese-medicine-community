@@ -154,30 +154,39 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   });
 
   //根据ip获取城市
+
+
   if($('#L_city').val() === ''){
-    $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js', function(){
-      $('#L_city').val(remote_ip_info.city||'');
-    });
+    $.ajax({
+      url: 'http://api.map.baidu.com/location/ip?ak=h6TnjYGdeBYuGtsT0FD2BWZY5YG7viGC',
+      type: 'get',
+      dataType: 'jsonp',  // 请求方式为jsonp
+      success: function(data) {
+        console.log(data);
+        $('#L_city').val(data.content.address_detail.city||'');
+      }
+    })
   }
 
-  //上传图片
+  //上传头像
   if($('.upload-img')[0]){
     layui.use('upload', function(upload){
       var avatarAdd = $('.avatar-add');
-
       upload.render({
         elem: '.upload-img'
-        ,url: '/user/upload/'
-        ,size: 50
+        ,url: '/api/upload/'
+        ,size: 1000
         ,before: function(){
           avatarAdd.find('.loading').show();
         }
         ,done: function(res){
           if(res.status == 0){
-            $.post('/user/set/', {
+            $.post('/user/modifyuseravatar', {
               avatar: res.url
             }, function(res){
-              location.reload();
+              layer.msg(res.msg, {icon: 1,time:1000},function () {
+                location.reload();
+              });
             });
           } else {
             layer.msg(res.msg, {icon: 5});
@@ -191,73 +200,6 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     });
   }
 
-  //合作平台
-  if($('#LAY_coop')[0]){
-
-    //资源上传
-    $('#LAY_coop .uploadRes').each(function(index, item){
-      var othis = $(this);
-      upload.render({
-        elem: item
-        ,url: '/api/upload/cooperation/?filename='+ othis.data('filename')
-        ,accept: 'file'
-        ,exts: 'zip'
-        ,size: 30*1024
-        ,before: function(){
-          layer.msg('正在上传', {
-            icon: 16
-            ,time: -1
-            ,shade: 0.7
-          });
-        }
-        ,done: function(res){
-          if(res.code == 0){
-            layer.msg(res.msg, {icon: 6})
-          } else {
-            layer.msg(res.msg)
-          }
-        }
-      });
-    });
-
-    //成效展示
-    var effectTpl = ['{{# layui.each(d.data, function(index, item){ }}'
-    ,'<tr>'
-      ,'<td><a href="/u/{{ item.uid }}" target="_blank" style="color: #01AAED;">{{ item.uid }}</a></td>'
-      ,'<td>{{ item.authProduct }}</td>'
-      ,'<td>￥{{ item.rmb }}</td>'
-      ,'<td>{{ item.create_time }}</td>'
-      ,'</tr>'
-    ,'{{# }); }}'].join('');
-
-    var effectView = function(res){
-      var html = laytpl(effectTpl).render(res);
-      $('#LAY_coop_effect').html(html);
-      $('#LAY_effect_count').html('你共有 <strong style="color: #FF5722;">'+ (res.count||0) +'</strong> 笔合作授权订单');
-    };
-
-    var effectShow = function(page){
-      fly.json('/cooperation/effect', {
-        page: page||1
-      }, function(res){
-        effectView(res);
-        laypage.render({
-          elem: 'LAY_effect_page'
-          ,count: res.count
-          ,curr: page
-          ,jump: function(e, first){
-            if(!first){
-              effectShow(e.curr);
-            }
-          }
-        });
-      });
-    };
-
-    effectShow();
-
-  }
-
   //提交成功后刷新
   fly.form['set-mine'] = function(data, required){
     layer.msg('修改成功', {
@@ -268,30 +210,6 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       location.reload();
     });
   }
-
-  //帐号绑定
-  $('.acc-unbind').on('click', function(){
-    var othis = $(this), type = othis.attr('type');
-    layer.confirm('整的要解绑'+ ({
-      qq_id: 'QQ'
-      ,weibo_id: '微博'
-    })[type] + '吗？', {icon: 5}, function(){
-      fly.json('/api/unbind', {
-        type: type
-      }, function(res){
-        if(res.status === 0){
-          layer.alert('已成功解绑。', {
-            icon: 1
-            ,end: function(){
-              location.reload();
-            }
-          });
-        } else {
-          layer.msg(res.msg);
-        }
-      });
-    });
-  });
 
 
   //我的消息

@@ -16,9 +16,11 @@ import com.bbgu.zmz.community.util.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -40,13 +42,14 @@ public class UserService {
         if (users.size() == 0){
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
+            user.setPwd(MD5Utils.getMd5("123456"));
             userMapper.insertSelective(user);
         }else{
             User dbUser = users.get(0);
             User updateUser = new User();
             updateUser.setUserModified(System.currentTimeMillis());
-            updateUser.setAvatarUrl(user.getAvatarUrl());
-            updateUser.setName(user.getName());
+           // updateUser.setAvatarUrl(user.getAvatarUrl());
+           // updateUser.setName(user.getName());
             updateUser.setToken(user.getToken());
             updateUser.setRole(user.getRole());
             UserExample example = new UserExample();
@@ -82,10 +85,10 @@ public class UserService {
         List<User> userList = userMapper.selectByExample(userExample);
         if (userList.size() != 0) {
             regRespObj.setStatus(1);
-            regRespObj.setMsg("该邮箱已被使用！");
+            regRespObj.setMsg("抱歉，该邮箱已被使用！");
         } else {
             regRespObj.setStatus(0);
-            regRespObj.setMsg("恭喜，该邮箱可用于注册验证！");
+            regRespObj.setMsg("恭喜，该邮箱可用！");
         }
         return regRespObj;
     }
@@ -93,17 +96,17 @@ public class UserService {
     /*
     注册账户
      */
-    public RegRespObj doreg(User user,String retoken,String url){
+    public RegRespObj doreg(User user,String repass,String url){
         RegRespObj regRespObj = new RegRespObj();
-        if(user.getToken().equals(retoken)){
+        if(user.getPwd().equals(repass)){
             Long time = System.currentTimeMillis();
             //创建激活密钥，利用邮箱+密码+时间
-            String accode = MD5Utils.getMd5(user.getEmail()+user.getToken()+time);
+            String accode = MD5Utils.getMd5(user.getEmail()+user.getPwd()+time);
             //创建激活有效时间
             Long actime = time+1000*60*5;
             //加密密码
-            String token = MD5Utils.getMd5(user.getToken());
-            user.setToken(token);
+            String pwd = MD5Utils.getMd5(user.getPwd());
+            user.setPwd(pwd);
             user.setActiveCode(accode);
             user.setActiveTime(actime);
             user.setAvatarUrl("/images/avatar/1.jpg");
@@ -172,9 +175,9 @@ public class UserService {
      */
 
     public User loginCheck(User user){
-        String token =  MD5Utils.getMd5(user.getToken());
+        String pwd =  MD5Utils.getMd5(user.getPwd());
         UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId()).andTokenEqualTo(token);
+        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId()).andPwdEqualTo(pwd);
         List<User> userList = userMapper.selectByExample(userExample);
         if(userList.size() != 0){
             User user1 = userList.get(0);
@@ -183,7 +186,6 @@ public class UserService {
             return null;
         }
     }
-
 
     /*
     更新飞吻数量
@@ -259,4 +261,59 @@ public class UserService {
         return regRespObj;
     }
 
+    /*
+    用户修改我的资料
+     */
+    public RegRespObj modifyUserInfo(User user){
+        RegRespObj regRespObj = new RegRespObj();
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        userMapper.updateByExampleSelective(user,userExample);
+        regRespObj.setStatus(0);
+        regRespObj.setMsg("修改成功！");
+        return regRespObj;
+    }
+
+    /*
+    用户修改头像
+     */
+    public RegRespObj modifyUserAvatar(Long accountId,String avatar){
+        RegRespObj regRespObj = new RegRespObj();
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        User user = new User();
+        user.setAvatarUrl(avatar);
+        userMapper.updateByExampleSelective(user,userExample);
+        regRespObj.setStatus(0);
+        regRespObj.setMsg("修改头像成功！");
+        return regRespObj;
+    }
+
+    /*
+    用户修改密码
+     */
+    public RegRespObj modifyUserPassword(String nowpass, String pass,String repass,Long accountId){
+        RegRespObj regRespObj = new RegRespObj();
+        String pwd = MD5Utils.getMd5(nowpass);
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        List<User> userinfos = userMapper.selectByExample(userExample);
+        User userinfo = userinfos.get(0);
+        if(pass.equals(repass)){
+            if(userinfo.getPwd().equals(pwd)){
+                User user = new User();
+                user.setPwd(MD5Utils.getMd5(pass));
+                userMapper.updateByExampleSelective(user,userExample);
+                regRespObj.setStatus(0);
+                regRespObj.setMsg("密码已修改！");
+            }else{
+                regRespObj.setStatus(1);
+                regRespObj.setMsg("当前密码验证错误！");
+            }
+        }else{
+            regRespObj.setStatus(1);
+            regRespObj.setMsg("两次输入的密码不一致！");
+        }
+        return regRespObj;
+    }
 }

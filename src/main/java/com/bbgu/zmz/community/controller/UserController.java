@@ -8,9 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,9 +90,9 @@ public class UserController {
     注册用户
      */
     @PostMapping("/doreg")
-    public @ResponseBody  RegRespObj doreg(User user, String retoken, HttpServletRequest request){
+    public @ResponseBody  RegRespObj doreg(User user, String repass, HttpServletRequest request){
         String url = request.getServletContext().getContextPath() + "/tips/regsuccess";
-        RegRespObj regRespObj= userService.doreg(user,retoken,url);
+        RegRespObj regRespObj= userService.doreg(user,repass,url);
         return regRespObj;
     }
 
@@ -119,7 +121,7 @@ public class UserController {
      */
 
     @PostMapping("dologin")
-    public @ResponseBody RegRespObj dologin(User user,String url, HttpServletRequest request){
+    public @ResponseBody RegRespObj dologin(User user,String url,HttpServletRequest request){
         RegRespObj regRespObj = new RegRespObj();
        User user1 =  userService.loginCheck(user);
        if(user1 != null && user1.getStatus().equals(1)){
@@ -132,11 +134,7 @@ public class UserController {
            regRespObj.setStatus(1);
            regRespObj.setMsg("账号需激活后才能使用！");
            return regRespObj;
-       }else if(user1 == null){
-           regRespObj.setStatus(1);
-           regRespObj.setMsg("该用户不存在！");
-           return regRespObj;
-       } else{
+       }else{
            regRespObj.setStatus(1);
            regRespObj.setMsg("用户名或者密码错误！");
            return regRespObj;
@@ -146,14 +144,40 @@ public class UserController {
     /*
     用户中心
      */
+    //基本设置
     @GetMapping("set")
     public String userSet(HttpServletRequest request,Model model){
         User user = (User)request.getSession().getAttribute("user");
-        if(user.getEmail()==null){
-            
-        }
-        model.addAttribute("eml",user.getEmail());
+        model.addAttribute("info",user);
         return "user/set";
+    }
+
+    //修改我的资料
+    @PostMapping("modifyuserinfo")
+    @ResponseBody
+    public RegRespObj modifyUserInfo(User user,HttpServletRequest request){
+        User userinfo = (User)request.getSession().getAttribute("user");
+        user.setAccountId(userinfo.getAccountId());
+        RegRespObj regRespObj = userService.modifyUserInfo(user);
+        return regRespObj;
+    }
+
+    //修改头像
+    @PostMapping("modifyuseravatar")
+    @ResponseBody
+    public RegRespObj modifyUserAvatar(String avatar,HttpServletRequest request){
+        User userinfo = (User)request.getSession().getAttribute("user");
+        RegRespObj regRespObj = userService.modifyUserAvatar(userinfo.getAccountId(),avatar);
+        return regRespObj;
+    }
+
+    //修改密码
+    @PostMapping("modifypass")
+    @ResponseBody
+    public RegRespObj modifyUserPassword(String nowpass,String pass,String repass,HttpServletRequest request){
+        User userinfo = (User)request.getSession().getAttribute("user");
+        RegRespObj regRespObj =  userService.modifyUserPassword(nowpass,pass,repass,userinfo.getAccountId());
+        return regRespObj;
     }
 
     @GetMapping("message")

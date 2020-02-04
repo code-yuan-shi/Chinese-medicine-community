@@ -2,9 +2,12 @@ package com.bbgu.zmz.community.controller;
 
 import com.bbgu.zmz.community.dto.AccessTokenDTO;
 import com.bbgu.zmz.community.dto.GithubUser;
+import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.User;
+import com.bbgu.zmz.community.model.UserExample;
 import com.bbgu.zmz.community.provider.GithubProvider;
 import com.bbgu.zmz.community.service.UserService;
+import com.bbgu.zmz.community.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -32,10 +36,13 @@ public class AuthorizeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserMapper userMapper;
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code,
                            @RequestParam(name="state") String url,
-                           HttpServletResponse response){
+                           HttpServletRequest request){
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setCode(code);
         accessTokenDTO.setClient_id(clientId);
@@ -58,8 +65,10 @@ public class AuthorizeController {
                 user.setRole("社区用户");
             }
             userService.createOrUpdate(user);
-            response.addCookie(new Cookie("token",token));
-            //request.getSession().setAttribute("user",githubUser);
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andAccountIdEqualTo(githubUser.getId());
+            List<User> users = userMapper.selectByExample(userExample);
+            request.getSession().setAttribute("user",users.get(0));
             int index = url.lastIndexOf("/");
             String str = url.substring(index+1);
             if(str.equals("reg") || str.equals("login")){

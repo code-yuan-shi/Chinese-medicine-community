@@ -23,8 +23,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        User user = (User)request.getSession().getAttribute("user");
-       Cookie[] cookies = request.getCookies();
+     Cookie[] cookies = request.getCookies();
         if(cookies != null && cookies.length != 0){
             for(Cookie cookie:cookies){
                 if(cookie.getName().equals("token")){
@@ -39,27 +38,6 @@ public class SessionInterceptor implements HandlerInterceptor {
                 }
             }
         }
-/*        if(request.getRequestURI().lastIndexOf("/")>=0){
-            return true;
-        }*/
-/*        if(request.getRequestURI().indexOf("/login")>=0){
-            return true;
-        }
-        if(request.getRequestURI().indexOf("/dologin")>=0){
-            return true;
-        }
-        if(request.getRequestURI().indexOf("/doreg")>=0){
-            return true;
-        }
-        if(request.getRequestURI().indexOf("/reg")>=0){
-            return true;
-        }
-        if(request.getRequestURI().indexOf("/detail")>=0){
-            return true;
-        }
-        if (user == null){
-            return false;
-        }*/
         return true;
     }
 

@@ -2,7 +2,7 @@
 <div class="fly-header layui-bg-black" th:fragment="head">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/images/code.png" alt="Code社区">
+      <img src="/images/logo.png" alt="Code社区">
     </a>
    <!-- <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
@@ -27,9 +27,6 @@
             </li>
             <li class="layui-nav-item">
               <a href="/user/reg">注册</a>
-            </li>
-            <li class="layui-nav-item layui-hide-xs">
-              <a th:href="@{'https://github.com/login/oauth/authorize?client_id=79483350f9fdc435f418&redirect_uri=http://localhost:8080/callback&state='+${#httpServletRequest.requestURL}+'&scope=user'}" onclick="layer.msg('正在通过Github登入', {icon:16, shade: 0.1, time:0})" title="Github登入"><i class="layui-icon layui-icon-website" style="font-size: 25px; color: #A9B7B7">&#xe7ae;</i></a>
             </li>
       </div>
 <!--      <li class="layui-nav-item layui-hide-xs">

@@ -3,6 +3,7 @@ create table user
       id bigint auto_increment,
       account_id bigint,
 	  token varchar(36),
+	  pwd varchar(100),
 	  email varchar(50),
       name varchar(50),
 	  city varchar(50),

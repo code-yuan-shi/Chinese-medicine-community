@@ -572,6 +572,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
               location.reload();
             })
         }
+    },{
+      error:function() {
+        location.reload();
+      }
     });
     return false;
   });
@@ -622,7 +626,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   form.verify({
     pass: [
       /^[\S]{6,12}$/
-      ,'密码必须6到12位，且不能出现空格'
+      ,'密码为6到16位，且不能出现空格'
     ],
     length:[
         /^[\S\n\s]{8,12}$/
@@ -653,19 +657,22 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   $("#L_email").blur(function(){
     var val = $("#L_email").val();
-    fly.json('/user/checkemail',{
-      email:val
-    }, function(res){
-      if(res.status == 0){
-        layer.msg(res.msg,{icon:1,time:2*1000},function () {
-        })
+    if(val != ''){
+      fly.json('/user/checkemail',{
+        email:val
+      }, function(res){
+        if(res.status == 0){
+          layer.msg(res.msg,{icon:1,time:2*1000},function () {
+          })
 
-      }
-    },{
-      error:function () {
-        $("#L_email").val("");
-      }
-    });
+        }
+      },{
+        error:function () {
+          $("#L_email").val("");
+        }
+      });
+    }
+
   })
 
   //注册账户
