@@ -73,10 +73,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           if(res.status === 0) {
             success && success(res);
           } else {
-            layer.msg(res.msg || res.code, {icon:2,time:2*1000},function () {
-              options.error && options.error();
-            });
-
+            layer.msg(res.msg || res.code, {shift: 6});
+            options.error && options.error();
           }
         }, error: function(e){
           layer.msg('请求异常，请重试', {shift: 6});
@@ -160,7 +158,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
               upload.render({
                 elem: '#uploadImg'
                 ,url: '/api/upload'
-                ,size: 1024
+                ,size: 1024*20
                 ,done: function(res){
                   if(res.status == 0){
                     layer.msg(res.msg,{icon:1,time:1*1000},function () {
@@ -290,7 +288,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
    ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
       if(layui.cache.user.uid !== -1 && elemUser[0]){
-        fly.json('/message/nums/', {
+        fly.json('/message/nums', {
           _: new Date().getTime()
         }, function(res){
           if(res.status === 0 && res.count > 0){
@@ -322,14 +320,14 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   //签到
   var tplSignin = ['{{# if(d.signed){ }}'
     ,'<button class="layui-btn layui-btn-disabled">今日已签到</button>'
-    ,'<span>获得了<cite>{{ d.experience }}</cite>飞吻</span>'
-  ,'{{# } else { }}'
+    ,'<span>获得了<cite>{{ d.itValue }}</cite>IT值</span>'
+    ,'{{# } else { }}'
     ,'<button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>'
-    ,'<span>可获得<cite>{{ d.experience }}</cite>飞吻</span>'
-  ,'{{# } }}'].join('')
-  ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
+    ,'<span>可获得<cite>{{ d.itValue }}</cite>IT值</span>'
+    ,'{{# } }}'].join('')
+      ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
 
-  ,signRender = function(data){
+      ,signRender = function(data){
     laytpl(tplSignin).render(data, function(html){
       elemSigninMain.html(html);
     });
@@ -338,25 +336,29 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     });
   }
 
-  ,elemSigninHelp = $('#LAY_signinHelp')
-  ,elemSigninTop = $('#LAY_signinTop')
-  ,elemSigninMain = $('.fly-signin-main')
-  ,elemSigninDays = $('.fly-signin-days');
-  
+      ,elemSigninHelp = $('#LAY_signinHelp')
+      ,elemSigninTop = $('#LAY_signinTop')
+      ,elemSigninMain = $('.fly-signin-main')
+      ,elemSigninDays = $('.fly-signin-days');
+
   if(elemSigninMain[0]){
-    /*
-    fly.json('/sign/status', function(res){
+
+    /*fly.json('/sign/status', function(res){
       if(!res.data) return;
       signRender.token = res.data.token;
       signRender(res.data);
-    });
-    */
+    });*/
+
   }
   $('body').on('click', '#LAY_signin', function(){
+    if(layui.cache.user.uid =='-1'){
+      layer.msg('请登录！');
+      return;
+    }
     var othis = $(this);
     if(othis.hasClass(DISABLED)) return;
 
-    fly.json('/sign/in', {
+    fly.json('sign/in', {
       token: signRender.token || 1
     }, function(res){
       signRender(res.data);
@@ -368,7 +370,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
     othis.addClass(DISABLED);
   });
-
   //签到说明
   elemSigninHelp.on('click', function(){
     layer.open({
@@ -464,7 +465,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   //回帖榜
   var tplReply = ['{{# layui.each(d.weekList, function(index, item){ }}'
         ,'<dd>'
-          ,'<a href="/u/{{item.userId}}">'
+          ,'<a href="#{{item.userId}}">'
             ,'<img src="{{item.avatarUrl}}">'
             ,'<cite>{{item.name}}</cite>'
             ,'<i>{{item.commentNum}}次回答</i>'
@@ -472,7 +473,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'</dd>'
       ,'{{# }); }}'
     ,'{{# if(d.weekList.length === 0){ }}'
-    ,'<dt class="fly-none" style="height: auto; font-size: 14px; min-height: 60px;">没有相关数据</dt>'
+    ,'<div class="fly-none" style="min-height: 60px;">没有相关数据</div>'
     ,'{{# } }}'].join('')
   ,elemReply = $('#LAY_replyRank');
 
@@ -511,7 +512,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       ,shadeClose: true
       ,maxWidth: 10000
       ,skin: 'fly-layer-search'
-      ,content: ['<form action="http://cn.bing.com/search">'
+      ,content: ['<form action="/search">'
         ,'<input autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="q">'
       ,'</form>'].join('')
       ,success: function(layero){
@@ -523,7 +524,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           if(val.replace(/\s/g, '') === ''){
             return false;
           }
-          input.val('site:layui.com '+ input.val());
+          input.val(input.val());
       });
       }
     })
@@ -561,6 +562,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   //表单提交
   form.on('submit(*)', function(data){
+    $("button").addClass("layui-btn-disabled");
+    $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action'), button = $(data.elem);
     fly.json(action, data.field, function(res){
         if(res.action){
@@ -617,20 +620,20 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     ,click: function(type){
       if(type === 'bar1'){
         //layer.msg('打开 index.js，开启发表新帖的路径');
-        location.href = '/jie/add';
+          location.href = '/jie/add';
+        }
       }
-    }
   });
 
   //验证密码
   form.verify({
     pass: [
-      /^[\S]{6,12}$/
+      /^[\S]{6,16}$/
       ,'密码为6到16位，且不能出现空格'
     ],
     length:[
-        /^[\S\n\s]{8,12}$/
-        ,'用户名8到12位'
+        /^[\S\n\s]{6,12}$/
+        ,'用户名6到12位'
     ]
   });
 
@@ -677,11 +680,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   //注册账户
   form.on('submit(reg)', function(data) {
+    $("button").addClass("layui-btn-disabled");
+    $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action');
-    layer.load(2, {
-      shade: [0.3, '#fff'],
-      success:function (res) {
-        fly.json(action, data.field, function(res){
+    fly.json(action, data.field, function(res){
           if(res.action){
             layer.msg(res.msg,{icon:1,time:2*1000},function () {
               location.href = res.action;
@@ -691,14 +693,14 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           error:function(){
             location.reload();
         }
-        });
-      }
-  })
+        })
     return false;
   });
 
   //账户登录
   form.on('submit(login)', function(data) {
+    $("button").addClass("layui-btn-disabled");
+    $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action');
     layer.load(2, {
       shade: [0.3, '#fff'],

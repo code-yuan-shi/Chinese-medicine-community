@@ -4,8 +4,10 @@ import com.bbgu.zmz.community.dto.RegRespObj;
 import com.bbgu.zmz.community.dto.ReplyDTO;
 import com.bbgu.zmz.community.dto.Rows;
 import com.bbgu.zmz.community.dto.TopicInfoDTO;
+import com.bbgu.zmz.community.mapper.MessageMapper;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.ListService;
+import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class JieController {
     private UserService userService;
     @Autowired
     private ListService listService;
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping("/index")
     public String jieIndex(){
@@ -63,7 +67,13 @@ public class JieController {
     跳转发帖页面
      */
     @GetMapping("/add")
-    public String jieAdd(Model model){
+    public String jieAdd(Model model,HttpServletRequest request,HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=utf-8");
+        User user = (User)request.getSession().getAttribute("user");
+        if(user == null){
+            response.getWriter().write("<script>alert('请先登录！')</script>");
+            return "user/login";
+        }
         List<Category> categoryList = topicService.findCate();
         List<Kind> kindList = topicService.findKind();
         model.addAttribute("cates",categoryList);
@@ -136,21 +146,28 @@ public class JieController {
      */
    @PostMapping("/reply")
     @ResponseBody
-    public RegRespObj reply(Comment comment, HttpServletRequest request){
+    public RegRespObj reply(Comment comment,Long recvUserId,Long recvUserId2,HttpServletRequest request){
         RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         if(user != null){
             TopicInfoDTO topicInfoDTO = topicService.showDetail(comment.getTopicId());
             if(topicInfoDTO.getTopicinfo().getStatus() == 1){
-           comment.setCommentCreate(System.currentTimeMillis());
-           comment.setCommentModified(comment.getCommentCreate());
-           comment.setUserId(user.getAccountId());
-           comment.setType(0);
-           topicService.insertComment(comment);
-           regRespObj.setStatus(0);
-           regRespObj.setCode(0);
-           regRespObj.setMsg("回复成功！");
+               comment.setCommentCreate(System.currentTimeMillis());
+               comment.setCommentModified(comment.getCommentCreate());
+               comment.setUserId(user.getAccountId());
+               comment.setType(0);
+               Long id =topicService.insertComment(comment);
+               if(recvUserId==null){
+                   int type = 1;
+                   messageService.insMessage(user.getAccountId(),recvUserId2,comment.getTopicId(),type,comment.getContent(),id);
+               }else{
+                   int type = 0;
+                   messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),id);
+               }
+               regRespObj.setStatus(0);
+               regRespObj.setCode(0);
+               regRespObj.setMsg("回复成功！");
             }else{
                 regRespObj.setStatus(1);
                 regRespObj.setMsg("该帖未审核，无法评论！");

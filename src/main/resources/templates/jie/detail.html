@@ -10,6 +10,7 @@
   <meta name="description" content="Code社区是编程学习交流的场所">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
+
 </head>
 <body>
 <div th:insert="~{common/header::head}"></div>
@@ -61,9 +62,11 @@
         </div>
         <div class="detail-body photos" th:if="${detail.topicinfo.status == 1 || session.user?.role=='管理员' || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}" th:text="${detail.topicinfo.content}"></div>
 
+
         <div th:if="${detail.user?.accountId != session.user?.accountId}">
           <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.topicinfo?.status == 0 &&  session.user?.role !='管理员'&&  session.user?.role !='社区管理员'}">内容正在审核中！</div>
         </div>
+        <div style="color: #999;">注：内容均由发帖者自由发出，不代表本网站立场。<br>如有侵权，请联系管理员删除。</div>
       </div>
 
       <div class="fly-panel detail-box" id="flyReply">
@@ -72,8 +75,9 @@
         </fieldset>
 
         <ul class="jieda" id="jieda">
-          <li th:attr="data-id=${commenta.comment.id}" th:if="${commenta?.comment?.isAccept == 1}">
-            <a name="item-1111111111"></a>
+          <!--已采纳-->
+          <li th:attr="data-id=${commenta.comment.id},data-userId = ${commenta.comment.userId}" th:if="${commenta?.comment?.isAccept == 1}">
+            <a th:name="${commenta.comment.id}"></a>
             <div class="detail-about detail-about-reply">
               <a class="fly-avatar" href="">
                 <img th:src="${commenta.user?.avatarUrl}" th:alt="${commenta.user?.name}">
@@ -98,9 +102,9 @@
 
               <i class="iconfont icon-caina" title="最佳答案" th:if="${commenta.comment?.isAccept == 1}"></i>
             </div>
-            <div class="detail-body jieda-body photos" th:text="${commenta.comment.content}">
+            <div class="detail-body jieda-body photos" th:text="${commenta.comment.content}"></div>
 
-            </div>
+
             <div class="jieda-reply">
               <span class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
@@ -117,8 +121,10 @@
               </div>
             </div>
           </li>
-          <li th:attr="data-id=${comment.comment.id}" th:if="${comment.comment.isAccept != 1}" class="jieda-daan" th:each="comment:${reply}">
-            <a name="item-1111111111"></a>
+
+          <!--未采纳-->
+          <li th:attr="data-id=${comment.comment.id},data-userId = ${comment.comment.userId}" th:if="${comment.comment.isAccept != 1}" class="jieda-daan" th:each="comment:${reply}">
+            <a th:name="${comment.comment.id}"></a>
             <div class="detail-about detail-about-reply">
               <a class="fly-avatar" href="">
                 <img th:src="${comment.user?.avatarUrl}" th:alt="${comment.user?.name}">
@@ -163,22 +169,36 @@
           </li>
           <li class="fly-none" th:if="${reply.size() == 0}">消灭零回复</li>
         </ul>
-        <div id="test1"></div>
+        <div id="test1" th:if="${reply.size() != 0}"></div>
         <div class="layui-form layui-form-pane">
-          <form action="/jie/reply" method="post">
+          <div class="reviewInfo" id="reviewInfo" style="display: none;">
+            <div class="content">
+              <div class="reviewBox">
+                <div id="L_content" style="color: #303030;"></div>
+              </div>
+              <div style="position: absolute;cursor:pointer;right: 5px;top: 5px;width: 20px;text-align:center;height: 25px;line-height: 25px;" class="layui-icon close layui-icon-close" onclick="closeComment($(this))"></div>
+            </div>
+          </div>
+          <blockquote th:if="${session.user == null}" class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">请先登录~</blockquote>
+          <form action="/jie/reply" method="post" th:if="${session.user != null}">
             <div class="layui-form-item layui-form-text">
               <a name="comment"></a>
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                <textarea id="cText" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
               <input id="topid" type="hidden" name="topicId" th:value="${detail.topicinfo.id}">
               <input id="pageid" type="hidden" th:value="${pageid}">
+              <input type="text" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">
+              <input type="hidden" name="recvUserId2" th:value="${detail.user.accountId}">
               <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
             </div>
           </form>
         </div>
+  <!--      <div class="layui-form layui-form-pane" th:if="">
+          <blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">请先登录~</blockquote>
+        </div>-->
       </div>
     </div>
     <div class="layui-col-md4">
@@ -217,14 +237,15 @@
 <div th:insert="~{common/footer::foot}"></div>
 
 <script src="/layui/layui.js"></script>
+
 <script>
 layui.cache.page = 'jie';
-layui.cache.user = {
-  username: '游客'
-  ,uid:-1
-  ,avatar: '/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
+layui.cache.user =  {
+  username: '[[${session.user == null?"游客":session.user.name}]]'
+  ,uid: '[[${session.user == null?"-1":session.user.id}]]'
+  ,avatar: '[[${session.user == null?"/images/avatar/00.jpg":session.user.avatarUrl}]]'
+  ,experience: '[[${session.user == null?"83":session.user.kissNum}]]'
+  ,sex: '[[${session.user == null?"女":session.user.sex == 0?"女":"男"}]]'
 };
 layui.config({
   version: "3.0.0"
@@ -240,6 +261,14 @@ layui.config({
     othis.html(fly.content(html));
   })
 });
+</script>
+<script src="/js/jquery.js" type="text/javascript"></script>
+<script>
+  function closeComment(dom) {
+    dom.parent().parent().hide();
+    $("#L_content").text("");
+    $("#commentTo").val("");
+  }
 </script>
 
 </body>

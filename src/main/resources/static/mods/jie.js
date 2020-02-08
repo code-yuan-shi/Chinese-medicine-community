@@ -150,13 +150,18 @@ layui.define('fly', function(exports){
       });
     }
     ,reply: function(li){ //回复
-      console.log(li);
-     var val = dom.content.val();
-      var aite = '[quote]@'+li.find('.fly-detail-user cite').text().replace(/\s/g, '')+' '+li.find('.detail-body').text()+'[/quote]';
-      dom.content.focus()
+      var val = dom.content.val();
+      val="";
+      var aite = '@'+ li.find('.fly-detail-user cite').text().replace(/\s/g, '');
+      //设置被评论者Id评论
+      $("#commentTo").val(li.attr("data-userId"));
+      //设置@了谁
+      $("#cText").focus();
       if(val.indexOf(aite) !== -1) return;
-      dom.content.val(aite);
-    // li.find(".jieda-reply").append();
+      //dom.content.val(aite +' ' + val);
+      //dom.content.attr("placeholder",aite);
+      $("#L_content").text(aite);
+      $(".reviewInfo").slideDown("fast");
     }
     ,accept: function(li){ //采纳
       var othis = $(this);

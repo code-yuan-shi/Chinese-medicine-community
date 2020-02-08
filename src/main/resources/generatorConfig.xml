@@ -7,6 +7,10 @@
 
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
 <!--       <jdbcConnection driverClass="org.h2.Driver"
                         connectionURL="jdbc:h2:~/community"
                         userId="sa"
@@ -39,7 +43,9 @@
 
         <table tableName="user" domainObjectName="User" ></table>
         <table tableName="category" domainObjectName="Category" ></table>
-        <table tableName="comment" domainObjectName="Comment" ></table>
+        <table tableName="comment" domainObjectName="Comment" >
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
         <table tableName="commentagree" domainObjectName="Commentagree" ></table>
         <table tableName="message" domainObjectName="Message" ></table>
         <table tableName="topicinfo" domainObjectName="Topicinfo" >
@@ -47,6 +53,7 @@
         </table>
         <table tableName="kind" domainObjectName="Kind" ></table>
         <table tableName="collect" domainObjectName="Collect" ></table>
+        <table tableName="qiandao" domainObjectName="Qiandao" ></table>
 
     </context>
 </generatorConfiguration>

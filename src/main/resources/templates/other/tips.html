@@ -29,12 +29,12 @@
 <script src="/layui/layui.js"></script>
 <script>
 layui.cache.page = '';
-layui.cache.user = {
-  username: '游客'
-  ,uid: -1
-  ,avatar: '/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
+layui.cache.user =  {
+    username: '[[${session.user == null?"游客":session.user.name}]]'
+    ,uid: '[[${session.user == null?"-1":session.user.id}]]'
+    ,avatar: '[[${session.user == null?"/images/avatar/00.jpg":session.user.avatarUrl}]]'
+    ,experience: '[[${session.user == null?"83":session.user.kissNum}]]'
+    ,sex: '[[${session.user == null?"女":session.user.sex == 0?"女":"男"}]]'
 };
 layui.config({
   version: "3.0.0"

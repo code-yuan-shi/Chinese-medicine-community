@@ -59,18 +59,35 @@
 	    <div  id="LAY_minemsg" style="margin-top: 10px;">
         <!--<div class="fly-none">您暂时没有最新消息</div>-->
         <ul class="mine-msg">
-          <li data-id="123">
-            <blockquote class="layui-elem-quote">
-              <a href="/jump?username=Absolutely" target="_blank"><cite>Absolutely</cite></a>回答了您的求解<a target="_blank" href="/jie/8153.html/page/0/#item-1489505778669"><cite>layui后台框架</cite></a>
+          <li  th:if="${msg.type == 0}" th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
+            <blockquote class="layui-elem-quote"  th:if="${msg.type == 0}" >
+              <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
+              回复了我的帖子
+              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}}">
+                <cite th:text="${msg.topicinfo.title}"></cite>
+              </a>
+              说：
+              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'#'+${msg.comment?.id}}">
+                <cite th:text="${msg.content}"></cite>
+              </a>
             </blockquote>
             <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
           </li>
-          <li data-id="123">
-            <blockquote class="layui-elem-quote">
-              系统消息：欢迎使用 layui
+          <li  th:if="${msg.type == 1}" th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
+            <blockquote class="layui-elem-quote"  th:if="${msg.type == 0}" >
+              <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
+              回复了我的帖子
+              <a target="_blank" th:href="@{'/jie/detail/'}">
+                <cite th:text="${msg.topicinfo.title}"></cite>
+              </a>
+              说：
+              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'#'+${msg.comment?.id}}">
+                <cite th:text="${msg.content}"></cite>
+              </a>
             </blockquote>
             <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
           </li>
+
         </ul>
       </div>
 	  </div>
@@ -84,12 +101,12 @@
 <script src="/layui/layui.js"></script>
 <script>
 layui.cache.page = 'user';
-layui.cache.user = {
-  username: '游客'
-  ,uid: -1
-  ,avatar: '../../res/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
+layui.cache.user =  {
+  username: '[[${session.user == null?"游客":session.user.name}]]'
+  ,uid: '[[${session.user == null?"-1":session.user.id}]]'
+  ,avatar: '[[${session.user == null?"/images/avatar/00.jpg":session.user.avatarUrl}]]'
+  ,experience: '[[${session.user == null?"83":session.user.kissNum}]]'
+  ,sex: '[[${session.user == null?"女":session.user.sex == 0?"女":"男"}]]'
 };
 layui.config({
   version: "3.0.0"

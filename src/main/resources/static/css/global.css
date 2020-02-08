@@ -239,6 +239,8 @@ pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid 
 .fly-list li h2{height: 26px; font-size: 0;}
 .fly-list li h2 a{display: inline-block; max-width: 80%; padding-right: 10px; font-size: 16px;}
 .fly-list li h2 .layui-badge{top: -2px; height: 16px; line-height: 16px; padding: 0 5px; margin-right: 10px; font-size: 12px; border: 1px solid #5FB878; background: none; color: #5FB878;}
+.fly-list li h2 .layui-badge2{top: -2px; height: 16px; line-height: 16px; padding: 0 5px; margin-right: 10px; font-size: 12px; border: 1px solid #009688; background: none; color: #009688;}
+
 
 .fly-list-info{position: relative; font-size: 13px; color: #999;}
 .fly-list-info>*{padding-right: 15px;}
@@ -502,8 +504,38 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .fly-none p{margin-top: 50px; padding: 0 15px; font-size: 20px; color: #999; font-weight: 300;}
 .fly-list-one .fly-none{min-height: 70px;}
 
-
+@media screen and (max-width: 1200px) {
+  .fly-header .fly-nav a {
+    padding: 0 25px 0 20px;
+  }
+}
+@media screen and (max-width: 990px) {
+  .fly-header .fly-nav a {
+    padding: 0 10px 0 10px;
+  }
+}
 @media screen and (max-width: 768px) {
+  /*拓展*/
+  .fly-user-main>.layui-nav{position: absolute; left: 0; top: -36px; z-index: 1000; height: 102%; padding: 10px 0;}
+  .cxt_nav_wp{
+    width: 100%;
+    height: 36px;
+    position: relative;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid #E9E9E9;
+    background-color: #fff;
+  }
+  .cxt_nav{
+    width: 100%;
+    height: 36px;
+    white-space: nowrap;
+    clear: both;
+    display: block!important;
+  }
+
+  .cxt_nav .layui-this a{color: #5FB878;}
+  .cxt_nav li{height: 36px;line-height: 36px;width: 25%;text-align: center;display: inline-block;}
 	.fly-main{width: 100%;}
 
   /* 顶边距 */
@@ -551,4 +583,29 @@ body .fly-user-main{position: relative; min-height: 600px;}
   .site-mobile .site-tree-mobile{display: none !important;}
   .site-mobile .fly-user-main>.layui-nav{left: 0;}
   .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.9); z-index: 999;}
+}
+/*
+轮播图
+ */
+#carousel img{
+  width: 100%;
+  height: 100%;
+}
+/*拓展*/
+.cxt_nav{
+  display: none;
+}
+.reviewInfo {
+  width: auto;
+  margin: 0px auto;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9f9;
+  height: 36px;
+  line-height: 36px;
+  padding: 0px 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 13px;
+  display: none;
 }

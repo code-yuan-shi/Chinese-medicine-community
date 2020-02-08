@@ -18,7 +18,7 @@
     <result column="comment_num" jdbcType="BIGINT" property="commentNum" />
   </resultMap>
   <update id="incView" parameterType="com.bbgu.zmz.community.model.Topicinfo">
-    update TOPICINFO
+    update `topicinfo`
     set
       VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
     where ID = #{id,jdbcType=BIGINT}

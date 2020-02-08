@@ -12,24 +12,37 @@
 <body>
 
 <div th:insert="~{common/header::head}"></div>
+<div class="cxt_nav_wp">
+  <ul class="cxt_nav layui-clear">
+    <li class=""><a href="/Post/column/all/all">All</a></li>
+    <li class="layui-this"><a href="/Post/column/android">Android</a></li><li><a href="/Post/column/ios">IOS</a></li><li><a href="/Post/column/java">JAVA</a></li><li><a href="/Post/column/php">PHP</a></li><li><a href="/Post/column/web">WEB</a></li><li><a href="/Post/column/h5Game">H5Game</a></li>	</ul>
+</div>
 <div th:insert="~{common/column::col}"></div>
 
 
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8">
+      <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="carousel">
+        <div carousel-item>
+          <a href="#"><img src="/images/ad/gg.png"/></a>
+          <a href="#"><img src="/images/ad/gg1.png"/></a>
+          <a href="#"><img src="/images/ad/gg2.png"/></a>
+        </div>
+      </div>
       <div class="fly-panel">
         <div class="fly-panel-title fly-filter">
           <a>置顶</a>
           <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
         </div>
+        <div class="fly-none" th:if="${topictops.size()==0}"style="min-height: 50px">没有相关数据</div>
         <ul class="fly-list">
-          <li class="fly-none" th:if="${topictops.size()==0}"style="min-height: 50px">没有相关数据</li>
           <li th:each="topic:${topictops}">
             <a href="#" class="fly-avatar">
               <img th:src="${topic.user.avatarUrl}" th:alt="${topic.user.name}">
             </a>
             <h2>
+              <a class="layui-badge2" th:text="${topic.kind?.kindname}"></a>
               <a class="layui-badge" th:text="${topic.category.catename}"></a>
               <a th:href="@{'/jie/detail/'+${topic.topicinfo.id}}" th:text="${topic.topicinfo.title}"></a>
             </h2>
@@ -57,14 +70,14 @@
       <div class="fly-panel" style="margin-bottom: 0;">
 
         <div th:insert="~{common/filter::fil}"></div>
-
+        <div class="fly-none" th:if="${topicalls.size()==0}">没有相关数据</div>
         <ul class="fly-list">
-          <li class="fly-none" th:if="${topicalls.size()==0}">没有相关数据</li>
           <li th:each="all:${topicalls}">
             <a href="#" class="fly-avatar">
               <img th:src="${all.user.avatarUrl}" th:alt="${all.user.name}">
             </a>
             <h2>
+              <a class="layui-badge layui-badge2" th:text="${all.kind?.kindname}"></a>
               <a class="layui-badge" th:text="${all.category.catename}"></a>
               <a th:href="@{'/jie/detail/'+${all.topicinfo.id}}" th:text="${all.topicinfo.title}"></a>
             </h2>
@@ -87,9 +100,9 @@
           </li>
 
         </ul>
-        <div style="text-align: center" th:if="${topicalls.size()=='0'}">
+        <div style="text-align: center" th:if="${topicalls.size()>0}">
           <div class="laypage-main">
-            <a href="#" class="laypage-next">更多求解</a>
+            <a href="#" class="laypage-next">查看更多</a>
           </div>
         </div>
 
@@ -123,9 +136,10 @@
           <span class="fly-signin-days">已连续签到<cite>16</cite>天</span>
         </div>
         <div class="fly-panel-main fly-signin-main">
+          <i class="layui-icon fly-loading">&#xe63d;</i>
           <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
-          <span>可获得<cite>5</cite>飞吻</span>
-          
+             <span>可获得<cite>5</cite>飞吻</span>
+
           <!-- 已签到状态 -->
           <!--
           <button class="layui-btn layui-btn-disabled">今日已签到</button>
@@ -182,14 +196,15 @@
 <div th:insert="~{common/footer::foot}"></div>
  
 <script src="/layui/layui.js"></script>
+
 <script>
 layui.cache.page = 'index';
-layui.cache.user = {
-  username: '游客'
-  ,uid: -1
-  ,avatar: '/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
+layui.cache.user =  {
+  username: '[[${session.user == null?"游客":session.user.name}]]'
+  ,uid: '[[${session.user == null?"-1":session.user.id}]]'
+  ,avatar: '[[${session.user == null?"/images/avatar/00.jpg":session.user.avatarUrl}]]'
+  ,experience: '[[${session.user == null?"83":session.user.kissNum}]]'
+  ,sex: '[[${session.user == null?"女":session.user.sex == 0?"女":"男"}]]'
 };
 layui.config({
   version: "3.0.0"
@@ -199,6 +214,19 @@ layui.config({
 }).use('fly');
 </script>
 
+<script>
+  layui.use(['carousel'], function(){
+    var carousel = layui.carousel;
+    //建造实例
+    carousel.render({
+      elem: '#carousel'
+      ,width: '100%' //设置容器宽度
+      ,arrow: 'always' //始终显示箭头
+      ,height:'250px'
+      //,anim: 'updown' //切换动画方式
+    });
+  });
+</script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_30088308'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D30088308' type='text/javascript'%3E%3C/script%3E"));</script>
 
 </body>

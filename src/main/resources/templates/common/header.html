@@ -2,19 +2,28 @@
 <div class="fly-header layui-bg-black" th:fragment="head">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/images/logo.png" alt="Code社区">
+      <img src="/images/code.png" alt="Code社区">
     </a>
-   <!-- <ul class="layui-nav fly-nav layui-hide-xs">
+    <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
+        <a href="/">All</a>
       </li>
-      <li class="layui-nav-item">
-        <a href="case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
-      </li>
-      <li class="layui-nav-item">
-        <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
-      </li>
-    </ul>-->
+        <li class="layui-nav-item">
+            <a href="/">Android</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/">IOS</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/">JAVA</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/">PHP</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/">Web</a>
+        </li>
+    </ul>
     
     <ul class="layui-nav fly-nav-user">
         <div th:if="${session.user == null}">
@@ -23,7 +32,7 @@
               <a class="iconfont icon-touxiang layui-hide-xs" href="/user/login"></a>
             </li>
             <li class="layui-nav-item">
-              <a th:href="@{'/user/login?callback='+${#httpServletRequest.requestURL}}">登入</a>
+              <a th:href="@{'/user/login?callback='+${#httpServletRequest.requestURL}}">登录</a>
             </li>
             <li class="layui-nav-item">
               <a href="/user/reg">注册</a>

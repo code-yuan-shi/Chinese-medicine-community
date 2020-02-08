@@ -19,6 +19,9 @@ public class MailUtil {
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
         props.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
         props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
+        props.setProperty("mail.smtp.port", "465");
+        props.setProperty("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.smtp.socketFactory.port", "465");
 
         // 2. 根据配置创建会话对象, 用于和邮件服务器交互
         Session session = Session.getDefaultInstance(props);
@@ -60,7 +63,7 @@ public class MailUtil {
 
         // 4. Subject: 邮件主题
         message.setSubject("用户激活", "UTF-8");
-        String activeUrl="http://localhost:8080/user/activemail/"+mailActiveCode;
+        String activeUrl="http://101.200.47.40:8080/user/activemail/"+mailActiveCode;
         // 5. Content: 邮件正文（可以使用html标签）
         message.setContent("尊敬的用户，您好！我是Code社区站长听风，请点击激活链接完成邮箱激活，激活链接有效期只有五分钟。<a href=\""+activeUrl+"\" target=\"_blank\">"+activeUrl+"</a>", "text/html;charset=UTF-8");
         //message.setContent("尊敬的用户，您好！我是Code社区站长听风，我正在进行邮箱激活测试，打扰了！", "text/html;charset=UTF-8");

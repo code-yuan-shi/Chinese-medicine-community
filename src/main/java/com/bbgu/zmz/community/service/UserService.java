@@ -7,20 +7,13 @@ import com.bbgu.zmz.community.mapper.CollectExtMapper;
 import com.bbgu.zmz.community.mapper.CollectMapper;
 import com.bbgu.zmz.community.mapper.TopicinfoMapper;
 import com.bbgu.zmz.community.mapper.UserMapper;
-import com.bbgu.zmz.community.model.Collect;
-import com.bbgu.zmz.community.model.Topicinfo;
-import com.bbgu.zmz.community.model.User;
-import com.bbgu.zmz.community.model.UserExample;
+import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.util.MD5Utils;
 import com.bbgu.zmz.community.util.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -96,16 +89,18 @@ public class UserService {
     /*
     注册账户
      */
-    public RegRespObj doreg(User user,String repass,String url){
-        RegRespObj regRespObj = new RegRespObj();
-        if(user.getPwd().equals(repass)){
+    public int doReg(UserExt userext) throws Exception {
+            User user = new User();
             Long time = System.currentTimeMillis();
             //创建激活密钥，利用邮箱+密码+时间
-            String accode = MD5Utils.getMd5(user.getEmail()+user.getPwd()+time);
+            String accode = MD5Utils.getMd5(userext.getEmail()+userext.getPwd()+time);
             //创建激活有效时间
             Long actime = time+1000*60*5;
             //加密密码
-            String pwd = MD5Utils.getMd5(user.getPwd());
+            String pwd = MD5Utils.getMd5(userext.getPwd());
+            user.setAccountId(userext.getAccountId());
+            user.setName(userext.getName());
+            user.setEmail(userext.getEmail());
             user.setPwd(pwd);
             user.setActiveCode(accode);
             user.setActiveTime(actime);
@@ -113,22 +108,13 @@ public class UserService {
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
             user.setRole("社区用户");
-            try {
-                MailUtil.sendActiveMail(user.getEmail(),accode);
-                userMapper.insertSelective(user);
-                regRespObj.setStatus(0);
-                regRespObj.setMsg("激活邮件已发送！");
-                regRespObj.setAction(url);
-            } catch (Exception e) {
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("网络异常,请重试！");
-            }
-        }else{
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("两次密码输入不一致！");
-        }
-
-        return regRespObj;
+            int count = userMapper.insertSelective(user);
+           if(count > 0){
+               MailUtil.sendActiveMail(user.getEmail(),accode);
+               return 0;
+           }else{
+               return 1;
+           }
     }
     /*
     激活用户
@@ -202,7 +188,7 @@ public class UserService {
         if(user != null){
             Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(cid);
             if(topicinfo.getStatus() == 1){
-                Map<String,Long> map = new HashMap<>();
+                Map<String,Long> map = new HashMap<String,Long>();
                 map.put("topicid",cid);
                 map.put("userid",user.getAccountId());
                 int count = collectExtMapper.getIsCollectInfo(map);
@@ -260,6 +246,15 @@ public class UserService {
         }
         return regRespObj;
     }
+    /*
+    用户查询我的资料
+     */
+    public User findUserInfo(User user){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        List<User> userList = userMapper.selectByExample(userExample);
+        return userList.get(0);
+    }
 
     /*
     用户修改我的资料
@@ -316,4 +311,6 @@ public class UserService {
         }
         return regRespObj;
     }
+
+
 }

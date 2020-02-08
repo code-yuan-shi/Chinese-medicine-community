@@ -175,7 +175,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       upload.render({
         elem: '.upload-img'
         ,url: '/api/upload/'
-        ,size: 1000
+        ,size: 1024*20
         ,before: function(){
           avatarAdd.find('.loading').show();
         }

@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
-  <title>登入</title>
+  <title>登录</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="keywords" content="fly,layui,前端社区">
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
@@ -24,7 +24,7 @@
   <div class="fly-panel fly-panel-user" pad20>
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
-        <li class="layui-this">登入</li>
+        <li class="layui-this">登录</li>
         <li><a href="/user/reg">注册</a></li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
@@ -33,9 +33,9 @@
             <form action="/user/dologin" method="post">
               <input name="url" type="hidden" th:value="${callback}">
               <div class="layui-form-item">
-                <label for="accountId" class="layui-form-label">用户名</label>
+                <label for="accountId" class="layui-form-label">用户账号</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="accountId" name="accountId" required lay-verify="required|number|length" autocomplete="off" class="layui-input">
+                  <input type="text" id="accountId" name="accountId" required lay-verify="required|number|length" autocomplete="off" class="layui-input" oninput = "value=value.replace(/[^\d]/g,'')" maxlength="12">
                 </div>
               </div>
               <div class="layui-form-item">
@@ -60,8 +60,10 @@
                 </span>
               </div>
               <div class="layui-form-item fly-form-app">
-                <span>或者使用社交账号登入</span>
-                <a th:href="@{'https://github.com/login/oauth/authorize?client_id=79483350f9fdc435f418&redirect_uri=http://localhost:8080/callback&state='+${#httpServletRequest.requestURL}+'&scope=user'}" onclick="layer.msg('正在通过Github登入', {icon:16, shade: 0.1, time:0})" title="Github登入"><i class="layui-icon layui-icon-website" style="font-size: 25px; color: #A9B7B7">&#xe7ae;</i></a>
+                <span>或者使用社交账号登录</span>
+                <a href="" onclick="layer.msg('正在通过QQ登录', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" style="font-size:40px" title="QQ登入"></a>
+                <a th:href="@{'https://github.com/login/oauth/authorize?client_id=f25f2e657fecdc7c6c65&redirect_uri=http://101.200.47.40:8080/callback&state='+${#httpServletRequest.requestURL}+'&scope=user'}" onclick="layer.msg('正在通过Github登录', {icon:16, shade: 0.1, time:0})" title="Github登录"><img src="/images/github.png" style="width:30px;height:30px;padding-bottom: 17px
+;" /></a>
               </div>
             </form>
           </div>
@@ -76,12 +78,12 @@
 <script src="/layui/layui.js"></script>
 <script>
 layui.cache.page = 'user';
-layui.cache.user = {
-  username: '游客'
-  ,uid: -1
-  ,avatar: '/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
+layui.cache.user =  {
+  username: '[[${session.user == null?"游客":session.user.name}]]'
+  ,uid: '[[${session.user == null?"-1":session.user.id}]]'
+  ,avatar: '[[${session.user == null?"/images/avatar/00.jpg":session.user.avatarUrl}]]'
+  ,experience: '[[${session.user == null?"83":session.user.kissNum}]]'
+  ,sex: '[[${session.user == null?"女":session.user.sex == 0?"女":"男"}]]'
 };
 layui.config({
   version: "3.0.0"

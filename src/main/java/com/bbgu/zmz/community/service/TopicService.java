@@ -31,7 +31,7 @@ public class TopicService {
     获取置顶帖子信息，查询4条
      */
     public List<TopicInfoDTO> topicTop(Integer istop,Integer num){
-        List<TopicInfoDTO> topicInfoDTOList = new ArrayList<>();
+        List<TopicInfoDTO> topicInfoDTOList = new ArrayList<TopicInfoDTO>();
         //获取帖子信息
         TopicinfoExample topicinfoExample = new TopicinfoExample();
         topicinfoExample.createCriteria().andIsTopEqualTo(istop);
@@ -94,6 +94,9 @@ public class TopicService {
         //获取帖子分类
         Category category = categoryMapper.selectByPrimaryKey(topicinfo.getCategoryId());
         topicInfoDTO.setCategory(category);
+        //获取帖子二级分类
+        Kind kind = kindMapper.selectByPrimaryKey(topicinfo.getKindId());
+        topicInfoDTO.setKind(kind);
         //获得评论总数
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(topicinfo.getId());
@@ -110,14 +113,16 @@ public class TopicService {
     /*
     插入评论
      */
-    public void insertComment(Comment comment){
+    public Long insertComment(Comment comment){
         commentMapper.insertSelective(comment);
+        Long id = comment.getId();
+        return id;
     }
     /*
     查询评论
      */
     public List<ReplyDTO> findComment(Long id,Integer page,Integer size){
-        List<ReplyDTO> replyDTOList = new ArrayList<>();
+        List<ReplyDTO> replyDTOList = new ArrayList<ReplyDTO>();
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id);
         Long count = commentMapper.countByExample(commentExample);

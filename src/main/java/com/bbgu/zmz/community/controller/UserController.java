@@ -1,7 +1,10 @@
 package com.bbgu.zmz.community.controller;
 
 import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.model.MessageExt;
 import com.bbgu.zmz.community.model.User;
+import com.bbgu.zmz.community.model.UserExt;
+import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,13 +25,15 @@ import java.util.regex.Pattern;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private MessageService messageService;
 
 
 
 
 
     @GetMapping("/login")
-    public String login(@RequestParam(name="callback")String url,Model model){
+    public String login(@RequestParam(name="callback",defaultValue = "/")String url,Model model){
         model.addAttribute("callback",url);
         return "user/login";
     }
@@ -47,7 +53,7 @@ public class UserController {
     @PostMapping("/checkuser")
     public @ResponseBody RegRespObj checkUser(String accountId){
         Boolean is = isNumeric(accountId);
-        if(is == true && accountId != "" && accountId.length()>=8){
+        if(is == true && accountId != "" && accountId.length()>=6){
          Long accountid = Long.parseLong(accountId);
          RegRespObj regRespObj = userService.checkUser(accountid);
          return regRespObj;
@@ -59,7 +65,7 @@ public class UserController {
         }else{
             RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
-            regRespObj.setMsg("账号为不少于8位的数字");
+            regRespObj.setMsg("账号不能少于6位数");
             return regRespObj;
         }
     }
@@ -90,10 +96,21 @@ public class UserController {
     注册用户
      */
     @PostMapping("/doreg")
-    public @ResponseBody  RegRespObj doreg(User user, String repass, HttpServletRequest request){
-        String url = request.getServletContext().getContextPath() + "/tips/regsuccess";
-        RegRespObj regRespObj= userService.doreg(user,repass,url);
-        return regRespObj;
+    public String doReg(UserExt userext,HttpServletResponse response) throws Exception {
+        response.setContentType("text/html; charset=utf-8");
+        if (userext.getPwd().equals(userext.getRepass())) {
+            int code = userService.doReg(userext);
+            if(code == 0){
+                return "redirect:/tips/regsuccess";
+            }else{
+                response.getWriter().write("<script>alert('很抱歉，失败了,请重试！')</script>");
+                return "/user/reg";
+            }
+        }else{
+            response.getWriter().write("<script>alert('两次输入密码不一致！')</script>");
+            return "/user/reg";
+        }
+
     }
 
     /*
@@ -119,7 +136,6 @@ public class UserController {
     /*
     用户登录验证
      */
-
     @PostMapping("dologin")
     public @ResponseBody RegRespObj dologin(User user,String url,HttpServletRequest request){
         RegRespObj regRespObj = new RegRespObj();
@@ -148,7 +164,9 @@ public class UserController {
     @GetMapping("set")
     public String userSet(HttpServletRequest request,Model model){
         User user = (User)request.getSession().getAttribute("user");
-        model.addAttribute("info",user);
+        User userinfo = userService.findUserInfo(user);
+        request.getSession().setAttribute("user",userinfo);
+        model.addAttribute("info",userinfo);
         return "user/set";
     }
 
@@ -181,7 +199,10 @@ public class UserController {
     }
 
     @GetMapping("message")
-    public String userMessage(){
+    public String userMessage(Model model,HttpServletRequest request){
+        User user = (User)request.getSession().getAttribute("user");
+        List<MessageExt> messageExt= messageService.selMessage(user.getAccountId());
+        model.addAttribute("messageList",messageExt);
         return "user/message";
     }
 
