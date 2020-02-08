@@ -30,7 +30,7 @@
           
           <span class="layui-badge layui-bg-black" th:if="${detail.topicinfo?.isTop == 1}">置顶</span>
           <span class="layui-badge layui-bg-red" th:if="${detail.topicinfo?.isGood == 1}">精帖</span>
-          <div class="fly-admin-box" th:attr="data-id=${detail.topicinfo.id}" th:if="${session.user?.role =='社区管理员' || session.user?.role =='管理员'}">
+          <div class="fly-admin-box" th:attr="data-id=${detail.topicinfo.id}" th:if="${session.user?.role =='社区管理员'}">
             <span class="layui-btn layui-btn-xs jie-admin" type="agr" th:if="${detail.topicinfo?.status == 0}">审核</span>
             <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1" th:if="${detail.topicinfo?.isTop == 0}">置顶</span>
@@ -57,10 +57,10 @@
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" th:attr="data-id=${detail.topicinfo.id}">
             <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.topicinfo.experience}"></span>飞吻</span>
-           <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || session.user?.role =='管理员' || detail.user?.accountId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.topicinfo.id}}">编辑此贴</a></span>
+           <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || detail.user?.accountId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.topicinfo.id}}">编辑此贴</a></span>
           </div>
         </div>
-        <div class="detail-body photos" th:if="${detail.topicinfo.status == 1 || session.user?.role=='管理员' || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}" th:text="${detail.topicinfo.content}"></div>
+        <div class="detail-body photos" th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}" th:text="${detail.topicinfo.content}"></div>
 
 
         <div th:if="${detail.user?.accountId != session.user?.accountId}">
@@ -90,7 +90,7 @@
                 </a>
 
                 <span th:if="${commenta.user?.accountId == detail.user?.accountId}">(楼主)</span>
-                <span style="color:#5FB878" th:if="${commenta.user?.role=='社区管理员' || commenta.user?.role == '管理员'}">(管理员)</span>
+                <span style="color:#5FB878" th:if="${commenta.user?.role=='社区管理员'}">(管理员)</span>
                 <!--  <span style="color:#FF9E3F">（社区之光）</span>-->
                 <span style="color:#999" th:if="${commenta.user?.role=='违规用户'}">（该号已被封）</span>
 
@@ -115,9 +115,9 @@
                 回复
               </span>
               <div class="jieda-admin" th:if="${session.user != null}">
-                <span type="edit" th:if="${commenta.user?.role=='社区管理员' || commenta.user?.role == '管理员' }">编辑</span>
-                <span type="del" th:if="${commenta.user?.role=='社区管理员' || commenta.user?.role == '管理员' }">删除</span>
-                <span class="jieda-accept" type="accept" th:if="${commenta.user?.role=='社区管理员' && commenta.user?.role == '管理员' || commenta.comment.isAccept == 0}">采纳</span>
+                <span type="edit"  th:if="${session.user?.role == '社区管理员'}">编辑</span>
+                <span type="del" th:if="${session.user?.role == '社区管理员'}">删除</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId}" >采纳</span>
               </div>
             </div>
           </li>
@@ -137,7 +137,7 @@
                 </a>
                 
                 <span th:if="${comment.user?.accountId == detail.user?.accountId}">(楼主)</span>
-                <span style="color:#5FB878" th:if="${comment.user?.role=='社区管理员' || comment.user?.role == '管理员'}">(管理员)</span>
+                <span style="color:#5FB878" th:if="${comment.user?.role=='社区管理员'}">(管理员)</span>
               <!--  <span style="color:#FF9E3F">（社区之光）</span>-->
                 <span style="color:#999" th:if="${comment.user?.role=='违规用户'}">（该号已被封）</span>
 
@@ -160,10 +160,10 @@
                 <i class="iconfont icon-svgmoban53"></i>
                 回复
               </span>
-              <div class="jieda-admin" th:if="${session.user != null}">
-                <span type="edit" th:if="${comment.user?.role=='社区管理员' || comment.user?.role == '管理员'}">编辑</span>
-                <span type="del" th:if="${comment.user?.role=='社区管理员' || comment.user?.role == '管理员' }">删除</span>
-                <span class="jieda-accept" type="accept" th:if="${comment.user?.role=='社区管理员' && commenta?.count != 99 || comment.user?.role == '管理员' && commenta?.count != 99}">采纳</span>
+              <div class="jieda-admin">
+                <span type="edit" th:if="${session.user?.role == '社区管理员'}">编辑</span>
+                <span type="del" th:if="${session.user?.role == '社区管理员'}"}>删除</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId}">采纳</span>
               </div>
             </div>
           </li>
@@ -190,8 +190,10 @@
             <div class="layui-form-item">
               <input id="topid" type="hidden" name="topicId" th:value="${detail.topicinfo.id}">
               <input id="pageid" type="hidden" th:value="${pageid}">
-              <input type="text" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">
-              <input type="hidden" name="recvUserId2" th:value="${detail.user.accountId}">
+              <input type="hidden" id="commentid" name="id">
+              <input type="hidden" id="replyTo" name="replyto">
+              <input type="hidden" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">
+              <input type="hidden" id="type" name="type" value="0">
               <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
             </div>
           </form>
@@ -267,7 +269,8 @@ layui.config({
   function closeComment(dom) {
     dom.parent().parent().hide();
     $("#L_content").text("");
-    $("#commentTo").val("");
+    $("#commentTo").val("[[${detail.user.accountId}]]");
+    $("#type").val(0);
   }
 </script>
 

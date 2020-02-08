@@ -6,10 +6,13 @@ import com.bbgu.zmz.community.mapper.MessageMapper;
 import com.bbgu.zmz.community.mapper.TopicinfoMapper;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.*;
+import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -97,6 +100,9 @@ public class MessageService {
             List<User> userList = userMapper.selectByExample(userExample);
             Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(message.getTopicId());
             Comment comment = commentMapper.selectByPrimaryKey(message.getCommentId());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = new Date(message.getMessageCreate());
+            messageExt.setTime(StringDate.getStringDate(date));
             messageExt.setComment(comment);
             messageExt.setCommentId(message.getCommentId());
             messageExt.setContent(message.getContent());

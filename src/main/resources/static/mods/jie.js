@@ -150,17 +150,17 @@ layui.define('fly', function(exports){
       });
     }
     ,reply: function(li){ //回复
-      var val = dom.content.val();
-      val="";
+
       var aite = '@'+ li.find('.fly-detail-user cite').text().replace(/\s/g, '');
       //设置被评论者Id评论
       $("#commentTo").val(li.attr("data-userId"));
+      $("#commentid").val(li.attr("data-id"));
+      $("#type").val(1);
       //设置@了谁
       $("#cText").focus();
-      if(val.indexOf(aite) !== -1) return;
-      //dom.content.val(aite +' ' + val);
-      //dom.content.attr("placeholder",aite);
+
       $("#L_content").text(aite);
+      $("#replyTo").val(aite);
       $(".reviewInfo").slideDown("fast");
     }
     ,accept: function(li){ //采纳

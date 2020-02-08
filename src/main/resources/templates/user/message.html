@@ -60,7 +60,7 @@
         <!--<div class="fly-none">您暂时没有最新消息</div>-->
         <ul class="mine-msg">
           <li  th:if="${msg.type == 0}" th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
-            <blockquote class="layui-elem-quote"  th:if="${msg.type == 0}" >
+            <blockquote class="layui-elem-quote" >
               <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
               回复了我的帖子
               <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}}">
@@ -71,21 +71,21 @@
                 <cite th:text="${msg.content}"></cite>
               </a>
             </blockquote>
-            <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
           </li>
           <li  th:if="${msg.type == 1}" th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
-            <blockquote class="layui-elem-quote"  th:if="${msg.type == 0}" >
+            <blockquote class="layui-elem-quote">
               <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
-              回复了我的帖子
+              回复了我的回复
               <a target="_blank" th:href="@{'/jie/detail/'}">
-                <cite th:text="${msg.topicinfo.title}"></cite>
+                <cite th:text="${msg.comment.content}"></cite>
               </a>
               说：
               <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'#'+${msg.comment?.id}}">
                 <cite th:text="${msg.content}"></cite>
               </a>
             </blockquote>
-            <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
           </li>
 
         </ul>

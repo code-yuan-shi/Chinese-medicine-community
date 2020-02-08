@@ -146,23 +146,27 @@ public class JieController {
      */
    @PostMapping("/reply")
     @ResponseBody
-    public RegRespObj reply(Comment comment,Long recvUserId,Long recvUserId2,HttpServletRequest request){
+    public RegRespObj reply(Comment comment,Long recvUserId,int type,String replyto,HttpServletRequest request){
+       Long ids = comment.getId();
         RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         if(user != null){
             TopicInfoDTO topicInfoDTO = topicService.showDetail(comment.getTopicId());
             if(topicInfoDTO.getTopicinfo().getStatus() == 1){
+                if(type == 1){
+                    String content = replyto +" "+ comment.getContent();
+                    comment.setContent(content);
+                }
                comment.setCommentCreate(System.currentTimeMillis());
                comment.setCommentModified(comment.getCommentCreate());
                comment.setUserId(user.getAccountId());
                comment.setType(0);
                Long id =topicService.insertComment(comment);
-               if(recvUserId==null){
-                   int type = 1;
-                   messageService.insMessage(user.getAccountId(),recvUserId2,comment.getTopicId(),type,comment.getContent(),id);
+               if(type == 1){
+                   //二级回复
+                   messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),ids);
                }else{
-                   int type = 0;
                    messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),id);
                }
                regRespObj.setStatus(0);

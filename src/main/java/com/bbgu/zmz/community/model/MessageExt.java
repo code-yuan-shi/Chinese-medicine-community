@@ -28,4 +28,6 @@ public class MessageExt {
 
     private Comment comment;
 
+    private String time;
+
 }
