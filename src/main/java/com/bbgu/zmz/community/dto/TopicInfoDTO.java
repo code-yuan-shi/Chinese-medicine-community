@@ -16,5 +16,6 @@ public class TopicInfoDTO {
     private Kind kind;
     private Long comment_count;
     private Long user_count;
+    private String time;
 
 }

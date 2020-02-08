@@ -51,7 +51,7 @@
                 <cite th:text="${topic.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${topic.user.name}"></i>
               </a>
-              <span  th:text="${#dates.format(topic.topicinfo.topicCreate,'yyyy-MM-dd')}"></span>
+              <span  th:text="${topic.time}"></span>
               
               <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> <span th:text="${topic.topicinfo.experience}"></span></span>
               <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${topic.topicinfo.isEnd == 1}">已结</span>
@@ -86,7 +86,7 @@
                 <cite th:text="${all.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${all.user.name}"></i>
               </a>
-              <span  th:text="${#dates.format(all.topicinfo.topicCreate,'yyyy-MM-dd')}"></span>
+              <span  th:text="${all.time}"></span>
 
               <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> <span th:text="${all.topicinfo.experience}"></span></span>
               <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${all.topicinfo.isEnd == 1}">已结</span>

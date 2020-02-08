@@ -91,6 +91,7 @@ public class MessageService {
 
         MessageExample messageExample = new MessageExample();
         messageExample.createCriteria().andRecvUserIdEqualTo(recvUserId);
+        messageExample.setOrderByClause("message_create desc");
         List<Message> messageList = messageMapper.selectByExample(messageExample);
         List<MessageExt> messageExtList = new ArrayList<>();
         for(Message message:messageList){

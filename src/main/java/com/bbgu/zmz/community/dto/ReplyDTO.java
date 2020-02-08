@@ -9,4 +9,5 @@ public class ReplyDTO {
     private Comment comment;
     private User user;
     private Long count;
+    private String time;
 }

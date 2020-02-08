@@ -53,7 +53,7 @@
               <i class="iconfont icon-renzheng" th:title="${detail.user?.role}"></i>
               <!--<i class="layui-badge fly-badge-vip">VIP3</i>-->
             </a>
-            <span th:text="${#dates.format(detail.topicinfo.topicCreate,'yyyy-MM-dd')}"></span>
+            <span th:text="${detail.time}"></span>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" th:attr="data-id=${detail.topicinfo.id}">
             <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.topicinfo.experience}"></span>飞吻</span>
@@ -64,7 +64,7 @@
 
 
         <div th:if="${detail.user?.accountId != session.user?.accountId}">
-          <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.topicinfo?.status == 0 &&  session.user?.role !='管理员'&&  session.user?.role !='社区管理员'}">内容正在审核中！</div>
+          <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.topicinfo?.status == 0 &&  session.user?.role !='社区管理员'}">内容正在审核中！</div>
         </div>
         <div style="color: #999;">注：内容均由发帖者自由发出，不代表本网站立场。<br>如有侵权，请联系管理员删除。</div>
       </div>
@@ -97,7 +97,7 @@
               </div>
 
               <div class="detail-hits">
-                <span th:text="${#dates.format(commenta.comment.commentCreate,'yyyy-MM-dd HH:mm:ss')}"></span>
+                <span th:text="${commenta.time}"></span>
               </div>
 
               <i class="iconfont icon-caina" title="最佳答案" th:if="${commenta.comment?.isAccept == 1}"></i>
@@ -117,7 +117,7 @@
               <div class="jieda-admin" th:if="${session.user != null}">
                 <span type="edit"  th:if="${session.user?.role == '社区管理员'}">编辑</span>
                 <span type="del" th:if="${session.user?.role == '社区管理员'}">删除</span>
-                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId}" >采纳</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId || session.user?.role == '社区管理员'}" >采纳</span>
               </div>
             </div>
           </li>
@@ -144,7 +144,7 @@
               </div>
 
               <div class="detail-hits">
-                <span th:text="${#dates.format(comment.comment.commentCreate,'yyyy-MM-dd HH:mm:ss')}"></span>
+                <span th:text="${comment.time}"></span>
               </div>
 
               <i class="iconfont icon-caina" title="最佳答案" th:if="${comment.comment?.isAccept == 1}"></i>
@@ -163,7 +163,7 @@
               <div class="jieda-admin">
                 <span type="edit" th:if="${session.user?.role == '社区管理员'}">编辑</span>
                 <span type="del" th:if="${session.user?.role == '社区管理员'}"}>删除</span>
-                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId}">采纳</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId || session.user?.role == '社区管理员'}">采纳</span>
               </div>
             </div>
           </li>
@@ -190,6 +190,7 @@
             <div class="layui-form-item">
               <input id="topid" type="hidden" name="topicId" th:value="${detail.topicinfo.id}">
               <input id="pageid" type="hidden" th:value="${pageid}">
+              <input id="size" type="hidden" th:value="${size}">
               <input type="hidden" id="commentid" name="id">
               <input type="hidden" id="replyTo" name="replyto">
               <input type="hidden" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">

@@ -63,11 +63,11 @@
             <blockquote class="layui-elem-quote" >
               <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
               回复了我的帖子
-              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}}">
+              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=100#'+${msg.comment?.id}}">
                 <cite th:text="${msg.topicinfo.title}"></cite>
               </a>
               说：
-              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'#'+${msg.comment?.id}}">
+              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=100#'+${msg.comment?.id}}">
                 <cite th:text="${msg.content}"></cite>
               </a>
             </blockquote>

@@ -5,10 +5,12 @@ import com.bbgu.zmz.community.dto.ReplyDTO;
 import com.bbgu.zmz.community.dto.TopicInfoDTO;
 import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.*;
+import com.bbgu.zmz.community.util.StringDate;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -85,6 +87,9 @@ public class TopicService {
     public TopicInfoDTO getDetails(Topicinfo topicinfo){
         TopicInfoDTO topicInfoDTO = new TopicInfoDTO();
         topicInfoDTO.setTopicinfo(topicinfo);
+        //获取时间
+        String time = StringDate.getStringDate(new Date(topicinfo.getTopicCreate()));
+        topicInfoDTO.setTime(time);
         //获取用户信息
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(topicinfo.getUserId());
@@ -125,6 +130,7 @@ public class TopicService {
         List<ReplyDTO> replyDTOList = new ArrayList<ReplyDTO>();
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id);
+        commentExample.setOrderByClause("comment_create desc");
         Long count = commentMapper.countByExample(commentExample);
         Long totalPage;
         if(count % size ==0){
@@ -143,6 +149,8 @@ public class TopicService {
         List<Comment> commentList = commentMapper.selectByExampleWithRowbounds(commentExample,new RowBounds(offset,size));
 
        for(Comment comment:commentList){
+
+           String time = StringDate.getStringDate(new Date(comment.getCommentCreate()));
            ReplyDTO replyDTO = new ReplyDTO();
            replyDTO.setComment(comment);
            UserExample userExample = new UserExample();
@@ -150,6 +158,7 @@ public class TopicService {
            List<User> users = userMapper.selectByExample(userExample);
            User user = users.get(0);
            replyDTO.setCount(count);
+           replyDTO.setTime(time);
            replyDTO.setUser(user);
            replyDTOList.add(replyDTO);
        }

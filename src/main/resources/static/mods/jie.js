@@ -249,13 +249,15 @@ layui.define('fly', function(exports){
    // 评论分页
     var count = $("#count").val(),
         id = parseInt($("#topid").val()),
+
         contextPath = $("#contextPath").val(),
-        pageid = $("#pageid").val();
+        pageid = $("#pageid").val(),
+        size =  $("#size").val();
     laypage.render({
       elem: 'test1'
       ,count: count
       ,curr:pageid
-      ,limit:5
+      ,limit:size
       ,first: '首页'
       ,last: '尾页'
       ,jump:function (obj,first) {
