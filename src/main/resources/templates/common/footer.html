@@ -1,4 +1,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+<script>
+  if('addEventListener' in document){
+    document.addEventListener('DOMContentLoaded',function(){
+      FastClick.attach(document.body);
+    },false);
+  }
+  if(!window.Promise){
+    document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
+  }
+</script>
+</head>
 <div class="fly-footer" th:fragment="foot">
   <p><a href="/">Code社区</a> 2019 &copy; Design by ZhuMaoZhen</p>
 </div>

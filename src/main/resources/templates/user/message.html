@@ -55,39 +55,34 @@
   
   <div class="fly-panel fly-panel-user" pad20>
 	  <div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
-	    <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
+	    <button class="layui-btn layui-btn-danger" id="LAY_delallmsg" th:if="${messageList.size() > 0}">清空全部消息</button>
 	    <div  id="LAY_minemsg" style="margin-top: 10px;">
-        <!--<div class="fly-none">您暂时没有最新消息</div>-->
-        <ul class="mine-msg">
-          <li  th:if="${msg.type == 0}" th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
+        <div class="fly-none" th:if="${messageList.size() == 0}">您暂时没有最新消息</div>
+        <ul class="mine-msg" th:if="${messageList.size()>0}">
+          <li th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
             <blockquote class="layui-elem-quote" >
-              <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
-              回复了我的帖子
-              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=100#'+${msg.comment?.id}}">
+              <a th:href="@{'/user/home/'+${msg.user.accountId}}" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
+              <span th:if="${msg.type == 0}">回复了我的帖子</span>
+              <span th:if="${msg.type == 1}">回复了我的回复</span>
+              <a th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}}">
                 <cite th:text="${msg.topicinfo.title}"></cite>
               </a>
-              说：
-              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=100#'+${msg.comment?.id}}">
-                <cite th:text="${msg.content}"></cite>
+              <a th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'}">
+                说：<cite th:text="${msg.comment.content}"></cite>
               </a>
-            </blockquote>
-            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
-          </li>
-          <li  th:if="${msg.type == 1}" th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
-            <blockquote class="layui-elem-quote">
-              <a href="#" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
-              回复了我的回复
-              <a target="_blank" th:href="@{'/jie/detail/'}">
-                <cite th:text="${msg.comment.content}"></cite>
-              </a>
-              说：
-              <a target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'#'+${msg.comment?.id}}">
-                <cite th:text="${msg.content}"></cite>
-              </a>
-            </blockquote>
-            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
-          </li>
 
+              <a  th:if="${msg.type != 2}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.comment?.id}}">
+                说：<cite class="replyContent" th:text="${msg.content}"></cite>
+              </a>
+              <span th:if="${msg.type == 2}">给我发私信说：</span>
+              <a th:if="${msg.type == 2}"  target="_blank">
+                <cite  class="replyContent" th:text="${msg.content}"></cite>
+              </a>
+              <button id="reMsg" th:if="${msg.type == 2}" class="layui-btn" >回复</button>
+              <input type="hidden" id="userid" th:value="${msg.user.accountId}">
+            </blockquote>
+            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+          </li>
         </ul>
       </div>
 	  </div>
@@ -113,7 +108,38 @@ layui.config({
   ,base: '/mods/'
 }).extend({
   fly: 'index'
-}).use('fly');
+}).use(['fly','face','layer'],function () {
+  var $ = layui.$
+      ,fly = layui.fly
+  ,layer = layui.layer;
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+  $('.replyContent').each(function(){
+    var othis = $(this), html = othis.html();
+    othis.html(fly.content(html));
+  })
+  $("#reMsg").click(function () {
+    var userid = $("#userid").val();
+    console.log(userid);
+    layer.prompt({
+      formType: 2,
+      title: '请输入消息内容',
+      area: ['auto', 'auto'] //自定义文本域宽高
+    }, function(value, index, elem){
+      fly.json("/message/send", {content:value,recvUserId:userid}, function(res){
+        layer.msg(res.msg,{icon:1,time:2*1000},function () {
+          layer.close(index);
+        })
+      },{
+        error:function(){
+          layer.msg(res.msg,{icon:2,time:2*1000},function () {
+            layer.close(index);
+          })
+        }
+      })
+    });
+  })
+
+});
 </script>
 
 </body>

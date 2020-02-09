@@ -44,11 +44,11 @@
           </span>
         </div>
         <div class="detail-about">
-          <a class="fly-avatar" href="../user/home.html">
+          <a class="fly-avatar" th:href="@{'/user/home/'+${detail.user.accountId}}">
             <img th:src="${detail.user.avatarUrl}" th:alt="${detail.user.name}">
           </a>
           <div class="fly-detail-user">
-            <a href="../user/home.html" class="fly-link">
+            <a th:href="@{'/user/home/'+${detail.user.accountId}}" class="fly-link">
               <cite th:text="${detail.user.name}"></cite>
               <i class="iconfont icon-renzheng" th:title="${detail.user?.role}"></i>
               <!--<i class="layui-badge fly-badge-vip">VIP3</i>-->
@@ -79,11 +79,11 @@
           <li th:attr="data-id=${commenta.comment.id},data-userId = ${commenta.comment.userId}" th:if="${commenta?.comment?.isAccept == 1}">
             <a th:name="${commenta.comment.id}"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="">
+              <a class="fly-avatar" th:href="@{'/user/home/'+${commenta.user.accountId}}">
                 <img th:src="${commenta.user?.avatarUrl}" th:alt="${commenta.user?.name}">
               </a>
               <div class="fly-detail-user">
-                <a href="" class="fly-link">
+                <a th:href="@{'/user/home/'+${commenta.user.accountId}}" class="fly-link">
                   <cite th:text="${commenta.user?.name}"></cite>
                   <i class="iconfont icon-renzheng" th:title="${commenta.user?.role}"></i>
                   <!-- <i class="layui-badge fly-badge-vip">VIP3</i>         -->
@@ -126,11 +126,11 @@
           <li th:attr="data-id=${comment.comment.id},data-userId = ${comment.comment.userId}" th:if="${comment.comment.isAccept != 1}" class="jieda-daan" th:each="comment:${reply}">
             <a th:name="${comment.comment.id}"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="">
+              <a class="fly-avatar" th:href="@{'/user/home/'+${comment.user.accountId}}">
                 <img th:src="${comment.user?.avatarUrl}" th:alt="${comment.user?.name}">
               </a>
               <div class="fly-detail-user">
-                <a href="" class="fly-link">
+                <a th:href="@{'/user/home/'+${comment.user.accountId}}" class="fly-link">
                   <cite th:text="${comment.user?.name}"></cite>
                   <i class="iconfont icon-renzheng" th:title="${comment.user?.role}"></i>
                  <!-- <i class="layui-badge fly-badge-vip">VIP3</i>         -->
@@ -176,32 +176,31 @@
               <div class="reviewBox">
                 <div id="L_content" style="color: #303030;"></div>
               </div>
-              <div style="position: absolute;cursor:pointer;right: 5px;top: 5px;width: 20px;text-align:center;height: 25px;line-height: 25px;" class="layui-icon close layui-icon-close" onclick="closeComment($(this))"></div>
+              <div id="guanbi" style="position: absolute;cursor:pointer;right: 5px;top: 5px;width: 20px;text-align:center;height: 25px;line-height: 25px;" class="layui-icon close layui-icon-close"></div>
             </div>
           </div>
-          <blockquote th:if="${session.user == null}" class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">请先登录~</blockquote>
-          <form action="/jie/reply" method="post" th:if="${session.user != null}">
-            <div class="layui-form-item layui-form-text">
+          <form action="/jie/reply" method="post">
+            <div class="layui-form-item layui-form-text" th:if="${session.user != null}">
               <a name="comment"></a>
               <div class="layui-input-block">
                 <textarea id="cText" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
               </div>
             </div>
-            <div class="layui-form-item">
-              <input id="topid" type="hidden" name="topicId" th:value="${detail.topicinfo.id}">
-              <input id="pageid" type="hidden" th:value="${pageid}">
-              <input id="size" type="hidden" th:value="${size}">
-              <input type="hidden" id="commentid" name="id">
-              <input type="hidden" id="replyTo" name="replyto">
-              <input type="hidden" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">
-              <input type="hidden" id="type" name="type" value="0">
+            <div class="layui-form-item" th:if="${session.user != null}">
               <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
             </div>
+            <input id="topid" type="hidden" name="topicId" th:value="${detail.topicinfo.id}">
+            <input id="pageid" type="hidden" th:value="${pageid}">
+            <input id="size" type="hidden" th:value="${size}">
+            <input type="hidden" id="commentid" name="id">
+            <input type="hidden" id="replyTo" name="replyto">
+            <input type="hidden" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">
+            <input type="hidden" id="type" name="type" value="0">
           </form>
         </div>
-  <!--      <div class="layui-form layui-form-pane" th:if="">
+        <div class="layui-form layui-form-pane" th:if="${session.user == null}">
           <blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">请先登录~</blockquote>
-        </div>-->
+        </div>
       </div>
     </div>
     <div class="layui-col-md4">
@@ -265,14 +264,18 @@ layui.config({
   })
 });
 </script>
-<script src="/js/jquery.js" type="text/javascript"></script>
 <script>
-  function closeComment(dom) {
-    dom.parent().parent().hide();
-    $("#L_content").text("");
-    $("#commentTo").val("[[${detail.user.accountId}]]");
-    $("#type").val(0);
-  }
+    layui.use('jquery',function () {
+      var $ = layui.jquery;
+      $("#guanbi").click(function () {
+        $(this).parent().parent().hide();
+        $("#L_content").text("");
+        $("#commentTo").val("[[${detail.user.accountId}]]");
+        $("#type").val(0);
+      })
+
+
+    })
 </script>
 
 </body>

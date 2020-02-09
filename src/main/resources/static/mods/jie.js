@@ -122,7 +122,7 @@ layui.define('fly', function(exports){
   var asyncRender = function(){
     var div = $('.fly-admin-box'), jieAdmin = $('#LAY_jieAdmin');
     //查询帖子是否收藏
-    if(jieAdmin[0] && layui.cache.user.uid == -1){
+    if(jieAdmin[0] && layui.cache.user.uid != -1){
       fly.json('/collection/find', {
         cid: div.data('id')
       }, function(res){
@@ -249,10 +249,10 @@ layui.define('fly', function(exports){
    // 评论分页
     var count = $("#count").val(),
         id = parseInt($("#topid").val()),
-
         contextPath = $("#contextPath").val(),
         pageid = $("#pageid").val(),
         size =  $("#size").val();
+    console.log($("#topid").val());
     laypage.render({
       elem: 'test1'
       ,count: count

@@ -45,4 +45,27 @@
 			commentinfo.comment_num DESC
 		limit 0,10
   </select>
+    <select id="getUserTopic" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+            t.id,
+            t.title,
+            t.topic_create,
+            t.view_count,
+            IFNULL(commentinfo.comment_num, 0) comment_num
+        FROM
+            topicinfo t
+        LEFT JOIN (
+            SELECT
+                c.topic_id,
+                count(*) comment_num
+            FROM
+                `comment` c
+            GROUP BY
+                c.topic_id
+        ) commentinfo ON commentinfo.topic_id = t.id
+        WHERE
+            t.user_id = #{id,jdbcType=BIGINT}
+        order by
+            t.topic_create desc
+  </select>
 </mapper>

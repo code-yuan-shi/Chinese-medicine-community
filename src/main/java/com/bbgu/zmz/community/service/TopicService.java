@@ -130,7 +130,6 @@ public class TopicService {
         List<ReplyDTO> replyDTOList = new ArrayList<ReplyDTO>();
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id);
-        commentExample.setOrderByClause("comment_create desc");
         Long count = commentMapper.countByExample(commentExample);
         Long totalPage;
         if(count % size ==0){

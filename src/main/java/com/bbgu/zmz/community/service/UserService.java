@@ -3,13 +3,11 @@ package com.bbgu.zmz.community.service;
 
 import com.bbgu.zmz.community.dto.Data;
 import com.bbgu.zmz.community.dto.RegRespObj;
-import com.bbgu.zmz.community.mapper.CollectExtMapper;
-import com.bbgu.zmz.community.mapper.CollectMapper;
-import com.bbgu.zmz.community.mapper.TopicinfoMapper;
-import com.bbgu.zmz.community.mapper.UserMapper;
+import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.util.MD5Utils;
 import com.bbgu.zmz.community.util.MailUtil;
+import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +24,11 @@ public class UserService {
     private CollectExtMapper collectExtMapper;
     @Autowired
     private TopicinfoMapper topicinfoMapper;
+    @Autowired
+    private TopicinfoExtMapper topicinfoextMapper;
+    @Autowired
+    private CommentExtMapper commentExtMapper;
+
 
     public void createOrUpdate(User user) {
         UserExample userExample = new UserExample();
@@ -36,6 +39,8 @@ public class UserService {
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
             user.setPwd(MD5Utils.getMd5("123456"));
+            user.setBio("该用户很懒，什么都没有留下！");
+            user.setCity("玉林市");
             userMapper.insertSelective(user);
         }else{
             User dbUser = users.get(0);
@@ -44,7 +49,7 @@ public class UserService {
            // updateUser.setAvatarUrl(user.getAvatarUrl());
            // updateUser.setName(user.getName());
             updateUser.setToken(user.getToken());
-            updateUser.setRole(user.getRole());
+            //updateUser.setRole(user.getRole());
             UserExample example = new UserExample();
             example.createCriteria().andIdEqualTo(dbUser.getId());
             userMapper.updateByExampleSelective(updateUser,example);
@@ -101,6 +106,8 @@ public class UserService {
             user.setAccountId(userext.getAccountId());
             user.setName(userext.getName());
             user.setEmail(userext.getEmail());
+            user.setCity("玉林市");
+            user.setBio("该用户很懒，什么都没有留下！");
             user.setPwd(pwd);
             user.setActiveCode(accode);
             user.setActiveTime(actime);
@@ -310,6 +317,41 @@ public class UserService {
             regRespObj.setMsg("两次输入的密码不一致！");
         }
         return regRespObj;
+    }
+
+    /*
+    查询我发表的帖子
+     */
+    public List<TopicinfoExt> getUserTopic(Long id){
+        return topicinfoextMapper.getUserTopic(id);
+    }
+
+    /*
+    查询收藏
+     */
+    public List<CollectExt> getUserCollectTopic(Long id){
+
+         List<CollectExt> collectExtList = collectExtMapper.getUserCollectTopic(id);
+        List<CollectExt> collectExtList1 = new ArrayList<>();
+         for(CollectExt collectExt:collectExtList){
+             collectExt.setTime(StringDate.getStringDate(new Date(collectExt.getCollectCreate())));
+             collectExtList1.add(collectExt);
+         }
+        return collectExtList1;
+    }
+
+    /*
+      查询用户评论
+     */
+   public List<CommentExt> findComment(Long userId){
+
+       List<CommentExt>  commentExtList =  commentExtMapper.findComment(userId);
+       List<CommentExt> commentExtList1 = new ArrayList<>();
+       for (CommentExt commentExt:commentExtList){
+           commentExt.setTime(StringDate.getStringDate(new Date(commentExt.getCommentCreate())));
+           commentExtList1.add(commentExt);
+       }
+        return commentExtList1;
     }
 
 

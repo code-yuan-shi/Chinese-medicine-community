@@ -25,9 +25,9 @@
     <div class="layui-col-md8">
       <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="carousel">
         <div carousel-item>
-          <a href="#"><img src="/images/ad/gg.png"/></a>
-          <a href="#"><img src="/images/ad/gg1.png"/></a>
-          <a href="#"><img src="/images/ad/gg2.png"/></a>
+          <a href="#"><img src="https://img.alicdn.com/tfs/TB1ieKUvhn1gK0jSZKPXXXvUXXa-520-280.jpg_q90_.webp"/></a>
+          <a href="#"><img src="https://img.alicdn.com/simba/img/TB1tmBKu9f2gK0jSZFPSutsopXa.jpg"/></a>
+          <a href="#"><img src="https://img.alicdn.com/simba/img/TB170fZvhD1gK0jSZFsSuvldVXa.jpg"/></a>
         </div>
       </div>
       <div class="fly-panel">
@@ -38,7 +38,7 @@
         <div class="fly-none" th:if="${topictops.size()==0}"style="min-height: 50px">没有相关数据</div>
         <ul class="fly-list">
           <li th:each="topic:${topictops}">
-            <a href="#" class="fly-avatar">
+            <a th:href="@{'/user/home/'+${topic.user.accountId}}" class="fly-avatar">
               <img th:src="${topic.user.avatarUrl}" th:alt="${topic.user.name}">
             </a>
             <h2>
@@ -47,7 +47,7 @@
               <a th:href="@{'/jie/detail/'+${topic.topicinfo.id}}" th:text="${topic.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a href="#" link>
+              <a th:href="@{'/user/home/'+${topic.user.accountId}}" link>
                 <cite th:text="${topic.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${topic.user.name}"></i>
               </a>
@@ -67,13 +67,15 @@
         </ul>
       </div>
 
+
+      <!--综合-->
       <div class="fly-panel" style="margin-bottom: 0;">
 
         <div th:insert="~{common/filter::fil}"></div>
         <div class="fly-none" th:if="${topicalls.size()==0}">没有相关数据</div>
         <ul class="fly-list">
           <li th:each="all:${topicalls}">
-            <a href="#" class="fly-avatar">
+            <a th:href="@{'/user/home/'+${all.user.accountId}}" class="fly-avatar">
               <img th:src="${all.user.avatarUrl}" th:alt="${all.user.name}">
             </a>
             <h2>
@@ -82,7 +84,7 @@
               <a th:href="@{'/jie/detail/'+${all.topicinfo.id}}" th:text="${all.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a href="#" link>
+              <a th:href="@{'/user/home/'+${all.user.accountId}}" link>
                 <cite th:text="${all.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${all.user.name}"></i>
               </a>

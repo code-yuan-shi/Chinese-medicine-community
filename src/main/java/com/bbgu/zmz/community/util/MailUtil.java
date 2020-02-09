@@ -65,7 +65,7 @@ public class MailUtil {
         message.setSubject("用户激活", "UTF-8");
         String activeUrl="http://101.200.47.40:8080/user/activemail/"+mailActiveCode;
         // 5. Content: 邮件正文（可以使用html标签）
-        message.setContent("尊敬的用户，您好！我是Code社区站长听风，请点击激活链接完成邮箱激活，激活链接有效期只有五分钟。<a href=\""+activeUrl+"\" target=\"_blank\">"+activeUrl+"</a>", "text/html;charset=UTF-8");
+        message.setContent("尊敬的用户，您好！我是Code社区站长听风，请点击激活链接完成邮箱激活，激活链接有效期只有五分钟。联立登录的账号初始密码为123456，请及时修改！<a href=\""+activeUrl+"\" target=\"_blank\">"+activeUrl+"</a>", "text/html;charset=UTF-8");
         //message.setContent("尊敬的用户，您好！我是Code社区站长听风，我正在进行邮箱激活测试，打扰了！", "text/html;charset=UTF-8");
         // 6. 设置发件时间
         message.setSentDate(new Date());

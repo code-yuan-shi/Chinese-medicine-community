@@ -104,11 +104,12 @@ public class JieController {
      */
     @PostMapping("/doadd")
     @ResponseBody
-    public RegRespObj jieDoAdd(Topicinfo topicinfo, HttpServletRequest request){
+    public RegRespObj jieDoAdd(Topicinfo topicinfo,String check, HttpServletRequest request){
         RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
-
+        String saveCheck = (String)httpSession.getAttribute("check");
+    if(check.equals(saveCheck)){
         if(topicinfo.getId() == null){  //新增
             topicinfo.setUserId(user.getAccountId());
             topicinfo.setTopicCreate(System.currentTimeMillis());
@@ -138,6 +139,10 @@ public class JieController {
                regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);
            }
         }
+    }else{
+        regRespObj.setStatus(1);
+        regRespObj.setMsg("验证码错误！");
+    }
 
         return regRespObj;
     }

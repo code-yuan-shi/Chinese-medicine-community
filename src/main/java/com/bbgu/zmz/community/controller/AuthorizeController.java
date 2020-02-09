@@ -71,7 +71,7 @@ public class AuthorizeController {
             user.setAvatarUrl(githubUser.getAvatar_url());
             user.setStatus(1);
             if(githubUser.getId() == 56061468){
-                user.setRole("管理员");
+                user.setRole("社区管理员");
             }else{
                 user.setRole("社区用户");
             }

@@ -21,6 +21,9 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
+    /*
+    获取是否有新通知
+     */
     @PostMapping("nums")
     @ResponseBody
     public RegRespObj getMsgCount(HttpServletRequest request){
@@ -33,6 +36,10 @@ public class MessageController {
         }
         return regRespObj;
     }
+
+    /*
+    读取消息
+     */
     @PostMapping("read")
     @ResponseBody
     public RegRespObj readMsg(HttpServletRequest request){
@@ -42,7 +49,9 @@ public class MessageController {
         regRespObj.setStatus(0);
         return  regRespObj;
     }
-
+        /*
+        移除消息
+         */
     @PostMapping("remove")
     @ResponseBody
     public RegRespObj readMsg(Boolean all,Integer id ,HttpServletRequest request) {
@@ -51,8 +60,25 @@ public class MessageController {
         return regRespObj;
     }
 
+    /*
+    发送消息
+     */
+    @PostMapping("send")
+    @ResponseBody
+    public RegRespObj sendMsg(Long recvUserId,String content,HttpServletRequest request) {
+        User user = (User)request.getSession().getAttribute("user");
+        int num = messageService.insMessage(user.getAccountId(),recvUserId,null,2,content,null);
+        RegRespObj regRespObj = new RegRespObj();
+        if(num > 0){
+            regRespObj.setStatus(0);
+            regRespObj.setMsg("发送成功！");
+        }else{
+            regRespObj.setStatus(1);
+            regRespObj.setMsg("服务器冒烟了,请稍后再试！");
+        }
+        return regRespObj;
+    }
 
 
 
     }
-

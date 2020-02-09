@@ -132,7 +132,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             ,title: '插入图片'
             ,area: 'auto'
             ,shade: false
-            ,area: '465px'
+            ,area: 'auto'
             ,fixed: false
             ,offset: [
               editor.offset().top - $(window).scrollTop() + 'px'
@@ -145,7 +145,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
                 ,'<div class="layui-input-inline">'
                     ,'<input required name="image" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
                   ,'</div>'
-                  ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
+                  ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>本地选择</button>'
               ,'</li>'
               ,'<li class="layui-form-item" style="text-align: center;">'
                 ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
@@ -226,9 +226,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             ,title: '预览'
             ,shade: false
             ,offset:'r'
-            ,area: ['775px', '100%']
+            ,area: ['100%', '100%']
             ,scrollbar: false
-            ,content: '<div class="detail-body" style="margin:20px;">'+ content +'</div>'
+            ,content: '<div class="detail-body" style="margin:20px;width: 775px;">'+ content +'</div>'
           });
         }
       };
@@ -462,10 +462,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   });
 
 
-  //回帖榜
+  //回帖周榜
   var tplReply = ['{{# layui.each(d.weekList, function(index, item){ }}'
         ,'<dd>'
-          ,'<a href="#{{item.userId}}">'
+          ,'<a href="/user/home/{{item.userId}}">'
             ,'<img src="{{item.avatarUrl}}">'
             ,'<cite>{{item.name}}</cite>'
             ,'<i>{{item.commentNum}}次回答</i>'
@@ -473,7 +473,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'</dd>'
       ,'{{# }); }}'
     ,'{{# if(d.weekList.length === 0){ }}'
-    ,'<div class="fly-none" style="min-height: 60px;">没有相关数据</div>'
+    ,'<dd class="fly-none" style="min-height: 65px; min-width:90px;font-size: 13px;">没有相关数据</dd>'
     ,'{{# } }}'].join('')
   ,elemReply = $('#LAY_replyRank');
 
@@ -566,6 +566,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action'), button = $(data.elem);
     fly.json(action, data.field, function(res){
+
         if(res.action){
           layer.msg(res.msg,{icon:1,time:2*1000},function () {
             location.href = res.action;
@@ -577,7 +578,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         }
     },{
       error:function() {
-        location.reload();
+        $("button").removeClass("layui-btn-disabled");
+        $("button").removeAttr("disabled");
+        //location.reload();
       }
     });
     return false;
@@ -616,7 +619,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   //固定Bar
   util.fixbar({
     bar1: '&#xe642;'
-    ,bgcolor: '#009688'
+    ,bgcolor: 'rgba(208, 200, 200, 0.7)'
     ,click: function(type){
       if(type === 'bar1'){
         //layer.msg('打开 index.js，开启发表新帖的路径');
@@ -684,14 +687,15 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action');
     fly.json(action, data.field, function(res){
-          if(res.action){
-            layer.msg(res.msg,{icon:1,time:2*1000},function () {
-              location.href = res.action;
-            })
-          }
+
+      layer.msg(res.msg,{icon:1,time:2*1000},function () {
+          location.href = res.action;
+      });
         },{
           error:function(){
-            location.reload();
+           // location.reload();
+            $("button").removeClass("layui-btn-disabled");
+            $("button").removeAttr("disabled");
         }
         })
     return false;
@@ -702,10 +706,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     $("button").addClass("layui-btn-disabled");
     $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action');
-    layer.load(2, {
-      shade: [0.3, '#fff'],
-      success:function (res) {
         fly.json(action, data.field, function(res){
+
           if(res.action){
             layer.msg(res.msg,{icon:1,time:2*1000},function () {
               location.href = res.action;
@@ -713,10 +715,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           }
         },{
           error:function(){
-            location.reload();
+            $("button").removeClass("layui-btn-disabled");
+            $("button").removeAttr("disabled");
           }
-        });
-      }
+
     })
     return false;
   });

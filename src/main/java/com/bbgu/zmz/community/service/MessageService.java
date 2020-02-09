@@ -72,7 +72,7 @@ public class MessageService {
     /*
     添加通知信息
      */
-    public void insMessage(Long sendUserId, Long recvUserId,Long topicId,Integer type,String content,Long commentId){
+    public int insMessage(Long sendUserId, Long recvUserId,Long topicId,Integer type,String content,Long commentId){
         Message message = new Message();
         message.setSendUserId(sendUserId);
         message.setRecvUserId(recvUserId);
@@ -82,7 +82,8 @@ public class MessageService {
         message.setType(type);
         message.setIsRead(0);
         message.setMessageCreate(System.currentTimeMillis());
-        messageMapper.insertSelective(message);
+        return messageMapper.insertSelective(message);
+
     }
     /*
     查询通知消息

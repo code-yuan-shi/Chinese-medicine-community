@@ -441,7 +441,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .mine-msg li .layui-elem-quote p[download]{padding: 10px 0 5px;}
 
 /* 设置 */
-.avatar-add{position:relative; width:373px; height:373px; background-color:#F2F2F5;}
+.avatar-add{position:relative; width:auto; height:373px; background-color:#F2F2F5;}
 .avatar-add .upload-img{position:absolute; left:50%; top:35px; margin:0 0 0 -56px;}
 .avatar-add img{position:absolute; left:50%; top:50%; width:168px; height:168px; margin:-50px 0 0 -84px; border-radius:100%;}
 .avatar-add .loading{display:none; position:absolute; width:100%; height:100%; left:0; top:0; padding: 0; background-color:#000; opacity:0.5; filter: Alpha(opacity=50);}
@@ -516,7 +516,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 }
 @media screen and (max-width: 768px) {
   /*拓展*/
-  .fly-user-main>.layui-nav{position: absolute; left: 0; top: -36px; z-index: 1000; height: 102%; padding: 10px 0;}
+  .fly-user-main>.layui-nav{position: absolute; left: 0; z-index: 1000; height: 102%; padding: 10px 0;}
   .cxt_nav_wp{
     width: 100%;
     height: 36px;
@@ -579,10 +579,10 @@ body .fly-user-main{position: relative; min-height: 600px;}
   body .fly-user-main{width: auto;}
   .fly-user-main>.layui-nav{left: -300px; transition: all .3s; -webkit-transition: all .3s;}
   .fly-user-main>.fly-panel-user{width: auto; margin-left: 0; transition: all .3s; -webkit-transition: all .3s;}
-  .site-tree-mobile{display: block!important; position: fixed; z-index: 100000; bottom: 20px; left: 10px; width: 50px; height: 50px; line-height: 50px; border-radius: 2px; text-align: center; background-color: rgba(0,0,0,.7); color: #fff;}
+  .site-tree-mobile{display: block!important; position: fixed; z-index: 100000; bottom: 20px; left: 10px; width: 50px; height: 50px; line-height: 50px; border-radius: 2px; text-align: center; background-color: rgba(208, 200, 200, 0.7); color: #fff;}
   .site-mobile .site-tree-mobile{display: none !important;}
   .site-mobile .fly-user-main>.layui-nav{left: 0;}
-  .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.9); z-index: 999;}
+  .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 999;}
 }
 /*
 轮播图
@@ -608,4 +608,10 @@ body .fly-user-main{position: relative; min-height: 600px;}
   border-top-right-radius: 5px;
   font-size: 13px;
   display: none;
+}
+.replyContent img{
+  width: 100px;
+}
+.jieda-body img{
+  width: 250px;
 }

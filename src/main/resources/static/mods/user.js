@@ -175,7 +175,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       upload.render({
         elem: '.upload-img'
         ,url: '/api/upload/'
-        ,size: 1024*20
+        ,size: 2048
         ,before: function(){
           avatarAdd.find('.loading').show();
         }
@@ -214,48 +214,26 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
 
   //我的消息
   gather.minemsg = function(){
-    var delAll = $('#LAY_delallmsg')
-    ,tpl = '{{# var len = d.rows.length;\
-    if(len === 0){ }}\
-      <div class="fly-none">您暂时没有最新消息</div>\
-    {{# } else { }}\
-      <ul class="mine-msg">\
-      {{# for(var i = 0; i < len; i++){ }}\
-        <li data-id="{{d.rows[i].id}}">\
-          <blockquote class="layui-elem-quote">{{ d.rows[i].content}}</blockquote>\
-          <p><span>{{d.rows[i].time}}</span><a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger fly-delete">删除</a></p>\
-        </li>\
-      {{# } }}\
-      </ul>\
-    {{# } }}'
-    ,delEnd = function(clear){
+    var delEnd = function(clear){
       if(clear || dom.minemsg.find('.mine-msg li').length === 0){
         dom.minemsg.html('<div class="fly-none">您暂时没有最新消息</div>');
       }
     }
     
-    
-    /*
-    fly.json('/message/find/', {}, function(res){
-      var html = laytpl(tpl).render(res);
-      dom.minemsg.html(html);
-      if(res.rows.length > 0){
-        delAll.removeClass('layui-hide');
-      }
-    });
-    */
-    
     //阅读后删除
     dom.minemsg.on('click', '.mine-msg li .fly-delete', function(){
       var othis = $(this).parents('li'), id = othis.data('id');
-      fly.json('/message/remove/', {
-        id: id
-      }, function(res){
-        if(res.status === 0){
-          othis.remove();
-          delEnd();
-        }
-      });
+      layer.confirm('确定删除吗？', function(index){
+        fly.json('/message/remove/', {
+          id: id
+        }, function(res){
+          if(res.status === 0){
+            othis.remove();
+            layer.close(index);
+            delEnd();
+          }
+        });
+      })
     });
 
     //删除全部

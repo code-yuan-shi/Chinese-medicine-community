@@ -8,4 +8,17 @@
   <select id="getIsCollectInfo" parameterType="java.util.Map" resultType="int">
       select count(*) from collect where topic_id = #{topicid} and user_id = #{userid}
   </select>
+    <select id="getUserCollectTopic" parameterType="long" resultType="collectext">
+      SELECT
+        c.collect_create,
+        c.topic_id,
+        t.title
+      FROM
+        collect c
+      LEFT JOIN topicinfo t ON c.topic_id = t.id
+      WHERE
+        c.user_id = #{id}
+  </select>
+
+
 </mapper>

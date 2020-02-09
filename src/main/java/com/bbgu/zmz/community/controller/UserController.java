@@ -1,9 +1,7 @@
 package com.bbgu.zmz.community.controller;
 
 import com.bbgu.zmz.community.dto.RegRespObj;
-import com.bbgu.zmz.community.model.MessageExt;
-import com.bbgu.zmz.community.model.User;
-import com.bbgu.zmz.community.model.UserExt;
+import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +27,19 @@ public class UserController {
     private MessageService messageService;
 
 
-
-
-
     @GetMapping("/login")
-    public String login(@RequestParam(name="callback",defaultValue = "/")String url,Model model){
-        model.addAttribute("callback",url);
+    public String login(@RequestParam(name = "callback", defaultValue = "/") String url, Model model) {
+        model.addAttribute("callback", url);
         return "user/login";
     }
+
     @GetMapping("/reg")
-    public String reg(){
+    public String reg() {
         return "user/reg";
     }
+
     @GetMapping("/forget")
-    public String forget(){
+    public String forget() {
         return "user/forget";
     }
 
@@ -51,18 +48,19 @@ public class UserController {
      */
 
     @PostMapping("/checkuser")
-    public @ResponseBody RegRespObj checkUser(String accountId){
+    public @ResponseBody
+    RegRespObj checkUser(String accountId) {
         Boolean is = isNumeric(accountId);
-        if(is == true && accountId != "" && accountId.length()>=6){
-         Long accountid = Long.parseLong(accountId);
-         RegRespObj regRespObj = userService.checkUser(accountid);
-         return regRespObj;
-        }else if(accountId == ""){
+        if (is == true && accountId != "" && accountId.length() >= 6) {
+            Long accountid = Long.parseLong(accountId);
+            RegRespObj regRespObj = userService.checkUser(accountid);
+            return regRespObj;
+        } else if (accountId == "") {
             RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("账号不能为空！！！");
             return regRespObj;
-        }else{
+        } else {
             RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("账号不能少于6位数");
@@ -74,17 +72,18 @@ public class UserController {
     检查邮箱
      */
     @PostMapping("/checkemail")
-    public @ResponseBody RegRespObj checkEmail(String email){
+    public @ResponseBody
+    RegRespObj checkEmail(String email) {
         Boolean is = isEmail(email);
-        if (is){
+        if (is) {
             RegRespObj regRespObj = userService.checkEmail(email);
-            return  regRespObj;
-        }else if(email == ""){
+            return regRespObj;
+        } else if (email == "") {
             RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("请先输入邮箱！");
             return regRespObj;
-        }else{
+        } else {
             RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("邮箱格式不正确！");
@@ -96,21 +95,30 @@ public class UserController {
     注册用户
      */
     @PostMapping("/doreg")
-    public String doReg(UserExt userext,HttpServletResponse response) throws Exception {
-        response.setContentType("text/html; charset=utf-8");
-        if (userext.getPwd().equals(userext.getRepass())) {
-            int code = userService.doReg(userext);
-            if(code == 0){
-                return "redirect:/tips/regsuccess";
-            }else{
-                response.getWriter().write("<script>alert('很抱歉，失败了,请重试！')</script>");
-                return "/user/reg";
+    @ResponseBody
+    public RegRespObj doReg(UserExt userext, String check, HttpServletRequest request) throws Exception {
+        String saveCheck = (String) request.getSession().getAttribute("check");
+        RegRespObj regRespObj = new RegRespObj();
+        if (check.equals(saveCheck)) {
+            if (userext.getPwd().equals(userext.getRepass())) {
+                int code = userService.doReg(userext);
+                if (code == 0) {
+                    regRespObj.setStatus(0);
+                    regRespObj.setAction("/");
+                    regRespObj.setMsg("注册成功，激活邮件已经发送至您的邮箱！");
+                } else {
+                    regRespObj.setStatus(1);
+                    regRespObj.setMsg("服务器冒烟了，请稍后再试！");
+                }
+            } else {
+                regRespObj.setStatus(1);
+                regRespObj.setMsg("两次输入的密码不一致！");
             }
-        }else{
-            response.getWriter().write("<script>alert('两次输入密码不一致！')</script>");
-            return "/user/reg";
+        } else {
+            regRespObj.setStatus(1);
+            regRespObj.setMsg("验证码错误！");
         }
-
+        return regRespObj;
     }
 
     /*
@@ -137,25 +145,28 @@ public class UserController {
     用户登录验证
      */
     @PostMapping("dologin")
-    public @ResponseBody RegRespObj dologin(User user,String url,HttpServletRequest request){
+    public @ResponseBody RegRespObj dologin(User user,String url,String check,HttpServletRequest request){
+        String savecheck = (String)request.getSession().getAttribute("check");
         RegRespObj regRespObj = new RegRespObj();
        User user1 =  userService.loginCheck(user);
-       if(user1 != null && user1.getStatus().equals(1)){
-            regRespObj.setStatus(0);
-            regRespObj.setMsg("登录成功！");
-            regRespObj.setAction(url);
-            request.getSession().setAttribute("user",user1);
-            return regRespObj;
-       }else if(user1 != null && user1.getStatus().equals(0)){
+       if(check.equals(savecheck)){
+           if(user1 != null && user1.getStatus().equals(1)){
+               regRespObj.setStatus(0);
+               regRespObj.setMsg("登录成功！");
+               regRespObj.setAction(url);
+               request.getSession().setAttribute("user",user1);
+           }else if(user1 != null && user1.getStatus().equals(0)){
+               regRespObj.setStatus(1);
+               regRespObj.setMsg("账号需激活后才能使用！");
+           }else{
+               regRespObj.setStatus(1);
+               regRespObj.setMsg("用户名或者密码错误！");
+           }
+       }else {
            regRespObj.setStatus(1);
-           regRespObj.setMsg("账号需激活后才能使用！");
-           return regRespObj;
-       }else{
-           regRespObj.setStatus(1);
-           regRespObj.setMsg("用户名或者密码错误！");
-           return regRespObj;
+           regRespObj.setMsg("验证码错误！");
        }
-
+       return regRespObj;
     }
     /*
     用户中心
@@ -198,6 +209,9 @@ public class UserController {
         return regRespObj;
     }
 
+    /*
+    获取通知信息
+     */
     @GetMapping("message")
     public String userMessage(Model model,HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
@@ -206,13 +220,41 @@ public class UserController {
         return "user/message";
     }
 
+    //查看个人主页
     @GetMapping("home")
-    public String userHome(){
+    public String userHome(HttpServletRequest request,Model model){
+        User user = (User)request.getSession().getAttribute("user");
+        User userinfo = userService.findUserInfo(user);  //用户信息
+        List<TopicinfoExt> topicinfoExtList = userService.getUserTopic(user.getAccountId());  //发表的帖子
+        List<CommentExt> commentExtList = userService.findComment(user.getAccountId());
+        model.addAttribute("userinfo",userinfo);
+        model.addAttribute("topicinfos",topicinfoExtList);
+        model.addAttribute("comments",commentExtList);
+        return "user/home";
+    }
+    @GetMapping("home/{id}")
+    public String otherUserHome(Model model,@PathVariable(value = "id") Long id){
+        User user = new User();
+        user.setAccountId(id);
+        User userinfo = userService.findUserInfo(user);  //用户信息
+        List<TopicinfoExt> topicinfoExtList = userService.getUserTopic(id);  //发表的帖子
+        List<CommentExt> commentExtList = userService.findComment(id);
+        model.addAttribute("userinfo",userinfo);
+        model.addAttribute("topicinfos",topicinfoExtList);
+        model.addAttribute("comments",commentExtList);
         return "user/home";
     }
 
+
+    //个人中心
     @GetMapping("index")
-    public String userIndex(){
+    public String userIndex(HttpServletRequest request,Model model){
+        User user = (User)request.getSession().getAttribute("user");
+        List<TopicinfoExt> topicinfoExtList =userService.getUserTopic(user.getAccountId()); //用户发表的帖子
+        List<CollectExt>  collectExtList = userService.getUserCollectTopic(user.getAccountId());
+        model.addAttribute("topics",topicinfoExtList);
+        model.addAttribute("collects",collectExtList);
+
         return "user/index";
     }
 

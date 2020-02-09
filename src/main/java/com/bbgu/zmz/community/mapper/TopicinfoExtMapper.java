@@ -9,4 +9,6 @@ import java.util.List;
 public interface TopicinfoExtMapper {
    int incView(Topicinfo topicinfo);
    List<TopicinfoExt> getTop10Topics();
+   List<TopicinfoExt> getUserTopic(Long id);
 }
+
