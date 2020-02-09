@@ -1,4 +1,6 @@
 package com.bbgu.zmz.community.util;
+import com.bbgu.zmz.community.dto.RegRespObj;
+
 import java.util.Date;
 import java.util.Properties;
 
@@ -13,7 +15,8 @@ public class MailUtil {
     public static String myEmailSMTPHost = "smtp.qq.com";
     public static String receiveMailAccount;
 
-    public static void sendActiveMail(String receiveMailAccount,String mailActiveCode) throws Exception {
+    public static RegRespObj sendActiveMail(String receiveMailAccount, String mailActiveCode){
+        RegRespObj regRespObj = new RegRespObj();
         // 1. 创建参数配置, 用于连接邮件服务器的参数配置
         Properties props = new Properties();                    // 参数配置
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
@@ -27,19 +30,29 @@ public class MailUtil {
         Session session = Session.getDefaultInstance(props);
         //session.setDebug(true);                                 // 设置为debug模式, 可以查看详细的发送 log
 
-        // 3. 创建一封邮件
-        MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, mailActiveCode);
 
-        // 4. 根据 Session 获取邮件传输对象
-        Transport transport = session.getTransport();
+        try{
+            // 3. 创建一封邮件
+            MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, mailActiveCode);
 
-        transport.connect(myEmailAccount, myEmailPassword);
+            // 4. 根据 Session 获取邮件传输对象
+            Transport transport = session.getTransport();
 
-        // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
-        transport.sendMessage(message, message.getAllRecipients());
+            transport.connect(myEmailAccount, myEmailPassword);
 
-        // 7. 关闭连接
-        transport.close();
+            // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
+            transport.sendMessage(message, message.getAllRecipients());
+
+            // 7. 关闭连接
+            transport.close();
+        }catch (Exception e){
+
+            regRespObj.setStatus(1);
+            regRespObj.setMsg("邮箱不合法，邮件发送失败！");
+
+        }
+    return regRespObj;
+
     }
 
     /**

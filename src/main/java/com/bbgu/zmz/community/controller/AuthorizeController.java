@@ -73,7 +73,7 @@ public class AuthorizeController {
             if(githubUser.getId() == 56061468){
                 user.setRole("社区管理员");
             }else{
-                user.setRole("社区用户");
+                user.setRole("社区管理员");
             }
             userService.createOrUpdate(user);
             UserExample userExample = new UserExample();

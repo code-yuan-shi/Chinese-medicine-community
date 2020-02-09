@@ -106,9 +106,9 @@ public class UserController {
                     regRespObj.setStatus(0);
                     regRespObj.setAction("/");
                     regRespObj.setMsg("注册成功，激活邮件已经发送至您的邮箱！");
-                } else {
+                } else{
                     regRespObj.setStatus(1);
-                    regRespObj.setMsg("服务器冒烟了，请稍后再试！");
+                    regRespObj.setMsg("邮箱不合法，请更换！");
                 }
             } else {
                 regRespObj.setStatus(1);

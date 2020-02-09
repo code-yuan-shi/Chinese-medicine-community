@@ -40,7 +40,6 @@ public class UserService {
             user.setUserModified(user.getUserCreate());
             user.setPwd(MD5Utils.getMd5("123456"));
             user.setBio("该用户很懒，什么都没有留下！");
-            user.setCity("玉林市");
             userMapper.insertSelective(user);
         }else{
             User dbUser = users.get(0);
@@ -106,7 +105,6 @@ public class UserService {
             user.setAccountId(userext.getAccountId());
             user.setName(userext.getName());
             user.setEmail(userext.getEmail());
-            user.setCity("玉林市");
             user.setBio("该用户很懒，什么都没有留下！");
             user.setPwd(pwd);
             user.setActiveCode(accode);
@@ -114,14 +112,14 @@ public class UserService {
             user.setAvatarUrl("/images/avatar/1.jpg");
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
-            user.setRole("社区用户");
-            int count = userMapper.insertSelective(user);
-           if(count > 0){
-               MailUtil.sendActiveMail(user.getEmail(),accode);
-               return 0;
-           }else{
-               return 1;
-           }
+            user.setRole("社区管理员");
+            RegRespObj regRespObj = MailUtil.sendActiveMail(user.getEmail(),accode);
+               if(regRespObj.getStatus() != 1){
+                   userMapper.insertSelective(user);
+                   return 0;
+               }else{
+                   return 1;
+               }
     }
     /*
     激活用户
