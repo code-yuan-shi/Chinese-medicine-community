@@ -1,5 +1,4 @@
- 
- 
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -10,7 +9,8 @@
   <meta name="description" content="Code社区是编程学习交流的场所">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
-
+  <link rel="stylesheet" href="/editor/css/editormd.preview.min.css">
+  <script src="/js/jquery.js"></script>
 </head>
 <body>
 <div th:insert="~{common/header::head}"></div>
@@ -60,7 +60,10 @@
            <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || detail.user?.accountId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.topicinfo.id}}">编辑此贴</a></span>
           </div>
         </div>
-        <div class="detail-body photos" th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}" th:text="${detail.topicinfo.content}"></div>
+        <div th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}" id="details"  class="editormd-preview-theme-dark markdown-body editormd-html-preview" style="margin:10px 0px;padding: 0px;overflow-y: hidden;">
+          <textarea name="content" style="display:none;">[[${detail.topicinfo.content}]]</textarea>
+        </div>
+      <!--  <div  class="detail-body photos" th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}"></div>-->
 
 
         <div th:if="${detail.user?.accountId != session.user?.accountId}">
@@ -232,7 +235,14 @@
 </div>
 
 <div th:insert="~{common/footer::foot}"></div>
-
+<script src="/editor/lib/marked.min.js"></script>
+<script src="/editor/lib/prettify.min.js"></script>
+<script src="/editor/lib/raphael.min.js"></script>
+<script src="/editor/lib/underscore.min.js"></script>
+<script src="/editor/lib/sequence-diagram.min.js"></script>
+<script src="/editor/lib/flowchart.min.js"></script>
+<script src="/editor/lib/jquery.flowchart.min.js"></script>
+<script src="/editor/editormd.js"></script>
 <script src="/layui/layui.js"></script>
 
 <script>
@@ -253,24 +263,33 @@ layui.config({
   var $ = layui.$
   ,fly = layui.fly;
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  $('.detail-body').each(function(){
+ $('.detail-body').each(function(){
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
   })
 });
 </script>
-<script>
-    layui.use('jquery',function () {
-      var $ = layui.jquery;
+<script type="text/javascript">
+
       $("#guanbi").click(function () {
         $(this).parent().parent().hide();
         $("#L_content").text("");
         $("#commentTo").val("[[${detail.user.accountId}]]");
         $("#type").val(0);
       })
-
-
-    })
+      $("body").on("click","#details img,.photos img",function(e){
+        layer.photos({ photos: {"data": [{"src": e.target.src}]},anim:1});
+      });
+      //帖子富文本解析
+      editormd.markdownToHTML("details", {
+          htmlDecode: "style,script,sub,sup|on*",
+          emoji: true,
+          taskList: true,
+          tex: true,  // 默认不解析
+          flowChart: true,  // 默认不解析
+          sequenceDiagram: true  // 默认不解析
+          // tocContainer: "#post-index", // 自定义 ToC 容器层
+        })
 </script>
 
 </body>

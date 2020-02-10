@@ -32,6 +32,8 @@ public class TopicService {
     private CollectMapper collectMapper;
     @Autowired
     private MessageMapper messageMapper;
+    @Autowired
+    private CommentagreeMapper commentagreeMapper;
 
 
     /*
@@ -311,6 +313,10 @@ public class TopicService {
         MessageExample messageExample = new MessageExample();
         messageExample.createCriteria().andCommentIdEqualTo(id);
         messageMapper.deleteByExample(messageExample);
+        //删除点赞信息
+        CommentagreeExample commentagreeExample = new CommentagreeExample();
+        commentagreeExample.createCriteria().andCommentIdEqualTo(id);
+        commentagreeMapper.deleteByExample(commentagreeExample);
         RegRespObj regRespObj = new RegRespObj();
         regRespObj.setStatus(0);
         regRespObj.setMsg("删除成功！");

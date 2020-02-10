@@ -1,5 +1,6 @@
 package com.bbgu.zmz.community.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bbgu.zmz.community.dto.RegRespObj;
 import com.bbgu.zmz.community.model.WeekList;
 import com.bbgu.zmz.community.service.ListService;
@@ -31,26 +32,50 @@ public class ApiController {
     private ListService listService;
 
     @PostMapping("/upload")
-    public @ResponseBody RegRespObj upload(@RequestParam MultipartFile file, HttpServletRequest request) throws IOException {
+    public @ResponseBody
+    RegRespObj upload(@RequestParam MultipartFile file, HttpServletRequest request) throws IOException {
         RegRespObj regRespObj = new RegRespObj();
-        if (file.getSize()>0){
+        if (file.getSize() > 0) {
             String realPath = request.getServletContext().getRealPath("/upload");
             File file1 = new File(realPath);
-            if(!file1.exists()){
+            if (!file1.exists()) {
                 file1.mkdirs();
             }
             UUID uuid = UUID.randomUUID();
-            File file2 = new File(realPath+File.separator+uuid+file.getOriginalFilename());
+            File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
             file.transferTo(file2);
-            regRespObj.setUrl(request.getServletContext().getContextPath()+"/upload/"+uuid+file.getOriginalFilename());
+            regRespObj.setUrl(request.getServletContext().getContextPath() + "/upload/" + uuid + file.getOriginalFilename());
             regRespObj.setStatus(0);
             regRespObj.setMsg("上传成功！");
-        }else{
+        } else {
             regRespObj.setStatus(1);
             regRespObj.setMsg("上传失败！");
         }
         return regRespObj;
 
+    }
+
+    @PostMapping("addupload")
+    @ResponseBody
+    public JSONObject editormdPic(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, HttpServletRequest request) throws Exception {
+        JSONObject res = new JSONObject();
+        if (file.getSize() > 0) {
+            String realPath = request.getServletContext().getRealPath("/upload");
+            File file1 = new File(realPath);
+            if (!file1.exists()) {
+                file1.mkdirs();
+            }
+            UUID uuid = UUID.randomUUID();
+            File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
+            file.transferTo(file2);
+            res.put("url", request.getServletContext().getContextPath() + "/upload/" + uuid + file.getOriginalFilename());
+            res.put("success", 1);
+            res.put("message", "上传成功！");
+        }else{
+            res.put("success", 0);
+            res.put("message", "上传失败！");
+        }
+        return res;
     }
 
     @PostMapping("/top")
