@@ -496,8 +496,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       ,anim: -1
     });
   } else {
-    $('body').on('click', '.photos img', function(){
-      window.open(this.src);
+    $('body').on('click', '.photos img', function(e){
+      layer.photos({ photos: {"data": [{"src": e.target.src}]},anim:1});
     });
   }
 
