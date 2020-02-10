@@ -473,7 +473,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'</dd>'
       ,'{{# }); }}'
     ,'{{# if(d.weekList.length === 0){ }}'
-    ,'<dd class="fly-none" style="min-height: 65px; min-width:90px;font-size: 13px;">没有相关数据</dd>'
+    ,'<dd class="fly-none" style="min-height: 65px; min-width:90px;font-size: 14px;">没有相关数据</dd>'
     ,'{{# } }}'].join('')
   ,elemReply = $('#LAY_replyRank');
 
@@ -644,18 +644,20 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   $("#L_user").blur(function(){
     var val = $("#L_user").val();
-    fly.json('/user/checkuser',{
-      accountId:val
-    }, function(res){
-      if(res.status == 0){
-        layer.msg(res.msg,{icon:1,time:2*1000},function () {
-        })
-      }
-    },{
-      error:function () {
-        $("#L_user").val("");
-      }
-    });
+    if(val != ''){
+      fly.json('/user/checkuser',{
+        accountId:val
+      }, function(res){
+        if(res.status == 0){
+          layer.msg(res.msg,{icon:1,time:2*1000},function () {
+          })
+        }
+      },{
+        error:function () {
+          $("#L_user").val("");
+        }
+      });
+    }
   })
 
 

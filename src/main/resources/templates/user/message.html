@@ -67,11 +67,13 @@
               <a th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}}">
                 <cite th:text="${msg.topicinfo.title}"></cite>
               </a>
-              <a th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'}">
-                说：<cite th:text="${msg.comment.content}"></cite>
+              <a th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.commentId}}">
+                <cite th:text="${msg.comment.content}"></cite>
               </a>
-
-              <a  th:if="${msg.type != 2}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.comment?.id}}">
+              <a  th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.commentId}}">
+                说：<cite class="replyContent" th:text="${msg.content}"></cite>
+              </a>
+              <a  th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.newId}}">
                 说：<cite class="replyContent" th:text="${msg.content}"></cite>
               </a>
               <span th:if="${msg.type == 2}">给我发私信说：</span>

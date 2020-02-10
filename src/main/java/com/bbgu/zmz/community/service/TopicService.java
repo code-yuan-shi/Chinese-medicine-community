@@ -28,6 +28,11 @@ public class TopicService {
     private KindMapper kindMapper;
     @Autowired
     private TopicinfoExtMapper topicinfoExtMapper;
+    @Autowired
+    private CollectMapper collectMapper;
+    @Autowired
+    private MessageMapper messageMapper;
+
 
     /*
     获取置顶帖子信息，查询4条
@@ -219,6 +224,14 @@ public class TopicService {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id);
         commentMapper.deleteByExample(commentExample);
+        //删除相关收藏信息
+        CollectExample collectExample = new CollectExample();
+        collectExample.createCriteria().andTopicIdEqualTo(id);
+        collectMapper.deleteByExample(collectExample);
+        //删除相关通知信息
+        MessageExample messageExample = new MessageExample();
+        messageExample.createCriteria().andTopicIdEqualTo(id);
+        messageMapper.deleteByExample(messageExample);
     }
     /*
     点赞
@@ -256,18 +269,13 @@ public class TopicService {
         Comment comment = new Comment();
         comment.setId(id);
         comment.setIsAccept(1);
-        if (user.getRole().equals("管理员") || user.getRole().equals("社区管理员")){
-            commentMapper.updateByPrimaryKeySelective(comment);
-            comment = commentMapper.selectByPrimaryKey(id);
-            Topicinfo topicinfo = new Topicinfo();
-            topicinfo.setId(comment.getTopicId());
-            topicinfo.setIsEnd(1);
-            topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
-            regRespObj.setStatus(0);
-        }else{
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("没有权限！");
-        }
+        commentMapper.updateByPrimaryKeySelective(comment);
+        comment = commentMapper.selectByPrimaryKey(id);
+        Topicinfo topicinfo = new Topicinfo();
+        topicinfo.setId(comment.getTopicId());
+        topicinfo.setIsEnd(1);
+        topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
+        regRespObj.setStatus(0);
         return regRespObj;
     }
 
@@ -299,6 +307,10 @@ public class TopicService {
      */
     public RegRespObj delComment(Long id) {
         commentMapper.deleteByPrimaryKey(id);
+        //删除通知消息
+        MessageExample messageExample = new MessageExample();
+        messageExample.createCriteria().andCommentIdEqualTo(id);
+        messageMapper.deleteByExample(messageExample);
         RegRespObj regRespObj = new RegRespObj();
         regRespObj.setStatus(0);
         regRespObj.setMsg("删除成功！");

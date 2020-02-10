@@ -30,4 +30,6 @@ public class MessageExt {
 
     private String time;
 
+    private Long newId;
+
 }

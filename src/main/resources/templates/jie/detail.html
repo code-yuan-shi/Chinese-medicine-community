@@ -105,7 +105,7 @@
             <div class="detail-body jieda-body photos" th:text="${commenta.comment.content}"></div>
 
 
-            <div class="jieda-reply">
+            <div class="jieda-reply" th:if="${session.user != null}">
               <span class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
                 <em th:text="${commenta.comment.agreeNum}"></em>
@@ -114,11 +114,6 @@
                 <i class="iconfont icon-svgmoban53"></i>
                 回复
               </span>
-              <div class="jieda-admin" th:if="${session.user != null}">
-                <span type="edit"  th:if="${session.user?.role == '社区管理员'}">编辑</span>
-                <span type="del" th:if="${session.user?.role == '社区管理员'}">删除</span>
-                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId || session.user?.role == '社区管理员'}" >采纳</span>
-              </div>
             </div>
           </li>
 
@@ -151,7 +146,7 @@
             </div>
             <div class="detail-body jieda-body photos" th:text="${comment.comment.content}"></div>
             <input type="hidden" id="count" th:value="${comment?.count}" />
-            <div class="jieda-reply">
+            <div class="jieda-reply" th:if="${session.user != null}">
               <span class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
                 <em th:text="${comment.comment.agreeNum}"></em>
@@ -161,15 +156,15 @@
                 回复
               </span>
               <div class="jieda-admin">
-                <span type="edit" th:if="${session.user?.role == '社区管理员'}">编辑</span>
-                <span type="del" th:if="${session.user?.role == '社区管理员'}"}>删除</span>
-                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId || session.user?.role == '社区管理员'}">采纳</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId && detail.topicinfo.isEnd == 0 || session.user?.role == '社区管理员' && detail.topicinfo.isEnd == 0}">采纳</span>
+                <span type="edit" th:if="${session.user?.role == '社区管理员' || comment.comment.userId == session.user?.accountId}">编辑</span>
+                <span type="del" th:if="${session.user?.role == '社区管理员' || comment.comment.userId == session.user?.accountId}">删除</span>
               </div>
             </div>
           </li>
           <li class="fly-none" th:if="${reply.size() == 0}">消灭零回复</li>
         </ul>
-        <div id="test1" th:if="${reply.size() != 0}"></div>
+        <div id="test1" th:each="counts:${reply}" th:if="${counts.count > size}"></div>
         <div class="layui-form layui-form-pane">
           <div class="reviewInfo" id="reviewInfo" style="display: none;">
             <div class="content">
