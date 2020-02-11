@@ -245,7 +245,14 @@ public class TopicService {
         //删除相关评论
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id);
+        List<Comment> commentList = commentMapper.selectByExample(commentExample);
         commentMapper.deleteByExample(commentExample);
+        //删除相关评论点赞
+        for(Comment comment:commentList){
+            CommentagreeExample commentagreeExample = new CommentagreeExample();
+            commentagreeExample.createCriteria().andCommentIdEqualTo(comment.getId());
+            commentagreeMapper.deleteByExample(commentagreeExample);
+        }
         //删除相关收藏信息
         CollectExample collectExample = new CollectExample();
         collectExample.createCriteria().andTopicIdEqualTo(id);
