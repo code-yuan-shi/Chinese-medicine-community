@@ -55,29 +55,6 @@ public class ApiController {
 
     }
 
-    @PostMapping("addupload")
-    @ResponseBody
-    public JSONObject editormdPic(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, HttpServletRequest request) throws Exception {
-        JSONObject res = new JSONObject();
-        if (file.getSize() > 0) {
-            String realPath = request.getServletContext().getRealPath("/upload");
-            File file1 = new File(realPath);
-            if (!file1.exists()) {
-                file1.mkdirs();
-            }
-            UUID uuid = UUID.randomUUID();
-            File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
-            file.transferTo(file2);
-            res.put("url", request.getServletContext().getContextPath() + "/upload/" + uuid + file.getOriginalFilename());
-            res.put("success", 1);
-            res.put("message", "上传成功！");
-        }else{
-            res.put("success", 0);
-            res.put("message", "上传失败！");
-        }
-        return res;
-    }
-
     @PostMapping("/top")
     public @ResponseBody RegRespObj weekList(Long limit){
         List<WeekList> weekListList = listService.weekList();

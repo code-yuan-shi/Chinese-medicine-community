@@ -24,14 +24,14 @@
     </li>
     <li class="layui-nav-item">
       <a href="/user/index">
-        <i class="layui-icon">&#xe612;</i>
-        用户中心
+        <i class="layui-icon">&#xe60a;</i>
+        帖子管理
       </a>
     </li>
     <li class="layui-nav-item layui-this">
       <a href="/user/set">
-        <i class="layui-icon">&#xe620;</i>
-        基本设置
+        <i class="layui-icon">&#xe770;</i>
+        个人中心
       </a>
     </li>
     <li class="layui-nav-item">
@@ -73,10 +73,10 @@
               <label for="L_email" class="layui-form-label">邮箱</label>
               <div class="layui-input-inline">
                 <input type="text" th:if="${info.email != null}"  disabled th:value="${info.email}" class="layui-input" style="cursor:not-allowed !important;">
-                <input id="L_email" name="email" type="text" th:if="${info.email == null}" class="layui-input">
+                <input id="L_email" name="email" lay-verify="required|email" type="text" th:if="${info.email == null}" class="layui-input">
               </div>
               <div class="layui-form-mid layui-word-aux" th:if="${info.email != null}">邮箱已绑定，不可更改。</div>
-              <div class="layui-form-mid layui-word-aux" th:if="${info.email == null}">请输入需要绑定邮箱</div>
+              <div class="layui-form-mid layui-word-aux" th:if="${info.email == null}">请输入邮箱，绑定后不可更改！</div>
             </div>
             <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">昵称</label>

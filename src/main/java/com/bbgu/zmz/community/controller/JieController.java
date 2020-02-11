@@ -52,8 +52,8 @@ public class JieController {
         topicinfo.setViewCount(1);
         topicService.incView(topicinfo);
         TopicInfoDTO topicInfoDTO = topicService.showDetail(id); //帖子详情
-        List<ReplyDTO> replyDTOList = topicService.findComment(id,page,size);
-        ReplyDTO replyDTO = topicService.findAcceptComment(id);   //查询是否存在采纳
+        List<ReplyDTO> replyDTOList = topicService.findComment(id,page,size,user);//查询用户评论
+        ReplyDTO replyDTO = topicService.findAcceptComment(id,user);   //查询是否存在采纳
         List<TopicinfoExt> topicinfoExtList = listService.weekTopic();  //本周热议
         model.addAttribute("pageid",page);
         model.addAttribute("size",size);

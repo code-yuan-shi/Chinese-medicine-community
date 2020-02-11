@@ -77,15 +77,14 @@
                   </div>
                 </div>-->
               </div>
-<!--              <div class="layui-form-item layui-form-text">
+              <div class="layui-form-item layui-form-text">
                 <div class="layui-input-block">
                   <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细描述" class="layui-textarea fly-editor" style="height: 260px;" th:utext="${topic?.content}"></textarea>
                 </div>
-              </div>-->
-              <div id="editor">
-                <textarea id="L_content1" name="content" style="display:none;"  th:text="${topic?.content}" ></textarea>
-                <textarea  style="display:none;" name="content" id="content"></textarea>
               </div>
+<!--              <div id="editor">
+                <textarea style="display:none;" name="content" th:text="${topic?.content}" ></textarea>
+              </div>-->
               <div class="layui-form-item">
                 <div class="layui-inline">
                   <label class="layui-form-label">悬赏飞吻</label>
@@ -125,8 +124,6 @@
 <div th:insert="~{common/footer::foot}"></div>
 
 <script src="/layui/layui.js"></script>
-<script src="/js/jquery.js"></script>
-<script src="/editor/editormd.min.js"></script>
 <script>
 layui.cache.page = 'jie';
 layui.cache.user =  {
@@ -142,51 +139,6 @@ layui.config({
 }).extend({
   fly: 'index'
 }).use('fly');
-</script>
-<script>
-
-    $(function() {
-      var editor = editormd("editor", {
-        height:360,
-        toolbarAutoFixed     : true,
-        placeholder:"请填写内容！",
-        codeFold : true,
-        syncScrolling : "single",
-        saveHTMLToTextarea : false,
-        searchReplace : true,
-        watch : false,
-        htmlDecode : "style,script|on*",
-        tex : true,
-        emoji : true,
-        flowChart : true,
-        taskList : true,
-        sequenceDiagram : true,
-        previewTheme :'dark',// 开启时序/序列图支持，默认关闭,
-        imageUpload : true,
-        imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-        imageUploadURL : "/api/addupload",
-        toolbarIcons : function() {
-          // Or return editormd.toolbarModes[name]; // full, simple, mini
-          // Using "||" set icons align right.
-          return ["undo", "redo", "quote","|", "bold", "hr","italic","del","ucwords", "|","h1","h2","h3","h4","h5","h6","list-ul","list-ol","code-block"
-            ,"table","clear","search","|", "preview", "watch", "|", "fullscreen", "emoji", "link", "file", "faicon", "||", "watch",  "preview", "image","fullscreen"]
-        },
-        path : "/editor/lib/",
-        onfullscreen : function() {
-          $("#editor").css({"z-index": 10000});
-          editor.watch();
-        },
-        onfullscreenExit : function() {
-          $("#editor").css({"z-index": 0});
-          //editor.unwatch(true);
-        }
-
-      });
-      // editor.setTheme('dark');
-      // editor.setEditorTheme('monokai');
-    })
-
-
 </script>
 
 </body>

@@ -9,8 +9,6 @@
   <meta name="description" content="Code社区是编程学习交流的场所">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/editor/css/editormd.preview.min.css">
-  <script src="/js/jquery.js"></script>
 </head>
 <body>
 <div th:insert="~{common/header::head}"></div>
@@ -60,16 +58,17 @@
            <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || detail.user?.accountId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.topicinfo.id}}">编辑此贴</a></span>
           </div>
         </div>
-        <div th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}" id="details"  class="editormd-preview-theme-dark markdown-body editormd-html-preview" style="margin:10px 0px;padding: 0px;overflow-y: hidden;">
-          <textarea name="content" style="display:none;">[[${detail.topicinfo.content}]]</textarea>
-        </div>
-      <!--  <div  class="detail-body photos" th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}"></div>-->
+
+        <!--内容存放-->
+      <div class="detail-body photos" th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}">
+        [[${detail.topicinfo.content}]]
+      </div>
 
 
         <div th:if="${detail.user?.accountId != session.user?.accountId}">
           <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.topicinfo?.status == 0 &&  session.user?.role !='社区管理员'}">内容正在审核中！</div>
         </div>
-        <div style="color: #999;">注：内容均由发帖者自由发出，不代表本网站立场。<br>如有侵权，请联系管理员删除。</div>
+        <div style="color: #999;">注：内容均由发帖者自由发出，不代表本网站立场。如有侵权，请联系管理员删除。</div>
       </div>
 
       <div class="fly-panel detail-box" id="flyReply">
@@ -100,7 +99,7 @@
               </div>
 
               <div class="detail-hits">
-                <span th:text="${commenta.time}"></span>
+                <span th:text="${#dates.format(commenta.comment.commentCreate,'yyyy-MM-dd HH:mm:ss')}"></span>
               </div>
 
               <i class="iconfont icon-caina" title="最佳答案" th:if="${commenta.comment?.isAccept == 1}"></i>
@@ -109,7 +108,7 @@
 
 
             <div class="jieda-reply" th:if="${session.user != null}">
-              <span class="jieda-zan" type="zan">
+              <span th:classappend="${commenta.zan == true} ? 'zanok':''" class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
                 <em th:text="${commenta.comment.agreeNum}"></em>
               </span>
@@ -150,7 +149,7 @@
             <div class="detail-body jieda-body photos" th:text="${comment.comment.content}"></div>
             <input type="hidden" id="count" th:value="${comment?.count}" />
             <div class="jieda-reply" th:if="${session.user != null}">
-              <span class="jieda-zan" type="zan">
+              <span th:classappend="${comment.zan == true} ? 'zanok':''" class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
                 <em th:text="${comment.comment.agreeNum}"></em>
               </span>
@@ -235,14 +234,6 @@
 </div>
 
 <div th:insert="~{common/footer::foot}"></div>
-<script src="/editor/lib/marked.min.js"></script>
-<script src="/editor/lib/prettify.min.js"></script>
-<script src="/editor/lib/raphael.min.js"></script>
-<script src="/editor/lib/underscore.min.js"></script>
-<script src="/editor/lib/sequence-diagram.min.js"></script>
-<script src="/editor/lib/flowchart.min.js"></script>
-<script src="/editor/lib/jquery.flowchart.min.js"></script>
-<script src="/editor/editormd.js"></script>
 <script src="/layui/layui.js"></script>
 
 <script>
@@ -270,26 +261,19 @@ layui.config({
 });
 </script>
 <script type="text/javascript">
+layui.use('jquery',function () {
+  var $ = layui.jquery;
+  $("#guanbi").click(function () {
+    $(this).parent().parent().hide();
+    $("#L_content").text("");
+    $("#commentTo").val("[[${detail.user.accountId}]]");
+    $("#type").val(0);
+  })
+  $("body").on("click","#details img,.photos img",function(e){
+    layer.photos({ photos: {"data": [{"src": e.target.src}]},anim:1});
+  });
+})
 
-      $("#guanbi").click(function () {
-        $(this).parent().parent().hide();
-        $("#L_content").text("");
-        $("#commentTo").val("[[${detail.user.accountId}]]");
-        $("#type").val(0);
-      })
-      $("body").on("click","#details img,.photos img",function(e){
-        layer.photos({ photos: {"data": [{"src": e.target.src}]},anim:1});
-      });
-      //帖子富文本解析
-      editormd.markdownToHTML("details", {
-          htmlDecode: "style,script,sub,sup|on*",
-          emoji: true,
-          taskList: true,
-          tex: true,  // 默认不解析
-          flowChart: true,  // 默认不解析
-          sequenceDiagram: true  // 默认不解析
-          // tocContainer: "#post-index", // 自定义 ToC 容器层
-        })
 </script>
 
 </body>

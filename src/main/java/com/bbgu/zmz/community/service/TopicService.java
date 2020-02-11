@@ -133,7 +133,7 @@ public class TopicService {
     /*
     查询评论
      */
-    public List<ReplyDTO> findComment(Long id,Integer page,Integer size){
+    public List<ReplyDTO> findComment(Long id,Integer page,Integer size,User userinfo){
         List<ReplyDTO> replyDTOList = new ArrayList<ReplyDTO>();
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id);
@@ -155,14 +155,24 @@ public class TopicService {
         List<Comment> commentList = commentMapper.selectByExampleWithRowbounds(commentExample,new RowBounds(offset,size));
 
        for(Comment comment:commentList){
-
-           String time = StringDate.getStringDate(new Date(comment.getCommentCreate()));
            ReplyDTO replyDTO = new ReplyDTO();
+           String time = StringDate.getStringDate(new Date(comment.getCommentCreate()));
            replyDTO.setComment(comment);
            UserExample userExample = new UserExample();
            userExample.createCriteria().andAccountIdEqualTo(comment.getUserId());
            List<User> users = userMapper.selectByExample(userExample);
            User user = users.get(0);
+           //查询是否点赞
+           if(userinfo != null){
+               CommentagreeExample commentagreeExample = new CommentagreeExample();
+               commentagreeExample.createCriteria().andUseridEqualTo(userinfo.getAccountId()).andCommentIdEqualTo(comment.getId());
+               List<Commentagree> commentagreeList = commentagreeMapper.selectByExample(commentagreeExample);
+               if(commentagreeList.size()>0){
+                   replyDTO.setZan(true);
+               }else{
+                   replyDTO.setZan(false);
+               }
+           }
            replyDTO.setCount(count);
            replyDTO.setTime(time);
            replyDTO.setUser(user);
@@ -173,13 +183,23 @@ public class TopicService {
     /*
     查询采纳评论
      */
-    public ReplyDTO findAcceptComment(Long id){
+    public ReplyDTO findAcceptComment(Long id,User userinfo){
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andTopicIdEqualTo(id).andIsAcceptEqualTo(1);
         List<Comment> comments =commentMapper.selectByExample(commentExample);
         if(comments.size() != 0) {
-            Comment comment = comments.get(0);
             ReplyDTO replyDTO = new ReplyDTO();
+            Comment comment = comments.get(0);
+            if(userinfo != null){
+                CommentagreeExample commentagreeExample = new CommentagreeExample();
+                commentagreeExample.createCriteria().andUseridEqualTo(userinfo.getAccountId()).andCommentIdEqualTo(comment.getId());
+                List<Commentagree> commentagreeList = commentagreeMapper.selectByExample(commentagreeExample);
+                if(commentagreeList.size()>0){
+                    replyDTO.setZan(true);
+                }else{
+                    replyDTO.setZan(false);
+                }
+            }
             replyDTO.setComment(comment);
             UserExample userExample = new UserExample();
             userExample.createCriteria().andAccountIdEqualTo(comment.getUserId());
@@ -247,12 +267,19 @@ public class TopicService {
                 Comment comment = commentMapper.selectByPrimaryKey(id);
                 comment.setAgreeNum(comment.getAgreeNum() + 1);
                 commentMapper.updateByPrimaryKeySelective(comment);
+                Commentagree commentagree = new Commentagree();
+                commentagree.setCommentId(id);
+                commentagree.setUserid(user.getAccountId());
+                commentagreeMapper.insertSelective(commentagree);
                 regRespObj.setStatus(0);
                 regRespObj.setMsg("点赞成功！");
             }else{  //取消点赞
                 Comment comment = commentMapper.selectByPrimaryKey(id);
                 comment.setAgreeNum(comment.getAgreeNum() - 1);
                 commentMapper.updateByPrimaryKeySelective(comment);
+                CommentagreeExample commentagreeExample = new CommentagreeExample();
+                commentagreeExample.createCriteria().andCommentIdEqualTo(id).andUseridEqualTo(user.getAccountId());
+                commentagreeMapper.selectByExample(commentagreeExample);
                 regRespObj.setStatus(0);
                 regRespObj.setMsg("取消成功！");
             }

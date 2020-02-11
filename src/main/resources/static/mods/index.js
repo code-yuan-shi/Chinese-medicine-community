@@ -207,7 +207,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             ,id: 'LAY_flyedit_code'
             ,area: ['800px', '360px']
           }, function(val, index, elem){
-            layui.focusInsert(editor[0], '[pre class=layui-code]\n'+ val + '\n[/pre]');
+            layui.focusInsert(editor[0], '[quote]\n'+ val + '\n[/quote]\n');
             layer.close(index);
           });
         }
