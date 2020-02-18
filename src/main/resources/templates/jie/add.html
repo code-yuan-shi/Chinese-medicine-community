@@ -28,9 +28,9 @@
               <input name="id" th:value="${topic?.id}" type="hidden"/>
               <div class="layui-row layui-col-space15 layui-form-item">
                 <div class="layui-col-md3">
-                  <label class="layui-form-label">所在专栏</label>
+                  <label class="layui-form-label">所在板块</label>
                   <div class="layui-input-block">
-                    <select lay-verify="required" name="categoryId" lay-filter="column">
+                    <select lay-verify="required" name="categoryId">
                       <option></option>
                       <option th:each="cate:${cates}" th:text="${cate.catename}" th:value="${cate.id}"></option>
                      <!-- <option value="0">提问</option>
@@ -42,19 +42,12 @@
                     </select>
                   </div>
                 </div>
-                <div class="layui-col-md9">
-                  <label for="L_title" class="layui-form-label">标题</label>
-                  <div class="layui-input-block">
-                    <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${topic?.title}">
-                    <!-- <input type="hidden" name="id" value="{{d.edit.id}}"> -->
-                  </div>
-                </div>
               </div>
-              <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
+              <div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
                 <div class="layui-col-md3">
-                  <label class="layui-form-label">所属产品</label>
+                  <label class="layui-form-label">问题类型</label>
                   <div class="layui-input-block">
-                    <select name="kindId">
+                    <select name="kindId" lay-verify="required" lay-filter="column">
                       <option></option>
                       <option th:each="kind:${kinds}" th:text="${kind.kindname}" th:value="${kind.id}"></option>
                      <!-- <option value="独立版layer">独立版layer</option>
@@ -62,6 +55,13 @@
                       <option value="LayIM">LayIM</option>
                       <option value="Fly社区模板">Fly社区模板</option>-->
                     </select>
+                  </div>
+                </div>
+                <div class="layui-col-md9">
+                  <label for="L_title" class="layui-form-label">标题</label>
+                  <div class="layui-input-block">
+                    <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${topic?.title}">
+                    <!-- <input type="hidden" name="id" value="{{d.edit.id}}"> -->
                   </div>
                 </div>
           <!--      <div class="layui-col-md3">

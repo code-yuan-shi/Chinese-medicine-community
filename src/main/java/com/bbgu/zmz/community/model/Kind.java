@@ -5,8 +5,6 @@ public class Kind {
 
     private String kindname;
 
-    private Long categoryId;
-
     private Long kindCreate;
 
     private Long kindModified;
@@ -25,14 +23,6 @@ public class Kind {
 
     public void setKindname(String kindname) {
         this.kindname = kindname == null ? null : kindname.trim();
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public Long getKindCreate() {

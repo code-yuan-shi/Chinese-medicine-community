@@ -14,10 +14,12 @@
 <div th:insert="~{common/header::head}"></div>
 <div class="cxt_nav_wp">
   <ul class="cxt_nav layui-clear">
-    <li class=""><a href="/Post/column/all/all">All</a></li>
-    <li class="layui-this"><a href="/Post/column/android">Android</a></li><li><a href="/Post/column/ios">IOS</a></li><li><a href="/Post/column/java">JAVA</a></li><li><a href="/Post/column/php">PHP</a></li><li><a href="/Post/column/web">WEB</a></li><li><a href="/Post/column/h5Game">H5Game</a></li>	</ul>
+    <li><a th:href="@{'/category/cate/0'}">All</a></li>
+    <li th:each="cate:${categorys}"><a th:href="@{'/category/cate/'+${cate.id}}">[[${cate.catename}]]</a></li>
+  </ul>
 </div>
-<div th:insert="~{common/column::col}"></div>
+<div th:insert="~{common/category::cate(cates = ${categorys},column = 0)}"></div>
+<div th:insert="~{common/column::col(kinds = ${kinds},column = 0,fenlei = 0)}"></div>
 
 
 <div class="layui-container">
@@ -35,18 +37,18 @@
           <a>置顶</a>
           <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
         </div>
-        <div class="fly-none" th:if="${topictops.size()==0}"style="min-height: 50px">没有相关数据</div>
+        <div class="fly-none" th:if="${topictops?.size()==0}"style="min-height: 50px">没有相关数据</div>
         <ul class="fly-list">
           <li th:each="topic:${topictops}">
             <a th:href="@{'/user/home/'+${topic.user.accountId}}" class="fly-avatar">
               <img th:src="${topic.user.avatarUrl}" th:alt="${topic.user.name}">
             </a>
             <h2>
-              <a class="layui-badge2" th:text="${topic.kind?.kindname}"></a>
               <a class="layui-badge" th:text="${topic.category.catename}"></a>
               <a th:href="@{'/jie/detail/'+${topic.topicinfo.id}}" th:text="${topic.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
+              <a class="layui-badge fly-badge-accept">[[${topic.kind.kindname}]]<a/>
               <a th:href="@{'/user/home/'+${topic.user.accountId}}" link>
                 <cite th:text="${topic.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${topic.user.name}"></i>
@@ -71,19 +73,27 @@
       <!--综合-->
       <div class="fly-panel" style="margin-bottom: 0;">
 
-        <div th:insert="~{common/filter::fil}"></div>
-        <div class="fly-none" th:if="${topicalls.size()==0}">没有相关数据</div>
+        <div class="fly-panel-title fly-filter">
+          <a class="layui-this" th:href="@{'/category/cates/0/all'}">综合</a>
+          <span class="fly-mid"></span>
+          <a th:href="@{'/category/cates/0/notend'}">未结</a>
+          <span class="fly-mid"></span>
+          <a th:href="@{'/category/cates/0/isend'}">已结</a>
+          <span class="fly-mid"></span>
+          <a th:href="@{'/category/cates/0/isgood'}">精华</a>
+        </div>
+        <div class="fly-none" th:if="${topicalls?.size()==0}">没有相关数据</div>
         <ul class="fly-list">
           <li th:each="all:${topicalls}">
             <a th:href="@{'/user/home/'+${all.user.accountId}}" class="fly-avatar">
               <img th:src="${all.user.avatarUrl}" th:alt="${all.user.name}">
             </a>
             <h2>
-              <a class="layui-badge layui-badge2" th:text="${all.kind?.kindname}"></a>
               <a class="layui-badge" th:text="${all.category.catename}"></a>
               <a th:href="@{'/jie/detail/'+${all.topicinfo.id}}" th:text="${all.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
+              <a class="layui-badge fly-badge-accept">[[${all.kind.kindname}]]<a/>
               <a th:href="@{'/user/home/'+${all.user.accountId}}" link>
                 <cite th:text="${all.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${all.user.name}"></i>
@@ -102,9 +112,9 @@
           </li>
 
         </ul>
-        <div style="text-align: center" th:if="${topicalls.size()>0}">
+        <div style="text-align: center" th:if="${topicalls?.size()>0}">
           <div class="laypage-main">
-            <a href="#" class="laypage-next">查看更多</a>
+            <a href="/category/cate/0" class="laypage-next">查看更多</a>
           </div>
         </div>
 
@@ -169,7 +179,7 @@
           <a th:href="@{'/jie/detail/'+${weektopic.id}}" th:text="${weektopic.title}"></a>
           <span><i class="iconfont icon-pinglun1"></i> <span th:text="${weektopic.commentNum}"></span></span>
         </dd>
-        <div class="fly-none" th:if="${weektopics.size()==0}">没有相关数据</div>
+        <div class="fly-none" th:if="${weektopics?.size()==0}">没有相关数据</div>
       </dl>
 
       <div class="fly-panel">

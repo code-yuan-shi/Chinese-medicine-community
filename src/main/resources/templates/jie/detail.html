@@ -12,7 +12,14 @@
 </head>
 <body>
 <div th:insert="~{common/header::head}"></div>
-<div th:insert="~{common/column::col}"></div>
+<div class="cxt_nav_wp">
+  <ul class="cxt_nav layui-clear">
+    <li><a th:href="@{'/category/cate/0'}">All</a></li>
+    <li th:each="cate:${categorys}"><a th:href="@{'/category/cate/'+${cate.id}}">[[${cate.catename}]]</a></li>
+  </ul>
+</div>
+<div th:insert="~{common/category::cate(cates = ${categorys},column = 0)}"></div>
+<div th:insert="~{common/column::col(kinds=${kinds},column = 0,fenlei = 0)}"></div>
   <input type="hidden" th:href="${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + '/'} "
          id="contextPath"/>
 <div class="layui-container">

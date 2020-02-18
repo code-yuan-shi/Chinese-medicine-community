@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="fly-cate fly-column layui-hide-xs " th:fragment="cate(cates,column)">
+  <div class="layui-container">
+    <ul class="layui-clear">
+      <li th:classappend="${column == 0}?'layui-this':''"><a th:href="@{'/category/cate/0'}">All</a><span class="fly-mid"></span></li>
+      <li th:classappend="${column == cate.id}?'layui-this':''" th:each="cate:${cates}"><a th:href="@{'/category/cate/'+${cate.id}}">[[${cate.catename}]]</a><span class="fly-mid"></span></li>
+<!--      <li><a href="#">Android</a><span class="fly-mid"></span></li>
+      <li><a href="#">IOS</a><span class="fly-mid"></span></li>
+      <li><a href="#">JAVA</a><span class="fly-mid"></span></li>
+      <li><a href="#">PHP</a><span class="fly-mid"></span></li>
+      <li><a href="#">Web</a><span class="fly-mid"></span></li>-->
+    </ul>
+
+  </div>
+</div>
+</html>

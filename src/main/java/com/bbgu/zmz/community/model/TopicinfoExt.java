@@ -20,5 +20,10 @@ public class TopicinfoExt {
     private Long experience;
     private String content;
     private Long commentNum;
+    private String avatarUrl;
+    private String name;
+    private String role;
+    private String catename;
+    private String kindname;
 
 }

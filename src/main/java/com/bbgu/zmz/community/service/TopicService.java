@@ -6,6 +6,7 @@ import com.bbgu.zmz.community.dto.TopicInfoDTO;
 import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.util.StringDate;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -286,7 +287,7 @@ public class TopicService {
                 commentMapper.updateByPrimaryKeySelective(comment);
                 CommentagreeExample commentagreeExample = new CommentagreeExample();
                 commentagreeExample.createCriteria().andCommentIdEqualTo(id).andUseridEqualTo(user.getAccountId());
-                commentagreeMapper.selectByExample(commentagreeExample);
+                commentagreeMapper.deleteByExample(commentagreeExample);
                 regRespObj.setStatus(0);
                 regRespObj.setMsg("取消成功！");
             }
@@ -362,5 +363,170 @@ public class TopicService {
     public Topicinfo findTopicById(Long id){
         Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(id);
         return topicinfo;
+    }
+
+    /*
+    查询一级分类的帖子
+     */
+    public List<TopicinfoExt> findCateTopic(Long categoryId,Integer offset,Integer size,String status){
+        if(categoryId == 0){
+            if(status.equals("all")){
+                return topicinfoExtMapper.getAllTopic(offset,size);
+            }else if(status.equals("isend")){
+                return topicinfoExtMapper.getAllTopicIsEnd(offset,size);
+            }else if(status.equals("notend")){
+                return topicinfoExtMapper.getAllTopicNotEnd(offset,size);
+            }else if(status.equals("isgood")){
+                return topicinfoExtMapper.getAllTopicIsGood(offset,size);
+            }else{
+                return topicinfoExtMapper.getAllTopic(offset,size);
+            }
+
+        }else {
+            if(status.equals("all")){
+                return topicinfoExtMapper.getCateTopic(categoryId,offset,size);
+            }else if(status.equals("isend")){
+                return topicinfoExtMapper.getCateTopicIsEnd(categoryId,offset,size);
+            }else if(status.equals("notend")){
+                return topicinfoExtMapper.getCateTopicNotEnd(categoryId,offset,size);
+            }else if(status.equals("isgood")){
+                return topicinfoExtMapper.getCateTopicIsGood(categoryId,offset,size);
+            }else{
+                return topicinfoExtMapper.getCateTopic(categoryId,offset,size);
+            }
+
+        }
+    }
+    /*
+    查询一级分类帖子的总数
+     */
+    public Long findCateCount(Long categoryId,String status){
+        TopicinfoExample topicinfoExample = new TopicinfoExample();
+        if(categoryId == 0){
+            if(status.equals("all")){
+                return topicinfoMapper.countByExample(new TopicinfoExample());
+            }else if(status.equals("isend")){
+                topicinfoExample.createCriteria().andIsEndEqualTo(1);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("notend")){
+                topicinfoExample.createCriteria().andIsEndEqualTo(0);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("isgood")){
+                topicinfoExample.createCriteria().andIsGoodEqualTo(1);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else{
+                return topicinfoMapper.countByExample(new TopicinfoExample());
+            }
+        }else{
+            if(status.equals("all")){
+                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("isend")){
+                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andIsEndEqualTo(1);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("notend")){
+                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andIsEndEqualTo(0);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("isgood")){
+                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andIsGoodEqualTo(1);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else{
+                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }
+        }
+
+    }
+
+    /*
+    查询二级分类的帖子
+     */
+    public List<TopicinfoExt> findKindTopic(Long categoryId,Long kindId,Integer offset,Integer size,String status){
+        if(categoryId == 0){
+            if(status.equals("all")){
+                return topicinfoExtMapper.getAllTopicByKindId(kindId,offset,size);
+            }else if(status.equals("isend")){
+                return topicinfoExtMapper.getAllTopicByKindIdIsEnd(kindId,offset,size);
+            }else if(status.equals("notend")){
+                return topicinfoExtMapper.getAllTopicByKindIdNotEnd(kindId,offset,size);
+            }else if(status.equals("isgood")){
+                return topicinfoExtMapper.getAllTopicByKindIdIsGood(kindId,offset,size);
+            }else{
+                return topicinfoExtMapper.getAllTopicByKindId(kindId,offset,size);
+            }
+
+        }else {
+            if(status.equals("all")){
+                return topicinfoExtMapper.getKindTopic(categoryId,kindId,offset,size);
+            }else if(status.equals("isend")){
+                return topicinfoExtMapper.getKindTopicIsEnd(categoryId,kindId,offset,size);
+            }else if(status.equals("notend")){
+                return topicinfoExtMapper.getKindTopicNotEnd(categoryId,kindId,offset,size);
+            }else if(status.equals("isgood")){
+                return topicinfoExtMapper.getKindTopicIsGood(categoryId,kindId,offset,size);
+            }else{
+                return topicinfoExtMapper.getKindTopic(categoryId,kindId,offset,size);
+            }
+        }
+
+    }
+    /*
+    查询二级分类帖子的总数
+     */
+    public Long findKindCount(Long categoryId,Long kindId,String status){
+        TopicinfoExample topicinfoExample = new TopicinfoExample();
+        if(categoryId == 0){
+            if(status.equals("all")){
+                topicinfoExample.createCriteria().andKindIdEqualTo(kindId);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("isend")){
+                topicinfoExample.createCriteria().andKindIdEqualTo(kindId).andIsEndEqualTo(1);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("notend")){
+                topicinfoExample.createCriteria().andKindIdEqualTo(kindId).andIsEndEqualTo(0);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else if(status.equals("isgood")){
+                topicinfoExample.createCriteria().andKindIdEqualTo(kindId).andIsGoodEqualTo(1);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }else{
+                topicinfoExample.createCriteria().andKindIdEqualTo(kindId);
+                return topicinfoMapper.countByExample(topicinfoExample);
+            }
+
+        }else{
+           if(status.equals("all")){
+               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId);
+               return topicinfoMapper.countByExample(topicinfoExample);
+           }else if(status.equals("isend")){
+               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId).andIsEndEqualTo(1);
+               return topicinfoMapper.countByExample(topicinfoExample);
+           }else if(status.equals("notend")){
+               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId).andIsEndEqualTo(0);
+               return topicinfoMapper.countByExample(topicinfoExample);
+           }else if(status.equals("isgood")){
+               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId).andIsGoodEqualTo(1);
+               return topicinfoMapper.countByExample(topicinfoExample);
+           }else{
+               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId);
+               return topicinfoMapper.countByExample(topicinfoExample);
+           }
+
+        }
+
+    }
+    /*
+    搜索
+     */
+    public List<TopicinfoExt> searchTopic(String q,Integer offset, Integer size){
+        return topicinfoExtMapper.searchTopic(q,offset,size);
+    }
+
+    /*
+    统计搜索总数
+     */
+    public Long searchTopicCount(String q){
+        TopicinfoExample topicinfoExample = new TopicinfoExample();
+        topicinfoExample.createCriteria().andTitleLike("%"+q+"%");
+        return topicinfoMapper.countByExample(topicinfoExample);
     }
 }
