@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.Charset;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 
@@ -26,6 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(sessionInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(
                         "/static/**",
+                        "/upload/**",
                         "/api/top",
                         "/api/check",
                         "/callback",
@@ -54,5 +56,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
                 registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+                Properties props=System.getProperties(); //获得系统属性集
+                String osName = props.getProperty("os.name"); //操作系统名称
+                if(osName.indexOf("Win") != -1){
+                    registry.addResourceHandler("/upload/**").addResourceLocations("file:D://upload/");
+                }else{
+                    registry.addResourceHandler("/upload/**").addResourceLocations("file:/data/wwwroot/default/upload/");
+                }
+
           }
 }

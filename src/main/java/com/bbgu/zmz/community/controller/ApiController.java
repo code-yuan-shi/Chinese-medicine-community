@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 @Controller
 @RequestMapping("/api")
@@ -36,7 +37,14 @@ public class ApiController {
     RegRespObj upload(@RequestParam MultipartFile file, HttpServletRequest request) throws IOException {
         RegRespObj regRespObj = new RegRespObj();
         if (file.getSize() > 0) {
-            String realPath = request.getServletContext().getRealPath("/upload");
+            Properties props=System.getProperties(); //获得系统属性集
+            String osName = props.getProperty("os.name"); //操作系统名称
+            String realPath = "";
+            if(osName.indexOf("Win") != -1){
+                 realPath = new String("D://upload/");
+            }else{
+                 realPath = new String("/data/wwwroot/default/upload");
+            }
             File file1 = new File(realPath);
             if (!file1.exists()) {
                 file1.mkdirs();
@@ -44,7 +52,7 @@ public class ApiController {
             UUID uuid = UUID.randomUUID();
             File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
             file.transferTo(file2);
-            regRespObj.setUrl(request.getServletContext().getContextPath() + "/upload/" + uuid + file.getOriginalFilename());
+            regRespObj.setUrl( "/upload/" + uuid + file.getOriginalFilename());
             regRespObj.setStatus(0);
             regRespObj.setMsg("上传成功！");
         } else {

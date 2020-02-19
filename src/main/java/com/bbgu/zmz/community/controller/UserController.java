@@ -203,7 +203,11 @@ public class UserController {
            if(user1 != null && user1.getStatus().equals(1)){
                regRespObj.setStatus(0);
                regRespObj.setMsg("登录成功！");
-               regRespObj.setAction(url);
+               if(url.equals("")){
+                   regRespObj.setAction("/");
+               }else{
+                   regRespObj.setAction(url);
+               }
                request.getSession().setAttribute("user",user1);
            }else if(user1 != null && user1.getStatus().equals(0)){
                regRespObj.setStatus(1);
