@@ -6,6 +6,7 @@ import com.bbgu.zmz.community.model.Kind;
 import com.bbgu.zmz.community.model.TopicinfoExt;
 import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.TopicService;
+import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -31,7 +33,7 @@ public class CategoryController {
                                @RequestParam(value = "size",defaultValue = "5") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = topicService.findCateTopic(id,offset,size,"all");  //查询一级分类
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,"all"));  //查询一级分类
         Long count = topicService.findCateCount(id,"not");
         List<Category> categoryList = topicService.findCate();
         List<Kind> kindList = topicService.findKind();
@@ -53,7 +55,7 @@ public class CategoryController {
                                @RequestParam(value = "size",defaultValue = "5") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = topicService.findCateTopic(id,offset,size,status);  //查询一级分类
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,status));  //查询一级分类
         Long count = topicService.findCateCount(id,status);
         List<Category> categoryList = topicService.findCate();
         List<Kind> kindList = topicService.findKind();
@@ -76,7 +78,7 @@ public class CategoryController {
                                @RequestParam(value = "size",defaultValue = "5") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = topicService.findKindTopic(cid,kid,offset,size,"all");  //查询二级分类
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,"all"));  //查询二级分类
         Long count = topicService.findKindCount(cid,kid,"not");
         List<Category> categoryList = topicService.findCate();
         List<Kind> kindList = topicService.findKind();
@@ -100,7 +102,7 @@ public class CategoryController {
                                @RequestParam(value = "size",defaultValue = "5") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = topicService.findKindTopic(cid,kid,offset,size,status);  //查询二级分类
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,status));  //查询二级分类
         Long count = topicService.findKindCount(cid,kid,status);
         List<Category> categoryList = topicService.findCate();
         List<Kind> kindList = topicService.findKind();
@@ -116,5 +118,15 @@ public class CategoryController {
         model.addAttribute("count",count);
         model.addAttribute("status",status);
         return "jie/index";
+    }
+
+    /*
+    转换时间
+     */
+    public List<TopicinfoExt> transTime(List<TopicinfoExt> topicinfoExtList){
+        for (TopicinfoExt topicinfoExt:topicinfoExtList){
+            topicinfoExt.setTime(StringDate.getStringDate(new Date(topicinfoExt.getTopicCreate())));
+        }
+        return topicinfoExtList;
     }
 }

@@ -5,6 +5,7 @@ import com.bbgu.zmz.community.model.WeekList;
 
 import java.util.List;
 
+@lombok.Data
 public class RegRespObj {
     private int status;
     private String msg;
@@ -15,7 +16,7 @@ public class RegRespObj {
     private Data data;
     private Rows rows;
     private List<WeekList> weekList;
-
+/*
     public List<WeekList> getWeekList() {
         return weekList;
     }
@@ -80,11 +81,19 @@ public class RegRespObj {
         this.data = data;
     }
 
+    public List<Data> getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
     public Rows getRows() {
         return rows;
     }
 
     public void setRows(Rows rows) {
         this.rows = rows;
-    }
+    }*/
 }

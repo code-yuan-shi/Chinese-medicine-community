@@ -1,12 +1,19 @@
 package com.bbgu.zmz.community.dto;
 
+import com.bbgu.zmz.community.model.User;
+
+import java.util.Date;
+import java.util.List;
+
+@lombok.Data
 public class Data {
     private boolean collection;
-    private int days;
+    private long days;
     private int experience;
     private Boolean signed;
+    private List<Object> list;
 
-    public boolean isCollection() {
+   /* public boolean isCollection() {
         return collection;
     }
 
@@ -14,11 +21,11 @@ public class Data {
         this.collection = collection;
     }
 
-    public int getDays() {
+    public long getDays() {
         return days;
     }
 
-    public void setDays(int days) {
+    public void setDays(long days) {
         this.days = days;
     }
 
@@ -36,5 +43,5 @@ public class Data {
 
     public void setSigned(Boolean signed) {
         this.signed = signed;
-    }
+    }*/
 }

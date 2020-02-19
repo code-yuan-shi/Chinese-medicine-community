@@ -25,5 +25,6 @@ public class TopicinfoExt {
     private String role;
     private String catename;
     private String kindname;
+    private String time;
 
 }

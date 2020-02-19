@@ -48,7 +48,7 @@
               <a th:href="@{'/jie/detail/'+${topic.topicinfo.id}}" th:text="${topic.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept">[[${topic.kind.kindname}]]<a/>
+              <a class="layui-badge fly-badge-accept2">[[${topic.kind.kindname}]]<a/>
               <a th:href="@{'/user/home/'+${topic.user.accountId}}" link>
                 <cite th:text="${topic.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${topic.user.name}"></i>
@@ -93,7 +93,7 @@
               <a th:href="@{'/jie/detail/'+${all.topicinfo.id}}" th:text="${all.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept">[[${all.kind.kindname}]]<a/>
+              <a class="layui-badge fly-badge-accept2">[[${all.kind.kindname}]]<a/>
               <a th:href="@{'/user/home/'+${all.user.accountId}}" link>
                 <cite th:text="${all.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${all.user.name}"></i>
@@ -120,6 +120,7 @@
 
       </div>
     </div>
+    <a name="signin"></a>
     <div class="layui-col-md4">
 
       <div class="fly-panel">
@@ -139,18 +140,19 @@
 
 
       <div class="fly-panel fly-signin">
+
         <div class="fly-panel-title">
           签到
           <i class="fly-mid"></i> 
           <a href="javascript:;" class="fly-link" id="LAY_signinHelp">说明</a>
           <i class="fly-mid"></i> 
           <a href="javascript:;" class="fly-link" id="LAY_signinTop">活跃榜<span class="layui-badge-dot"></span></a>
-          <span class="fly-signin-days">已连续签到<cite>16</cite>天</span>
+          <span class="fly-signin-days"><!--已连续签到<cite>16</cite>天--></span>
         </div>
         <div class="fly-panel-main fly-signin-main">
-          <i class="layui-icon fly-loading">&#xe63d;</i>
-          <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
-             <span>可获得<cite>5</cite>飞吻</span>
+         <!-- <i class="layui-icon fly-loading">&#xe63d;</i>-->
+    <!--      <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>-->
+             <!--<span>可获得<cite>5</cite>飞吻</span>-->
 
           <!-- 已签到状态 -->
           <!--

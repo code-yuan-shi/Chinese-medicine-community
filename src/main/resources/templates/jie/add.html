@@ -9,7 +9,6 @@
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/editor/css/editormd.min.css">
 </head>
 <body>
 <div th:insert="~{common/header::head}"></div>
@@ -32,7 +31,7 @@
                   <div class="layui-input-block">
                     <select lay-verify="required" name="categoryId">
                       <option></option>
-                      <option th:each="cate:${cates}" th:text="${cate.catename}" th:value="${cate.id}"></option>
+                      <option th:selected="${cate?.id==topic?.categoryId}" th:each="cate:${cates}" th:text="${cate.catename}" th:value="${cate.id}"></option>
                      <!-- <option value="0">提问</option>
                       <option value="99">分享</option> 
                       <option value="100">讨论</option> 
@@ -49,7 +48,7 @@
                   <div class="layui-input-block">
                     <select name="kindId" lay-verify="required" lay-filter="column">
                       <option></option>
-                      <option th:each="kind:${kinds}" th:text="${kind.kindname}" th:value="${kind.id}"></option>
+                      <option th:selected="${kind?.id==topic?.kindId}" th:each="kind:${kinds}" th:text="${kind.kindname}" th:value="${kind.id}"></option>
                      <!-- <option value="独立版layer">独立版layer</option>
                       <option value="独立版layDate">独立版layDate</option>
                       <option value="LayIM">LayIM</option>
@@ -98,6 +97,9 @@
                       <option value="80">80</option>
                     </select>
                   </div>
+                  <div class="layui-input-inline" th:if="${topic?.id != null}">
+                    <input type="text" name="experience" th:value="${topic?.experience}" class="layui-input" style="cursor:not-allowed !important;" disabled>
+                  </div>
                   <div class="layui-form-mid layui-word-aux" >发表后无法更改飞吻</div>
                 </div>
               </div>
@@ -139,6 +141,12 @@ layui.config({
 }).extend({
   fly: 'index'
 }).use('fly');
+</script>
+<script>
+  layui.use([jquery],function () {
+    var $ = layui.jquery;
+
+  })
 </script>
 
 </body>
