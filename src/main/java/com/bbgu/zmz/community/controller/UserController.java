@@ -4,6 +4,7 @@ import com.bbgu.zmz.community.dto.RegRespObj;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.UserService;
+import com.bbgu.zmz.community.util.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,55 @@ public class UserController {
     @GetMapping("/forget")
     public String forget() {
         return "user/forget";
+    }
+
+
+
+    /*
+    发送验证码
+     */
+    @PostMapping("/reset")
+    @ResponseBody
+    public RegRespObj reset(Long accountId,String email) {
+        RegRespObj regRespObj = new RegRespObj();
+        User user = userService.findUserByEmailAndAccountId(accountId,email);
+        if(user != null){
+            int code = (int)((Math.random()*9+1)*100000);
+            RegRespObj regRespObj1 =MailUtil.sendActiveMail(email,"code",code);
+            if(regRespObj1.getStatus()==1){
+                regRespObj.setStatus(1);
+                regRespObj.setCode(code);
+                regRespObj.setMsg("网络错误！");
+            }else{
+                regRespObj.setStatus(0);
+                regRespObj.setCode(code);
+                regRespObj.setMsg("验证码已发送！");
+            }
+
+        }else {
+            regRespObj.setStatus(1);
+            regRespObj.setMsg("账号或者验证邮箱错误！");
+        }
+       return regRespObj;
+    }
+
+    /*
+    重置密码
+     */
+    @PostMapping("/repass")
+    @ResponseBody
+    public RegRespObj repass(Long accountId,String check,String code,String pwd) {
+        RegRespObj regRespObj = new RegRespObj();
+       if(check.equals(code)){
+            userService.resetUserPwd(accountId,pwd);
+            regRespObj.setStatus(0);
+            regRespObj.setMsg("密码已重置,请使用新密码登录！");
+            regRespObj.setAction("/user/login");
+       }else{
+           regRespObj.setStatus(1);
+           regRespObj.setMsg("您输入的验证码错误！");
+       }
+       return regRespObj;
     }
 
     /*

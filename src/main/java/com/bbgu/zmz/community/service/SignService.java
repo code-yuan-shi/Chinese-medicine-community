@@ -52,14 +52,15 @@ public class SignService {
     public RegRespObj findSign() {
         RegRespObj regRespObj = new RegRespObj();
         QiandaoExample qiandaoExample = new QiandaoExample();
+        List<Qiandao> qiandaoListFast = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
         qiandaoExample.setOrderByClause("qiandao_create desc");
-        List<Qiandao> qiandaoList = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
+        List<Qiandao> qiandaoListNew = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
         qiandaoExample.setOrderByClause("total desc");
         List<Qiandao> qiandaoTotal  = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
         List<QiandaoExt> qiandaoExtFast = new ArrayList<>();
         List<QiandaoExt> qiandaoExtNew = new ArrayList<>();
         List<QiandaoExt> qiandaoExtTotal = new ArrayList<>();
-        for(Qiandao qiandao:qiandaoList){
+        for(Qiandao qiandao:qiandaoListFast){
             QiandaoExt qiandaoExt = new QiandaoExt();
             UserExample userExample = new UserExample();
             userExample.createCriteria().andAccountIdEqualTo(qiandao.getUserId());
@@ -79,9 +80,6 @@ public class SignService {
                 qiandaoExt.setQiandao(qiandao);
                 qiandaoExtFast.add(qiandaoExt);
             }
-                qiandaoExt.setUser(user);
-                qiandaoExt.setQiandao(qiandao);
-                qiandaoExtNew.add(qiandaoExt);
         }
         for(Qiandao qiandao1:qiandaoTotal){
             QiandaoExt qiandaoExt = new QiandaoExt();
@@ -91,6 +89,15 @@ public class SignService {
             qiandaoExt.setUser(user);
             qiandaoExt.setQiandao(qiandao1);
             qiandaoExtTotal.add(qiandaoExt);
+        }
+        for(Qiandao qiandao2:qiandaoListNew){
+            QiandaoExt qiandaoExt = new QiandaoExt();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andAccountIdEqualTo(qiandao2.getUserId());
+            User user = userMapper.selectByExample(userExample).get(0);
+            qiandaoExt.setUser(user);
+            qiandaoExt.setQiandao(qiandao2);
+            qiandaoExtNew.add(qiandaoExt);
         }
         List<Object> list = new ArrayList<>();
         list.add(qiandaoExtNew);

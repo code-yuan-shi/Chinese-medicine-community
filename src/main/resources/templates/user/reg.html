@@ -7,15 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="keywords" content="fly,layui,前端社区">
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
-  <link rel="stylesheet" href="/layui/css/layui.css">
-  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/static/layui/css/layui.css">
+  <link rel="stylesheet" href="/static/css/global.css">
 </head>
 <body>
 
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/images/code.png" alt="Code社区">
+      <img src="/static/images/code.png" alt="Code社区">
     </a>
   </div>
 </div>
@@ -79,7 +79,7 @@
               <div class="layui-form-item fly-form-app">
                 <span>或者直接使用社交账号快捷注册</span>
                 <a href="" onclick="layer.msg('正在通过QQ登录', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" style="font-size:40px" title="QQ登入"></a>
-                <a th:href="@{'https://github.com/login/oauth/authorize?client_id=f25f2e657fecdc7c6c65&redirect_uri=http://101.200.47.40:8080/callback&state='+${#httpServletRequest.requestURL}+'&scope=user'}" onclick="layer.msg('正在通过Github登录', {icon:16, shade: 0.1, time:0})" title="Github登录"><img src="/images/github.png" style="width:30px;height:30px;padding-bottom: 17px
+                <a th:href="@{'https://github.com/login/oauth/authorize?client_id=f25f2e657fecdc7c6c65&redirect_uri=http://101.200.47.40:8080/callback&state='+${#httpServletRequest.requestURL}+'&scope=user'}" onclick="layer.msg('正在通过Github登录', {icon:16, shade: 0.1, time:0})" title="Github登录"><img src="/static/images/github.png" style="width:30px;height:30px;padding-bottom: 17px
 ;" /></a>
               </div>
             </form>
@@ -93,7 +93,7 @@
 
 <div th:insert="~{common/footer::foot}"></div>
 
-<script src="/layui/layui.js"></script>
+<script src="/static/layui/layui.js"></script>
 <script>
 layui.cache.page = 'user';
 layui.cache.user =  {
@@ -105,7 +105,7 @@ layui.cache.user =  {
 };
 layui.config({
   version: "3.0.0"
-  ,base: '/mods/'
+  ,base: '/static/mods/'
 }).extend({
   fly: 'index'
 }).use('fly');

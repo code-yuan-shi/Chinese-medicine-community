@@ -15,7 +15,7 @@ public class MailUtil {
     public static String myEmailSMTPHost = "smtp.qq.com";
     public static String receiveMailAccount;
 
-    public static RegRespObj sendActiveMail(String receiveMailAccount, String mailActiveCode){
+    public static RegRespObj sendActiveMail(String receiveMailAccount, String mailActiveCode,int mailCode){
         RegRespObj regRespObj = new RegRespObj();
         // 1. 创建参数配置, 用于连接邮件服务器的参数配置
         Properties props = new Properties();                    // 参数配置
@@ -33,7 +33,7 @@ public class MailUtil {
 
         try{
             // 3. 创建一封邮件
-            MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, mailActiveCode);
+            MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, mailActiveCode,mailCode);
 
             // 4. 根据 Session 获取邮件传输对象
             Transport transport = session.getTransport();
@@ -55,6 +55,7 @@ public class MailUtil {
 
     }
 
+
     /**
      * 创建一封只包含文本的简单邮件
      *
@@ -64,21 +65,30 @@ public class MailUtil {
      * @return
      * @throws Exception
      */
-    public static MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail,String mailActiveCode) throws Exception {
+    public static MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail,String mailActiveCode,int mailCode) throws Exception {
         // 1. 创建一封邮件
         MimeMessage message = new MimeMessage(session);
 
         // 2. From: 发件人
-        message.setFrom(new InternetAddress(sendMail, "Code社区账户激活邮件", "UTF-8"));
+        if(!mailActiveCode.equals("code")){
+            message.setFrom(new InternetAddress(sendMail, "Code社区账户激活邮件", "UTF-8"));
+        }else{
+            message.setFrom(new InternetAddress(sendMail, "Code社区找回用户密码", "UTF-8"));
+        }
 
         // 3. To: 收件人（可以增加多个收件人、抄送、密送）
         message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMail, receiveMailAccount, "UTF-8"));
 
         // 4. Subject: 邮件主题
-        message.setSubject("用户激活", "UTF-8");
-        String activeUrl="http://101.200.47.40:8080/user/activemail/"+mailActiveCode;
+        if(!mailActiveCode.equals("code")){
         // 5. Content: 邮件正文（可以使用html标签）
-        message.setContent("尊敬的用户，您好！我是Code社区站长听风，请点击激活链接完成邮箱激活，激活链接有效期只有五分钟。联立登录的账号初始密码为123456，请及时修改！<a href=\""+activeUrl+"\" target=\"_blank\">"+activeUrl+"</a>", "text/html;charset=UTF-8");
+            message.setSubject("用户激活", "UTF-8");
+            String activeUrl="http://101.200.47.40:8080/user/activemail/"+mailActiveCode;
+            message.setContent("尊敬的用户，您好！我是Code社区站长听风，请点击激活链接完成邮箱激活，激活链接有效期只有五分钟。联立登录的账号初始密码为123456，请及时修改！<a href=\""+activeUrl+"\" target=\"_blank\">"+activeUrl+"</a>", "text/html;charset=UTF-8");
+        }else{
+            message.setSubject("找回用户密码", "UTF-8");
+            message.setContent("尊敬的用户，您好！本次验证码为："+ mailCode, "text/html;charset=UTF-8");
+        }
         //message.setContent("尊敬的用户，您好！我是Code社区站长听风，我正在进行邮箱激活测试，打扰了！", "text/html;charset=UTF-8");
         // 6. 设置发件时间
         message.setSentDate(new Date());
@@ -88,5 +98,6 @@ public class MailUtil {
 
         return message;
     }
+
 
 }

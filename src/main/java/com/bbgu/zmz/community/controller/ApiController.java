@@ -64,7 +64,7 @@ public class ApiController {
         return  regRespObj;
     }
 
-    @GetMapping("check")
+    @GetMapping("/check")
     public void checkCode(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         response.setContentType("text/html;charset=utf-8");

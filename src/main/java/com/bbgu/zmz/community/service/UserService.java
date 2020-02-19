@@ -109,11 +109,11 @@ public class UserService {
             user.setPwd(pwd);
             user.setActiveCode(accode);
             user.setActiveTime(actime);
-            user.setAvatarUrl("/images/avatar/1.jpg");
+            user.setAvatarUrl("/static/images/avatar/1.jpg");
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
             user.setRole("社区管理员");
-            RegRespObj regRespObj = MailUtil.sendActiveMail(user.getEmail(),accode);
+            RegRespObj regRespObj = MailUtil.sendActiveMail(user.getEmail(),accode,0);
                if(regRespObj.getStatus() != 1){
                    userMapper.insertSelective(user);
                    return 0;
@@ -316,6 +316,16 @@ public class UserService {
         }
         return regRespObj;
     }
+    /*
+    用户重置密码
+     */
+    public void resetUserPwd(Long accountId,String password){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        User user = new User();
+        user.setPwd(MD5Utils.getMd5(password));
+        userMapper.updateByExampleSelective(user,userExample);
+    }
 
     /*
     查询我发表的帖子
@@ -355,6 +365,20 @@ public class UserService {
            commentExtList1.add(commentExt);
        }
         return commentExtList1;
+    }
+
+    /*
+    重置用户密码
+     */
+    public User findUserByEmailAndAccountId(Long accountId,String email){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(accountId).andEmailEqualTo(email);
+        List<User> userList =  userMapper.selectByExample(userExample);
+        if(userList.size() != 0){
+            return userList.get(0);
+        }else{
+            return null;
+        }
     }
 
 
