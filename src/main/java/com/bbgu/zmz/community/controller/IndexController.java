@@ -2,10 +2,7 @@ package com.bbgu.zmz.community.controller;
 
 
 import com.bbgu.zmz.community.dto.TopicInfoDTO;
-import com.bbgu.zmz.community.model.Category;
-import com.bbgu.zmz.community.model.Kind;
-import com.bbgu.zmz.community.model.WeekList;
-import com.bbgu.zmz.community.model.TopicinfoExt;
+import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +26,18 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model){
 
-       List<TopicInfoDTO> topicInfoDTOList = topicService.topicTop(1,4);  //置顶帖子
-        List<TopicInfoDTO> topicInfoDTOList2 = topicService.topicTop(0,10);  //综合帖子
+       List<TopicInfoDTO> topicInfoDTOList = topicService.topicTop(1,10);  //置顶帖子
+        List<TopicInfoDTO> topicInfoDTOList2 = topicService.topicTop(0,20);  //综合帖子
         List<TopicinfoExt> topicinfoExtList = listService.weekTopic();  //本周热议
-        List<Category> categoryList = topicService.findCate();
-        List<Kind> kindList = topicService.findKind();
+        List<Category> categoryList = topicService.findCate();  //查询一级分类
+        List<Kind> kindList = topicService.findKind();  //查询二级分类
+        List<Topicinfo> topicinfoList = topicService.findTopicStatus();
         model.addAttribute("kinds",kindList);
-         model.addAttribute("categorys",categoryList);
+        model.addAttribute("categorys",categoryList);
         model.addAttribute("topictops",topicInfoDTOList);
         model.addAttribute("topicalls",topicInfoDTOList2);
         model.addAttribute("weektopics",topicinfoExtList);
+        model.addAttribute("notcheck",topicinfoList);
 
         return "index";
     }

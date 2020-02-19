@@ -321,7 +321,12 @@ public class UserService {
     查询我发表的帖子
      */
     public List<TopicinfoExt> getUserTopic(Long id){
-        return topicinfoextMapper.getUserTopic(id);
+
+        List<TopicinfoExt> topicinfoExtList = topicinfoextMapper.getUserTopic(id);
+        for(TopicinfoExt topicinfoExt:topicinfoExtList){
+            topicinfoExt.setTime(StringDate.getStringDate(new Date(topicinfoExt.getTopicCreate())));
+        }
+        return topicinfoExtList;
     }
 
     /*

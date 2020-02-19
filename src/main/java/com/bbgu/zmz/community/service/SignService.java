@@ -5,6 +5,7 @@ import com.bbgu.zmz.community.dto.RegRespObj;
 import com.bbgu.zmz.community.mapper.QiandaoMapper;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.*;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,9 +53,9 @@ public class SignService {
         RegRespObj regRespObj = new RegRespObj();
         QiandaoExample qiandaoExample = new QiandaoExample();
         qiandaoExample.setOrderByClause("qiandao_create desc");
-        List<Qiandao> qiandaoList = qiandaoMapper.selectByExample(qiandaoExample);
+        List<Qiandao> qiandaoList = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
         qiandaoExample.setOrderByClause("total desc");
-        List<Qiandao> qiandaoTotal  = qiandaoMapper.selectByExample(qiandaoExample);
+        List<Qiandao> qiandaoTotal  = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
         List<QiandaoExt> qiandaoExtFast = new ArrayList<>();
         List<QiandaoExt> qiandaoExtNew = new ArrayList<>();
         List<QiandaoExt> qiandaoExtTotal = new ArrayList<>();

@@ -44,7 +44,7 @@ public class JieController {
     @GetMapping("/detail/{id}")
     public String jieDetail(@PathVariable(name = "id")  Long id,
                             @RequestParam(name = "page",defaultValue = "1") Integer page,
-                            @RequestParam(name = "size",defaultValue = "5") Integer size,
+                            @RequestParam(name = "size",defaultValue = "10") Integer size,
                             Model model,HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
         Topicinfo topicinfo = new Topicinfo();

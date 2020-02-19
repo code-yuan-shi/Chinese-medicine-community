@@ -30,7 +30,7 @@ public class CategoryController {
     @GetMapping("cate/{column}")
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
-                               @RequestParam(value = "size",defaultValue = "5") Integer size,
+                               @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,"all"));  //查询一级分类
@@ -52,7 +52,7 @@ public class CategoryController {
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @PathVariable(name = "status")  String status,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
-                               @RequestParam(value = "size",defaultValue = "5") Integer size,
+                               @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,status));  //查询一级分类
@@ -75,7 +75,7 @@ public class CategoryController {
     public String findKindInfo(@PathVariable(name = "column")  Long cid,
                                @PathVariable(name = "kind")  Long kid,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
-                               @RequestParam(value = "size",defaultValue = "5") Integer size,
+                               @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,"all"));  //查询二级分类
@@ -99,7 +99,7 @@ public class CategoryController {
                                @PathVariable(name = "kind")  Long kid,
                                @PathVariable(name = "status")  String status,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
-                               @RequestParam(value = "size",defaultValue = "5") Integer size,
+                               @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,status));  //查询二级分类

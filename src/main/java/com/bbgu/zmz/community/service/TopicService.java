@@ -529,4 +529,14 @@ public class TopicService {
         topicinfoExample.createCriteria().andTitleLike("%"+q+"%");
         return topicinfoMapper.countByExample(topicinfoExample);
     }
+
+    /*
+    查询未审帖子
+     */
+    public List<Topicinfo> findTopicStatus(){
+        TopicinfoExample topicinfoExample = new TopicinfoExample();
+        topicinfoExample.setOrderByClause("topic_create desc");
+        topicinfoExample.createCriteria().andStatusEqualTo(0);
+        return  topicinfoMapper.selectByExample(topicinfoExample);
+    }
 }

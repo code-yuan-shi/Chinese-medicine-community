@@ -69,7 +69,7 @@
           <ul class="mine-view jie-row">
             <li th:each="topic:${topics}">
               <a class="jie-title" th:href="@{'/jie/detail/'+${topic.id}}" target="_blank">[[${topic.title}]]</a>
-              <i th:text="${#dates.format(topic.topicCreate,'yyyy-MM-dd HH:mm:ss')}"></i>
+              <i>[[${topic.time}]]</i>
               <a class="mine-edit" th:href="@{'/jie/add/'+${topic.id}}">编辑</a>
               <em>[[${topic.viewCount}]]阅/[[${topic.commentNum}]]答</em>
             </li>

@@ -35,7 +35,10 @@
       <div class="fly-panel">
         <div class="fly-panel-title fly-filter">
           <a>置顶</a>
-          <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
+          <span class="layui-hide-sm layui-show-xs-block fly-right">
+            <a href="#check"  style="color: #5FB878;">去审核</a>
+            <a href="#signin" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
+          </span>
         </div>
         <div class="fly-none" th:if="${topictops?.size()==0}"style="min-height: 50px">没有相关数据</div>
         <ul class="fly-list">
@@ -48,7 +51,7 @@
               <a th:href="@{'/jie/detail/'+${topic.topicinfo.id}}" th:text="${topic.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept2">[[${topic.kind.kindname}]]<a/>
+              <a class="layui-badge fly-badge-accept2">[[${topic.kind.kindname}]]</a>
               <a th:href="@{'/user/home/'+${topic.user.accountId}}" link>
                 <cite th:text="${topic.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${topic.user.name}"></i>
@@ -93,7 +96,7 @@
               <a th:href="@{'/jie/detail/'+${all.topicinfo.id}}" th:text="${all.topicinfo.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept2">[[${all.kind.kindname}]]<a/>
+              <a class="layui-badge fly-badge-accept2">[[${all.kind.kindname}]]</a>
               <a th:href="@{'/user/home/'+${all.user.accountId}}" link>
                 <cite th:text="${all.user.name}"></cite>
                 <i class="iconfont icon-renzheng" th:title="${all.user.name}"></i>
@@ -121,11 +124,12 @@
       </div>
     </div>
     <a name="signin"></a>
+    <a name="check"></a>
     <div class="layui-col-md4">
 
       <div class="fly-panel">
-        <h3 class="fly-panel-title">温馨通道</h3>
-        <ul class="fly-panel-main fly-list-static">
+        <h3 class="fly-panel-title">[[${session.user?.role == '社区管理员'}?'待审帖子':'温馨通道']]</h3>
+        <ul th:if="${session.user?.role != '社区管理员'}" class="fly-panel-main fly-list-static">
           <li>
             <a href="http://qzhu.bysjy.com.cn/" target="_blank">北部湾大学云就业平台</a>
           </li>
@@ -136,6 +140,12 @@
             <a href="https://www.cnki.net/" target="_blank">中国知网</a>
           </li>
         </ul>
+        <ul th:if="${session.user?.role == '社区管理员'}" class="fly-panel-main fly-list-static">
+          <li th:each="check:${notcheck}">
+            <a th:href="@{'/jie/detail/'+${check.id}}" target="_blank">[[${check.title}]]</a>
+          </li>
+        </ul>
+
       </div>
 
 

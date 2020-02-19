@@ -55,7 +55,7 @@
           <li th:each="topicinfo:${topicinfos}">
             <span class="fly-jing" th:if="${topicinfo.isGood == 1}">精</span>
             <a th:href="@{'/jie/detail/'+${topicinfo.id}}" class="jie-title"> [[${topicinfo.title}]]</a>
-            <i>[[${#dates.format(topicinfo.topicCreate,'yyyy-MM-dd HH:mm:ss')}]]</i>
+            <i>[[${topicinfo.time}]]</i>
             <em class="layui-hide-xs">[[${topicinfo.viewCount}]]阅/[[${topicinfo.commentNum}]]答</em>
           </li>
 <!--          <li>
