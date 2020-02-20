@@ -1,6 +1,9 @@
 package com.bbgu.zmz.community.interceptor;
 
 
+import com.alibaba.fastjson.JSON;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.User;
 import com.bbgu.zmz.community.model.UserExample;
@@ -25,33 +28,49 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("经过了拦截器！");
-/*     Cookie[] cookies = request.getCookies();
-        if(cookies != null && cookies.length != 0){
-            for(Cookie cookie:cookies){
-                if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    UserExample userExample = new UserExample();
-                    userExample.createCriteria().andTokenEqualTo(token);
-                   List<User> users = userMapper.selectByExample(userExample);
-                    if(users.size() != 0) {
-                        request.getSession().setAttribute("user",users.get(0));
-                        return true;
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(request.getRequestURI().lastIndexOf("/")==0){
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null && cookies.length != 0) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("token")) {
+                        String token = cookie.getValue();
+                        UserExample userExample = new UserExample();
+                        userExample.createCriteria().andTokenEqualTo(token);
+                        List<User> users = userMapper.selectByExample(userExample);
+                        if (users.size() != 0) {
+                            request.getSession().setAttribute("user", users.get(0));
+                            return true;
+                        }
                     }
                 }
             }
-        }*/
-        //每一个项目对于登陆的实现逻辑都有所区别，我这里使用最简单的Session提取User来验证登陆。
-        HttpSession session = request.getSession();
-        //这里的User是登陆时放入session的
-        User user = (User) session.getAttribute("user");
-        //如果session中没有user，表示没登陆
+            return true;
+        }
+
         if (user == null){
-            //这个方法返回false表示忽略当前请求，如果一个用户调用了需要登陆才能使用的接口，如果他没有登陆这里会直接忽略掉
-            //当然你可以利用response给用户返回一些提示信息，告诉他没登陆
             response.setContentType("text/html;charset=utf-8");
             response.getWriter().write("<script>alert('请登录！');window.location='/user/login'</script>");
             return false;
         }else {
+            if(user.getStatus() == 0){
+                if(request.getRequestURI().indexOf("user/set")>=0){
+                    return true;
+                }
+                if(request.getRequestURI().indexOf("modifyuserinfo")>=0){
+                    return true;
+                }
+                String xRequestedWith=request.getHeader("X-Requested-With");
+                if(xRequestedWith!= null && xRequestedWith.indexOf("XMLHttpRequest")!=-1){
+                    response.setContentType("text/html;charset=utf-8");
+                    response.getWriter().write(JSON.toJSONString(new Result().error(MsgEnum.ALLOWLIMIT)));
+                }else {
+                    response.setContentType("text/html;charset=utf-8");
+                    response.getWriter().write("<script>window.location='/user/activate'</script>");
+                }
+                return false;
+            }
             return true;    //如果session里有user，表示该用户已经登陆，放行，用户即可继续调用自己需要的接口
         }
     }
@@ -59,6 +78,11 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 
+        if(response.getStatus()==500){
+            modelAndView.setViewName("/other/404");
+        }else if(response.getStatus()==405){
+            modelAndView.setViewName("/other/404");
+        }
     }
 
     @Override

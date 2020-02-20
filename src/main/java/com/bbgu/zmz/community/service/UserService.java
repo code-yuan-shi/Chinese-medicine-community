@@ -1,8 +1,8 @@
 package com.bbgu.zmz.community.service;
 
 
-import com.bbgu.zmz.community.dto.Data;
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.enums.MsgEnum;
+import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.util.MD5Utils;
@@ -57,37 +57,41 @@ public class UserService {
     /*
     查询用户是否存在
      */
-    public RegRespObj checkUser(Long accoundId){
-           RegRespObj regRespObj = new RegRespObj();
+    public Result checkUser(Long accoundId){
+           //RegRespObj regRespObj = new RegRespObj();
             UserExample userExample = new UserExample();
             userExample.createCriteria().andAccountIdEqualTo(accoundId);
             List<User> userList = userMapper.selectByExample(userExample);
             if (userList.size() != 0) {
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("用户已存在！");
+               /* regRespObj.setStatus(1);
+                regRespObj.setMsg("用户已存在！");*/
+               return new Result().error(MsgEnum.USER_EXIT);
             } else {
-                regRespObj.setStatus(0);
-                regRespObj.setMsg("恭喜，可以注册！");
+               /* regRespObj.setStatus(0);
+                regRespObj.setMsg("恭喜，可以注册！");*/
+               return  new Result().ok(MsgEnum.ALLOW_REG);
             }
-            return regRespObj;
+            //return regRespObj;
     }
 
     /*
     检查验证邮箱是否已经存在！
      */
-    public RegRespObj checkEmail(String email){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result checkEmail(String email){
+        //RegRespObj regRespObj = new RegRespObj();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andEmailEqualTo(email);
         List<User> userList = userMapper.selectByExample(userExample);
         if (userList.size() != 0) {
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("抱歉，该邮箱已被使用！");
+          /*  regRespObj.setStatus(1);
+            regRespObj.setMsg("抱歉，该邮箱已被使用！");*/
+          return new Result().error(MsgEnum.EMAIL_EXIT);
         } else {
-            regRespObj.setStatus(0);
-            regRespObj.setMsg("恭喜，该邮箱可用！");
+           /* regRespObj.setStatus(0);
+            regRespObj.setMsg("恭喜，该邮箱可用！");*/
+           return  new Result().ok(MsgEnum.EMAIL_ALLOW);
         }
-        return regRespObj;
+        //return regRespObj;
     }
 
     /*
@@ -113,13 +117,36 @@ public class UserService {
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
             user.setRole("社区管理员");
-            RegRespObj regRespObj = MailUtil.sendActiveMail(user.getEmail(),accode,0);
-               if(regRespObj.getStatus() != 1){
+            Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0);
+               if(result.getStatus() != 1){
                    userMapper.insertSelective(user);
                    return 0;
                }else{
                    return 1;
                }
+    }
+
+    /*
+    重新发送激活邮件
+     */
+
+    public int resend(User user){
+        Long time = System.currentTimeMillis();
+        //创建激活密钥，利用邮箱+密码+时间
+        String accode = MD5Utils.getMd5(user.getEmail()+user.getPwd()+time);
+        //创建激活有效时间
+        Long actime = time+1000*60*5;
+        //加密密码
+        user.setActiveCode(accode);
+        user.setActiveTime(actime);
+        Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0);
+        if(result.getStatus() != 1){
+            userMapper.updateByPrimaryKeySelective(user);
+            return 0;
+        }else{
+            return 1;
+        }
+
     }
     /*
     激活用户
@@ -138,16 +165,12 @@ public class UserService {
                 UserExample userExample1 = new UserExample();
                 userExample1.createCriteria().andActiveCodeEqualTo(acode);
                 userMapper.updateByExampleSelective(user,userExample1);
-                return 1;
+                return 0;  //激活成功
             }else{
-                UserExample userExample2 = new UserExample();
-                userExample2.createCriteria().andActiveCodeEqualTo(acode);
-                userMapper.deleteByExample(userExample2);
-                return 0;
+                return 1;    //验证失效
             }
-        }else{
-            return 2;
         }
+        return 2;    //已激活
     }
 
     /*
@@ -172,6 +195,9 @@ public class UserService {
         List<User> userList = userMapper.selectByExample(userExample);
         if(userList.size() != 0){
             User user1 = userList.get(0);
+            String token = UUID.randomUUID().toString();
+            user1.setToken(token);
+            userMapper.updateByPrimaryKeySelective(user1);
             return user1;
         }else{
             return null;
@@ -188,8 +214,8 @@ public class UserService {
     /*
     添加收藏
      */
-    public RegRespObj addCollect(User user,Long cid){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result addCollect(User user,Long cid){
+        //RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(cid);
             if(topicinfo.getStatus() == 1){
@@ -204,59 +230,76 @@ public class UserService {
                     collect.setCollectCreate(System.currentTimeMillis());
                     collect.setCollectModified(collect.getCollectCreate());
                     collectMapper.insertSelective(collect);
-                    regRespObj.setStatus(0);
-                    regRespObj.setMsg("收藏成功！");
+                    /*regRespObj.setStatus(0);
+                    regRespObj.setMsg("收藏成功！");*/
+                    return new Result().ok(MsgEnum.ADDCOLLECT);
                 }else{
-                    regRespObj.setStatus(1);
-                    regRespObj.setMsg("已收藏！");
+                   /* regRespObj.setStatus(1);
+                    regRespObj.setMsg("已收藏！");*/
+                    return new Result().error(MsgEnum.HAVACOLLECT);
                 }
             }else{
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("未审核，无法收藏！");
+                /*regRespObj.setStatus(1);
+                regRespObj.setMsg("未审核，无法收藏！");*/
+                return new Result().error(MsgEnum.NOTALLOWCOLLECT);
             }
         }
-        return regRespObj;
+       // return regRespObj;
+        return new Result().error(MsgEnum.NOTLOGIN);
     }
 
     /*
    取消收藏
     */
-    public RegRespObj removeCollect(User user,Long cid){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result removeCollect(User user,Long cid){
+        //RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Map<String,Long> map = new HashMap<>();
             map.put("topicid",cid);
             map.put("userid",user.getAccountId());
             collectExtMapper.delCollectInfo(map);
-            regRespObj.setStatus(0);
-            regRespObj.setMsg("取消成功！");
+        /*    regRespObj.setStatus(0);
+            regRespObj.setMsg("取消成功！");*/
+        return new Result().ok(MsgEnum.HAVADONE);
         }
-        return regRespObj;
+        return new Result().error(MsgEnum.NOTLOGIN);
+       // return regRespObj;
     }
     /*
     查询收藏
      */
-    public RegRespObj findCollect(User user,Long cid){
+    public Result findCollect(User user,Long cid){
         int count = 0;
-        RegRespObj regRespObj = new RegRespObj();
+       // RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Map<String,Long> map = new HashMap<>();
             map.put("topicid",cid);
             map.put("userid",user.getAccountId());
             count = collectExtMapper.getIsCollectInfo(map);
-            regRespObj.setStatus(0);
-            Data data = new Data();
+            //regRespObj.setStatus(0);
+            HashMap<String,Boolean> map1 = new HashMap<>();
+            map1.put("collection",count == 1 ? true:false);
+            return new Result().ok(MsgEnum.OK,map1);
+/*            Data data = new Data();
             data.setCollection(count == 1 ? true:false);
-            regRespObj.setData(data);
+            regRespObj.setData(data);*/
         }
-        return regRespObj;
+        //return regRespObj;
+        return new Result().error(MsgEnum.NOTLOGIN);
     }
     /*
     用户查询我的资料
      */
-    public User findUserInfo(User user){
+    public User findUserInfoById(Long accountId){
         UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        List<User> userList = userMapper.selectByExample(userExample);
+        return userList.get(0);
+    }
+
+    public User findUserInfoByName(String name){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andNameEqualTo(name);
         List<User> userList = userMapper.selectByExample(userExample);
         return userList.get(0);
     }
@@ -264,36 +307,40 @@ public class UserService {
     /*
     用户修改我的资料
      */
-    public RegRespObj modifyUserInfo(User user){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result modifyUserInfo(User user){
+        //RegRespObj regRespObj = new RegRespObj();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
         userMapper.updateByExampleSelective(user,userExample);
-        regRespObj.setStatus(0);
+    /*    regRespObj.setStatus(0);
         regRespObj.setMsg("修改成功！");
-        return regRespObj;
+        return regRespObj;*/
+        Map map = new HashMap();
+        map.put("action","");
+        return new Result().ok(MsgEnum.CHANGE,map);
     }
 
     /*
     用户修改头像
      */
-    public RegRespObj modifyUserAvatar(Long accountId,String avatar){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result modifyUserAvatar(Long accountId,String avatar){
+        //RegRespObj regRespObj = new RegRespObj();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(accountId);
         User user = new User();
         user.setAvatarUrl(avatar);
         userMapper.updateByExampleSelective(user,userExample);
-        regRespObj.setStatus(0);
+       /* regRespObj.setStatus(0);
         regRespObj.setMsg("修改头像成功！");
-        return regRespObj;
+        return regRespObj;*/
+        return new Result().ok(MsgEnum.CHANGE);
     }
 
     /*
     用户修改密码
      */
-    public RegRespObj modifyUserPassword(String nowpass, String pass,String repass,Long accountId){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result modifyUserPassword(String nowpass, String pass,String repass,Long accountId){
+        //RegRespObj regRespObj = new RegRespObj();
         String pwd = MD5Utils.getMd5(nowpass);
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(accountId);
@@ -304,17 +351,22 @@ public class UserService {
                 User user = new User();
                 user.setPwd(MD5Utils.getMd5(pass));
                 userMapper.updateByExampleSelective(user,userExample);
-                regRespObj.setStatus(0);
-                regRespObj.setMsg("密码已修改！");
+                /*regRespObj.setStatus(0);
+                regRespObj.setMsg("密码已修改！");*/
+                Map map = new HashMap();
+                map.put("action","");
+                return new Result().ok(MsgEnum.CHANGE);
             }else{
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("当前密码验证错误！");
+              /*  regRespObj.setStatus(1);
+                regRespObj.setMsg("当前密码验证错误！");*/
+              return new Result().error(MsgEnum.OLD_PWD_INCORRECT);
             }
         }else{
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("两次输入的密码不一致！");
+            /*regRespObj.setStatus(1);
+            regRespObj.setMsg("两次输入的密码不一致！");*/
+            return new Result().error(MsgEnum.PWD_ATYPISM);
         }
-        return regRespObj;
+       // return regRespObj;
     }
     /*
     用户重置密码

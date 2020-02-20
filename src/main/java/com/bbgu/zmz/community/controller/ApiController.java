@@ -1,7 +1,7 @@
 package com.bbgu.zmz.community.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.enums.MsgEnum;
+import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.model.WeekList;
 import com.bbgu.zmz.community.service.ListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +19,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+
 @Controller
 @RequestMapping("/api")
 public class ApiController {
@@ -33,9 +33,9 @@ public class ApiController {
     private ListService listService;
 
     @PostMapping("/upload")
-    public @ResponseBody
-    RegRespObj upload(@RequestParam MultipartFile file, HttpServletRequest request) throws IOException {
-        RegRespObj regRespObj = new RegRespObj();
+    @ResponseBody
+    public Result upload(@RequestParam MultipartFile file, HttpServletRequest request) throws IOException {
+        //RegRespObj regRespObj = new RegRespObj();
         if (file.getSize() > 0) {
             Properties props=System.getProperties(); //获得系统属性集
             String osName = props.getProperty("os.name"); //操作系统名称
@@ -52,24 +52,30 @@ public class ApiController {
             UUID uuid = UUID.randomUUID();
             File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
             file.transferTo(file2);
-            regRespObj.setUrl( "/upload/" + uuid + file.getOriginalFilename());
-            regRespObj.setStatus(0);
-            regRespObj.setMsg("上传成功！");
+            //regRespObj.setUrl( "/upload/" + uuid + file.getOriginalFilename());
+            //regRespObj.setStatus(0);
+            //regRespObj.setMsg("上传成功！");
+            Map map = new HashMap();
+            map.put("url","/upload/" + uuid + file.getOriginalFilename());
+            return new Result().ok(MsgEnum.UPLOAD_SUCCESS,map);
         } else {
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("上传失败！");
+            return new Result().error(MsgEnum.UPLOAD_SUCCESS);
+           // regRespObj.setStatus(1);
+            //regRespObj.setMsg("上传失败！");
         }
-        return regRespObj;
+        //return regRespObj;
 
     }
 
     @PostMapping("/top")
-    public @ResponseBody RegRespObj weekList(Long limit){
+    @ResponseBody
+    public Result weekList(Long limit){
         List<WeekList> weekListList = listService.weekList();
-        RegRespObj regRespObj = new RegRespObj();
+       /* RegRespObj regRespObj = new RegRespObj();
         regRespObj.setStatus(0);
-        regRespObj.setWeekList(weekListList);
-        return  regRespObj;
+        regRespObj.setWeekList(weekListList);*/
+        return new Result().ok(MsgEnum.OK,weekListList);
+        //return  regRespObj;
     }
 
     @GetMapping("/check")

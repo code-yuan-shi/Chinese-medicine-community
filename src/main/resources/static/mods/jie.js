@@ -187,7 +187,7 @@ layui.define('fly', function(exports){
       fly.json('/jie/edit', {
         id: li.data('id')
       }, function(res){
-        var data = res.rows;
+        var data = res.data;
         layer.prompt({
           formType: 2
           ,value: data.content

@@ -1,6 +1,7 @@
 package com.bbgu.zmz.community.service;
 
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.CommentMapper;
 import com.bbgu.zmz.community.mapper.MessageMapper;
 import com.bbgu.zmz.community.mapper.TopicinfoMapper;
@@ -54,18 +55,20 @@ public class MessageService {
     /*
     删除通知消息
      */
-    public RegRespObj delMessage(Boolean all, Long userId, Integer id){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result delMessage(Boolean all, Long userId, Integer id){
+        //RegRespObj regRespObj = new RegRespObj();
         if(all == null){
             messageMapper.deleteByPrimaryKey(id);
-            regRespObj.setStatus(0);
+            //regRespObj.setStatus(0);
+            return new Result().ok(MsgEnum.OK);
         }else{
             MessageExample messageExample = new MessageExample();
             messageExample.createCriteria().andRecvUserIdEqualTo(userId);
             messageMapper.deleteByExample(messageExample);
-            regRespObj.setStatus(0);
+            //regRespObj.setStatus(0);
+            return new Result().ok(MsgEnum.OK);
         }
-            return regRespObj;
+            //return regRespObj;
 
     }
 

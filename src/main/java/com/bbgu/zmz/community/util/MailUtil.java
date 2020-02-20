@@ -1,5 +1,6 @@
 package com.bbgu.zmz.community.util;
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 
 import java.util.Date;
 import java.util.Properties;
@@ -15,8 +16,8 @@ public class MailUtil {
     public static String myEmailSMTPHost = "smtp.qq.com";
     public static String receiveMailAccount;
 
-    public static RegRespObj sendActiveMail(String receiveMailAccount, String mailActiveCode,int mailCode){
-        RegRespObj regRespObj = new RegRespObj();
+    public static Result sendActiveMail(String receiveMailAccount, String mailActiveCode, int mailCode){
+        //RegRespObj regRespObj = new RegRespObj();
         // 1. 创建参数配置, 用于连接邮件服务器的参数配置
         Properties props = new Properties();                    // 参数配置
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
@@ -46,13 +47,9 @@ public class MailUtil {
             // 7. 关闭连接
             transport.close();
         }catch (Exception e){
-
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("邮箱不合法，邮件发送失败！");
-
+            return new Result().error(MsgEnum.EMAIL_INCORRECT);
         }
-    return regRespObj;
-
+        return new Result().ok(MsgEnum.OK);
     }
 
 
@@ -83,7 +80,7 @@ public class MailUtil {
         if(!mailActiveCode.equals("code")){
         // 5. Content: 邮件正文（可以使用html标签）
             message.setSubject("用户激活", "UTF-8");
-            String activeUrl="http://101.200.47.40:8080/user/activemail/"+mailActiveCode;
+            String activeUrl="http://101.200.47.40/user/activemail/"+mailActiveCode;
             message.setContent("尊敬的用户，您好！我是Code社区站长听风，请点击激活链接完成邮箱激活，激活链接有效期只有五分钟。联立登录的账号初始密码为123456，请及时修改！<a href=\""+activeUrl+"\" target=\"_blank\">"+activeUrl+"</a>", "text/html;charset=UTF-8");
         }else{
             message.setSubject("找回用户密码", "UTF-8");

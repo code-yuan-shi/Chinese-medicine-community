@@ -1,7 +1,8 @@
 package com.bbgu.zmz.community.controller;
 
 
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.model.User;
 import com.bbgu.zmz.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,29 +24,36 @@ public class CollectController {
     添加收藏
      */
     @PostMapping("add")
-    public @ResponseBody RegRespObj addCollect(Long cid, HttpSession httpSession){
+    public @ResponseBody Result addCollect(Long cid, HttpSession httpSession){
         User user = (User)httpSession.getAttribute("user");
-        RegRespObj regRespObj = userService.addCollect(user,cid);
-        return regRespObj;
+        if(user.getStatus() != 0){
+             return userService.addCollect(user,cid);
+        }else{
+/*            RegRespObj regRespObj = new RegRespObj();
+            regRespObj.setStatus(1);
+            regRespObj.setMsg("账号未激活！");
+            return regRespObj;*/
+            return new Result().error(MsgEnum.ALLOWLIMIT);
+        }
+
     }
 
     /*
     取消收藏
      */
     @PostMapping("remove")
-    public @ResponseBody RegRespObj removeCollect(Long cid, HttpSession httpSession){
+    public @ResponseBody Result removeCollect(Long cid, HttpSession httpSession){
         User user = (User)httpSession.getAttribute("user");
-        RegRespObj regRespObj = userService.removeCollect(user,cid);
-        return regRespObj;
+        return userService.removeCollect(user,cid);
     }
     /*
     查询帖子是否收藏
      */
     @PostMapping("find")
-    public @ResponseBody RegRespObj findCollect(Long cid, HttpSession httpSession){
+    public @ResponseBody Result findCollect(Long cid, HttpSession httpSession){
         User user = (User)httpSession.getAttribute("user");
-        RegRespObj regRespObj = userService.findCollect(user,cid);
-        return regRespObj;
+        return userService.findCollect(user,cid);
+
     }
 
 }

@@ -73,7 +73,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           if(res.status === 0) {
             success && success(res);
           } else {
-            layer.msg(res.msg || res.code, {shift: 6});
+            layer.msg(res.msg || res.data.code, {shift: 6});
             options.error && options.error();
           }
         }, error: function(e){
@@ -162,7 +162,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
                 ,done: function(res){
                   if(res.status == 0){
                     layer.msg(res.msg,{icon:1,time:1*1000},function () {
-                      image.val(res.url);
+                      image.val(res.data.url);
                     })
                   } else {
                     layer.msg(res.msg, {icon: 5});
@@ -299,8 +299,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           fly.json('/message/nums', {
             _: new Date().getTime()
           }, function (res) {
-            if (res.status === 0 && res.count > 0) {
-              var msg = $('<a class="fly-nav-msg" href="javascript:;">' + res.count + '</a>');
+            if (res.status === 0 && res.data.count > 0) {
+              var msg = $('<a class="fly-nav-msg" href="javascript:;">' + res.data.count + '</a>');
               elemUser.append(msg);
               msg.on('click', function () {
                 fly.json('/message/read', {}, function (res) {
@@ -309,7 +309,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
                   }
                 });
               });
-              layer.tips('你有 ' + res.count + ' 条未读消息', msg, {
+              layer.tips('你有 ' + res.data.count + ' 条未读消息', msg, {
                 tips: 3
                 , tipsMore: true
                 , fixed: true
@@ -363,7 +363,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   }
   $('body').on('click', '#LAY_signin', function(){
     if(layui.cache.user.uid =='-1'){
-      layer.msg('请登录！');
+      layer.msg('签到需要登录！');
       return;
     }
     var othis = $(this);
@@ -455,7 +455,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
       layui.each(signinItems, function(index, item){
         var html = laytpl(tplSigninTop).render({
-          data: res.data.list[index]
+          data: res.data[index]
           ,index: index
         });
         $(item).html(html);
@@ -476,7 +476,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
 
   //回帖周榜
-  var tplReply = ['{{# layui.each(d.weekList, function(index, item){ }}'
+  var tplReply = ['{{# layui.each(d.data, function(index, item){ }}'
         ,'<dd>'
           ,'<a href="/user/home/{{item.userId}}">'
             ,'<img src="{{item.avatarUrl}}">'
@@ -485,7 +485,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           ,'</a>'
         ,'</dd>'
       ,'{{# }); }}'
-    ,'{{# if(d.weekList.length === 0){ }}'
+    ,'{{# if(d.data.length === 0){ }}'
     ,'<dd class="fly-none" style="min-height: 65px; min-width:90px;font-size: 14px;">没有相关数据</dd>'
     ,'{{# } }}'].join('')
   ,elemReply = $('#LAY_replyRank');
@@ -547,17 +547,17 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   fly.newmsg();
 
   //发送激活邮件
-  fly.activate = function(email){
-    fly.json('/api/activate/', {}, function(res){
+  fly.activate = function(){
+    fly.json('/user/resend', {}, function(res){
       if(res.status === 0){
-        layer.alert('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。', {
+        layer.alert(res.msg, {
           icon: 1
         });
       };
     });
   };
   $('#LAY-activate').on('click', function(){
-    fly.activate($(this).attr('email'));
+    fly.activate();
   });
 
   //点击@
@@ -568,7 +568,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     }
     text = text.replace(/^@|（[\s\S]+?）/g, '');
     othis.attr({
-      href: '/user/home/'+ text
+      href: '/user/home?username='+ text
       ,target: '_blank'
     });
   });
@@ -579,21 +579,19 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     $("button").attr('disabled', 'disabled');
     var action = $(data.form).attr('action'), button = $(data.elem);
     fly.json(action, data.field, function(res){
-
-        if(res.action){
+        if(res.data.action){
           layer.msg(res.msg,{icon:1,time:2*1000},function () {
-            location.href = res.action;
+            location.href = res.data.action;
           })
-        } else if(res.code == 0) {
-            layer.msg(res.msg,{icon:1,time:2*1000},function () {
-              location.reload();
-            })
+        }else{
+          layer.msg(res.msg,{icon:1,time:2*1000},function () {
+            location.reload();
+          })
         }
     },{
       error:function() {
         $("button").removeClass("layui-btn-disabled");
         $("button").removeAttr("disabled");
-        //location.reload();
       }
     });
     return false;
@@ -696,7 +694,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   })
 
-  //注册账户
+/*  //注册账户
   form.on('submit(reg)', function(data) {
     $("button").addClass("layui-btn-disabled");
     $("button").attr('disabled', 'disabled');
@@ -704,7 +702,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     fly.json(action, data.field, function(res){
 
       layer.msg(res.msg,{icon:1,time:2*1000},function () {
-          location.href = res.action;
+          location.href = res.data.action;
       });
         },{
           error:function(){
@@ -714,8 +712,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         }
         })
     return false;
-  });
+  });*/
 
+/*
   //账户登录
   form.on('submit(login)', function(data) {
     $("button").addClass("layui-btn-disabled");
@@ -723,9 +722,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     var action = $(data.form).attr('action');
         fly.json(action, data.field, function(res){
 
-          if(res.action){
+          if(res.data.action){
             layer.msg(res.msg,{icon:1,time:2*1000},function () {
-              location.href = res.action;
+              location.href = res.data.action;
             })
           }
         },{
@@ -737,6 +736,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     })
     return false;
   });
+*/
 
 
 

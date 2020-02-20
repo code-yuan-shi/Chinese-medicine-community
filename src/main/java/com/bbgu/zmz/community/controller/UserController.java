@@ -1,6 +1,7 @@
 package com.bbgu.zmz.community.controller;
 
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.UserService;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,34 +45,44 @@ public class UserController {
         return "user/forget";
     }
 
-
+    @GetMapping("/activate")
+    public String activate() {
+        return "user/activate";
+    }
 
     /*
     发送验证码
      */
     @PostMapping("/reset")
     @ResponseBody
-    public RegRespObj reset(Long accountId,String email) {
-        RegRespObj regRespObj = new RegRespObj();
+    public Result reset(Long accountId, String email) {
+        //RegRespObj regRespObj = new RegRespObj();
         User user = userService.findUserByEmailAndAccountId(accountId,email);
         if(user != null){
             int code = (int)((Math.random()*9+1)*100000);
-            RegRespObj regRespObj1 =MailUtil.sendActiveMail(email,"code",code);
-            if(regRespObj1.getStatus()==1){
-                regRespObj.setStatus(1);
+            Result result =MailUtil.sendActiveMail(email,"code",code);
+            if(result.getStatus()==1){
+/*                regRespObj.setStatus(1);
                 regRespObj.setCode(code);
-                regRespObj.setMsg("网络错误！");
+                regRespObj.setMsg("网络错误！");*/
+                Map map = new HashMap<>();
+                map.put("code",code);
+                return new Result().error(MsgEnum.INTERNEET_ERROR,map);
             }else{
-                regRespObj.setStatus(0);
+          /*      regRespObj.setStatus(0);
                 regRespObj.setCode(code);
-                regRespObj.setMsg("验证码已发送！");
+                regRespObj.setMsg("验证码已发送！");*/
+                Map map = new HashMap<>();
+                map.put("code",code);
+                return new Result().ok(MsgEnum.CODE_SUCCESS,map);
             }
 
         }else {
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("账号或者验证邮箱错误！");
+          /*  regRespObj.setStatus(1);
+            regRespObj.setMsg("账号或者验证邮箱错误！");*/
+            return new Result().error(MsgEnum.USER_EMAIL_ERROR);
         }
-       return regRespObj;
+      // return regRespObj;
     }
 
     /*
@@ -79,18 +90,22 @@ public class UserController {
      */
     @PostMapping("/repass")
     @ResponseBody
-    public RegRespObj repass(Long accountId,String check,String code,String pwd) {
-        RegRespObj regRespObj = new RegRespObj();
+    public Result repass(Long accountId,String check,String code,String pwd) {
+        //RegRespObj regRespObj = new RegRespObj();
        if(check.equals(code)){
             userService.resetUserPwd(accountId,pwd);
-            regRespObj.setStatus(0);
+           /* regRespObj.setStatus(0);
             regRespObj.setMsg("密码已重置,请使用新密码登录！");
-            regRespObj.setAction("/user/login");
+            regRespObj.setAction("/user/login");*/
+           Map map = new HashMap();
+           map.put("action","/user/login");
+           return new Result().ok(MsgEnum.REPASS_SUCCESS,map);
        }else{
-           regRespObj.setStatus(1);
-           regRespObj.setMsg("您输入的验证码错误！");
+           /*regRespObj.setStatus(1);
+           regRespObj.setMsg("您输入的验证码错误！");*/
+           return new Result().error(MsgEnum.CODE_INCORRECT);
        }
-       return regRespObj;
+      // return regRespObj;
     }
 
     /*
@@ -98,23 +113,23 @@ public class UserController {
      */
 
     @PostMapping("/checkuser")
-    public @ResponseBody
-    RegRespObj checkUser(String accountId) {
+    public @ResponseBody Result checkUser(String accountId) {
         Boolean is = isNumeric(accountId);
         if (is == true && accountId != "" && accountId.length() >= 6) {
             Long accountid = Long.parseLong(accountId);
-            RegRespObj regRespObj = userService.checkUser(accountid);
-            return regRespObj;
+            return userService.checkUser(accountid);
         } else if (accountId == "") {
-            RegRespObj regRespObj = new RegRespObj();
+/*            RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("账号不能为空！！！");
-            return regRespObj;
+            return regRespObj;*/
+            return new Result().error(MsgEnum.ACCOUNTID_NOT_ALLOW_EMPTY);
         } else {
-            RegRespObj regRespObj = new RegRespObj();
+            /*RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("账号不能少于6位数");
-            return regRespObj;
+            return regRespObj;*/
+            return new Result().error(MsgEnum.ACCOUNTID_NUM_LIMIT);
         }
     }
 
@@ -122,22 +137,22 @@ public class UserController {
     检查邮箱
      */
     @PostMapping("/checkemail")
-    public @ResponseBody
-    RegRespObj checkEmail(String email) {
+    public @ResponseBody Result checkEmail(String email) {
         Boolean is = isEmail(email);
         if (is) {
-            RegRespObj regRespObj = userService.checkEmail(email);
-            return regRespObj;
+            return   userService.checkEmail(email);
         } else if (email == "") {
-            RegRespObj regRespObj = new RegRespObj();
+/*            RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("请先输入邮箱！");
-            return regRespObj;
+            return regRespObj;*/
+        return new Result().error(MsgEnum.EMAIL_NOT_ALLOW_EMPTY);
         } else {
-            RegRespObj regRespObj = new RegRespObj();
+           /* RegRespObj regRespObj = new RegRespObj();
             regRespObj.setStatus(1);
             regRespObj.setMsg("邮箱格式不正确！");
-            return regRespObj;
+            return regRespObj;*/
+           return new Result().error(MsgEnum.EMAIL_INCORRECT);
         }
     }
 
@@ -146,44 +161,74 @@ public class UserController {
      */
     @PostMapping("/doreg")
     @ResponseBody
-    public RegRespObj doReg(UserExt userext, String check, HttpServletRequest request) throws Exception {
+    public Result doReg(UserExt userext, String check, HttpServletRequest request) throws Exception {
         String saveCheck = (String) request.getSession().getAttribute("check");
-        RegRespObj regRespObj = new RegRespObj();
+        //RegRespObj regRespObj = new RegRespObj();
         if (check.equals(saveCheck)) {
             if (userext.getPwd().equals(userext.getRepass())) {
                 int code = userService.doReg(userext);
                 if (code == 0) {
-                    regRespObj.setStatus(0);
+/*                    regRespObj.setStatus(0);
                     regRespObj.setAction("/");
-                    regRespObj.setMsg("注册成功，激活邮件已经发送至您的邮箱！");
+                    regRespObj.setMsg("注册成功，激活邮件已经发送至您的邮箱！");*/
+                    Map map = new HashMap();
+                    map.put("action","/");
+                    return new Result().ok(MsgEnum.REG_SUCCESS,map);
                 } else{
-                    regRespObj.setStatus(1);
-                    regRespObj.setMsg("邮箱不合法，请更换！");
+                    /*regRespObj.setStatus(1);
+                    regRespObj.setMsg("邮箱不合法，请更换！");*/
+                    return new Result().error(MsgEnum.SEND_EMAIL_FAILE);
                 }
             } else {
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("两次输入的密码不一致！");
+ /*               regRespObj.setStatus(1);
+                regRespObj.setMsg("两次输入的密码不一致！");*/
+                return new Result().error(MsgEnum.PWD_ATYPISM);
             }
         } else {
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("验证码错误！");
+            /*regRespObj.setStatus(1);
+            regRespObj.setMsg("验证码错误！");*/
+            return new Result().error(MsgEnum.CODE_INCORRECT);
         }
-        return regRespObj;
+       // return regRespObj;
     }
 
+    /*
+    重新发送激活邮件
+     */
+
+    @PostMapping("resend")
+    @ResponseBody
+    public Result resendEmail(HttpServletRequest request){
+        //RegRespObj regRespObj = new RegRespObj();
+        User user = (User)request.getSession().getAttribute("user");
+       int code =  userService.resend(user);
+        if (code == 0) {
+/*            regRespObj.setStatus(0);
+            regRespObj.setAction("/");
+            regRespObj.setMsg("已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收！");*/
+            Map map = new HashMap();
+            map.put("action","/");
+            return new Result().ok(MsgEnum.EMAIL_RESEND,map);
+        } else{
+           /* regRespObj.setStatus(1);
+            regRespObj.setMsg("邮箱不合法，请更换！");*/
+           return new Result().error(MsgEnum.SEND_EMAIL_FAILE);
+        }
+       // return regRespObj;
+    }
     /*
     激活用户
      */
     @GetMapping("/activemail/{acode}")
     public String activemail(@PathVariable(name = "acode") String acode, Model model,HttpServletRequest request,HttpServletResponse response){
         int i =userService.activeUser(acode);
-        if(i==1) {
+        if(i==0) {
             User user = userService.findUserByAccode(acode);
             request.getSession().setAttribute("user",user);
             model.addAttribute("reginfo", "您的账号已成功激活！");
             return "other/tips";
-        }else if(i==0){
-            model.addAttribute("reginfo", "验证链接已超时，激活失败，请重新提交注册！");
+        }else if(i==1){
+            model.addAttribute("reginfo", "验证链接已超时，激活失败，请重新提交验证邮件！");
             return "other/tips";
         }else{
             model.addAttribute("reginfo", "该用户已激活，激活链接已失效！");
@@ -195,32 +240,50 @@ public class UserController {
     用户登录验证
      */
     @PostMapping("dologin")
-    public @ResponseBody RegRespObj dologin(User user,String url,String check,HttpServletRequest request){
+    public @ResponseBody Result dologin(User user,String url,String check,HttpServletRequest request,HttpServletResponse response){
         String savecheck = (String)request.getSession().getAttribute("check");
-        RegRespObj regRespObj = new RegRespObj();
+        //RegRespObj regRespObj = new RegRespObj();
+        Map map = new HashMap();
        User user1 =  userService.loginCheck(user);
        if(check.equals(savecheck)){
            if(user1 != null && user1.getStatus().equals(1)){
-               regRespObj.setStatus(0);
-               regRespObj.setMsg("登录成功！");
+               /*regRespObj.setStatus(0);
+               regRespObj.setMsg("登录成功！");*/
                if(url.equals("")){
-                   regRespObj.setAction("/");
+                   //regRespObj.setAction("/");
+                   map.put("action","/");
                }else{
-                   regRespObj.setAction(url);
+                   //regRespObj.setAction(url);
+                   map.put("action",url);
                }
                request.getSession().setAttribute("user",user1);
+               Cookie cookie = new Cookie("token",user1.getToken());
+               cookie.setMaxAge(60*60*24*7);
+               cookie.setPath("/");
+               response.addCookie(cookie);
+               return new Result().ok(MsgEnum.LOGIN_SUCCESS,map);
            }else if(user1 != null && user1.getStatus().equals(0)){
-               regRespObj.setStatus(1);
-               regRespObj.setMsg("账号需激活后才能使用！");
+              /* regRespObj.setStatus(0);
+               regRespObj.setMsg("登录成功！");
+               regRespObj.setAction("/user/activate");*/
+               map.put("action","/user/activate");
+               request.getSession().setAttribute("user",user1);
+               Cookie cookie = new Cookie("token",user1.getToken());
+               cookie.setMaxAge(60*60*24*7);
+               cookie.setPath("/");
+               response.addCookie(cookie);
+               return new Result().ok(MsgEnum.LOGIN_SUCCESS,map);
            }else{
-               regRespObj.setStatus(1);
-               regRespObj.setMsg("用户名或者密码错误！");
+               /*regRespObj.setStatus(1);
+               regRespObj.setMsg("用户名或者密码错误！");*/
+               return new Result().error(MsgEnum.USER_PWD_INCORRECT);
            }
        }else {
-           regRespObj.setStatus(1);
-           regRespObj.setMsg("验证码错误！");
+           /*regRespObj.setStatus(1);
+           regRespObj.setMsg("验证码错误！");*/
+           return new Result().error(MsgEnum.CODE_INCORRECT);
        }
-       return regRespObj;
+       //return regRespObj;
     }
     /*
     用户中心
@@ -229,7 +292,7 @@ public class UserController {
     @GetMapping("set")
     public String userSet(HttpServletRequest request,Model model){
         User user = (User)request.getSession().getAttribute("user");
-        User userinfo = userService.findUserInfo(user);
+        User userinfo = userService.findUserInfoById(user.getAccountId());
         request.getSession().setAttribute("user",userinfo);
         model.addAttribute("info",userinfo);
         return "user/set";
@@ -238,29 +301,26 @@ public class UserController {
     //修改我的资料
     @PostMapping("modifyuserinfo")
     @ResponseBody
-    public RegRespObj modifyUserInfo(User user,HttpServletRequest request){
+    public Result modifyUserInfo(User user,HttpServletRequest request){
         User userinfo = (User)request.getSession().getAttribute("user");
         user.setAccountId(userinfo.getAccountId());
-        RegRespObj regRespObj = userService.modifyUserInfo(user);
-        return regRespObj;
+        return  userService.modifyUserInfo(user);
     }
 
     //修改头像
     @PostMapping("modifyuseravatar")
     @ResponseBody
-    public RegRespObj modifyUserAvatar(String avatar,HttpServletRequest request){
+    public Result modifyUserAvatar(String avatar,HttpServletRequest request){
         User userinfo = (User)request.getSession().getAttribute("user");
-        RegRespObj regRespObj = userService.modifyUserAvatar(userinfo.getAccountId(),avatar);
-        return regRespObj;
+        return userService.modifyUserAvatar(userinfo.getAccountId(),avatar);
     }
 
     //修改密码
     @PostMapping("modifypass")
     @ResponseBody
-    public RegRespObj modifyUserPassword(String nowpass,String pass,String repass,HttpServletRequest request){
+    public Result modifyUserPassword(String nowpass,String pass,String repass,HttpServletRequest request){
         User userinfo = (User)request.getSession().getAttribute("user");
-        RegRespObj regRespObj =  userService.modifyUserPassword(nowpass,pass,repass,userinfo.getAccountId());
-        return regRespObj;
+        return userService.modifyUserPassword(nowpass,pass,repass,userinfo.getAccountId());
     }
 
     /*
@@ -274,23 +334,27 @@ public class UserController {
         return "user/message";
     }
 
-    //查看个人主页
+   //查看个人主页
     @GetMapping("home")
-    public String userHome(HttpServletRequest request,Model model){
+    public String userHome(HttpServletRequest request,Model model,@RequestParam(value = "username",defaultValue = "user") String username){
         User user = (User)request.getSession().getAttribute("user");
-        User userinfo = userService.findUserInfo(user);  //用户信息
+        if(username.equals("user")){
+            User userinfo = userService.findUserInfoById(user.getAccountId());
+            model.addAttribute("userinfo",userinfo);
+        }else{
+            User userinfo = userService.findUserInfoByName(username);
+            model.addAttribute("userinfo",userinfo);
+        }
+       //用户信息
         List<TopicinfoExt> topicinfoExtList = userService.getUserTopic(user.getAccountId());  //发表的帖子
         List<CommentExt> commentExtList = userService.findComment(user.getAccountId());
-        model.addAttribute("userinfo",userinfo);
         model.addAttribute("topicinfos",topicinfoExtList);
         model.addAttribute("comments",commentExtList);
         return "user/home";
     }
     @GetMapping("home/{id}")
     public String otherUserHome(Model model,@PathVariable(value = "id") Long id){
-        User user = new User();
-        user.setAccountId(id);
-        User userinfo = userService.findUserInfo(user);  //用户信息
+        User userinfo = userService.findUserInfoById(id);  //用户信息
         List<TopicinfoExt> topicinfoExtList = userService.getUserTopic(id);  //发表的帖子
         List<CommentExt> commentExtList = userService.findComment(id);
         model.addAttribute("userinfo",userinfo);

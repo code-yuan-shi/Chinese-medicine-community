@@ -1,9 +1,7 @@
 package com.bbgu.zmz.community.controller;
 
-import com.bbgu.zmz.community.dto.RegRespObj;
-import com.bbgu.zmz.community.dto.ReplyDTO;
-import com.bbgu.zmz.community.dto.Rows;
-import com.bbgu.zmz.community.dto.TopicInfoDTO;
+import com.bbgu.zmz.community.dto.*;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.MessageMapper;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.ListService;
@@ -18,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/jie")
@@ -108,8 +108,8 @@ public class JieController {
      */
     @PostMapping("/doadd")
     @ResponseBody
-    public RegRespObj jieDoAdd(Topicinfo topicinfo,String check, HttpServletRequest request){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result jieDoAdd(Topicinfo topicinfo, String check, HttpServletRequest request){
+        //RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         String saveCheck = (String)httpSession.getAttribute("check");
@@ -120,17 +120,21 @@ public class JieController {
             topicinfo.setTopicModified(topicinfo.getTopicCreate());
 
             if(topicinfo.getExperience() > user.getKissNum()){
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("飞吻不够");
+ /*               regRespObj.setStatus(1);
+                regRespObj.setMsg("飞吻不够");*/
+                return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);
             }else{
                 int result = topicService.addTopic(topicinfo);
                 Long id = topicinfo.getId();
                 user.setKissNum(user.getKissNum() - topicinfo.getExperience());
                 userService.updateKiss(user);
                 if(result > 0){
-                    regRespObj.setStatus(0);
+/*                    regRespObj.setStatus(0);
                     regRespObj.setMsg("发表成功！");
-                    regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);
+                    regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);*/
+                    HashMap<String,String> map = new HashMap<>();
+                    map.put("action",request.getServletContext().getContextPath() + "/jie/detail/"+id);
+                    return new Result().ok(MsgEnum.DETAIL_SUCCESS,map);
                 }
 
             }
@@ -138,17 +142,22 @@ public class JieController {
            int result = topicService.addTopic(topicinfo);
            Long id = topicinfo.getId();
            if(result == 10){
-               regRespObj.setStatus(0);
+/*               regRespObj.setStatus(0);
                regRespObj.setMsg("更改成功！");
-               regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);
+               regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);*/
+               HashMap<String,String> map = new HashMap<>();
+               map.put("action",request.getServletContext().getContextPath() + "/jie/detail/"+id);
+               return new Result().ok(MsgEnum.CHANGE,map);
            }
         }
     }else{
-        regRespObj.setStatus(1);
-        regRespObj.setMsg("验证码错误！");
+        /*regRespObj.setStatus(1);
+        regRespObj.setMsg("验证码错误！");*/
+        return new Result().error(MsgEnum.CODE_INCORRECT);
     }
 
-        return regRespObj;
+        //return regRespObj;
+        return new Result();
     }
 
     /*
@@ -156,12 +165,15 @@ public class JieController {
      */
    @PostMapping("/reply")
     @ResponseBody
-    public RegRespObj reply(Comment comment,Long recvUserId,int type,String replyto,HttpServletRequest request){
+    public Result reply(Comment comment,Long recvUserId,int type,String replyto,HttpServletRequest request){
        Long ids = comment.getId();
-        RegRespObj regRespObj = new RegRespObj();
+       // RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         if(user != null){
+            if(user.getStatus() == 0){
+                return new Result().error(MsgEnum.ALLOWLIMIT);
+            }
             TopicInfoDTO topicInfoDTO = topicService.showDetail(comment.getTopicId());
             if(topicInfoDTO.getTopicinfo().getStatus() == 1){
                 if(type == 1){
@@ -179,115 +191,122 @@ public class JieController {
                }else{
                    messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),id);
                }
-               regRespObj.setStatus(0);
+/*               regRespObj.setStatus(0);
                regRespObj.setCode(0);
-               regRespObj.setMsg("回复成功！");
+               regRespObj.setMsg("回复成功！");*/
+                Map map = new HashMap<>();
+                map.put("action","/jie/detail/"+comment.getTopicId());
+                return new Result().ok(MsgEnum.REPLY_SUCCESS,map);
             }else{
-                regRespObj.setStatus(1);
-                regRespObj.setMsg("该帖未审核，无法评论！");
+                /*regRespObj.setStatus(1);
+                regRespObj.setMsg("该帖未审核，无法评论！");*/
+                return new Result().error(MsgEnum.NOT_ALLOW_COMMENT);
             }
 
         }else{
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("请登录后再操作！");
+           /* regRespObj.setStatus(1);
+            regRespObj.setMsg("请登录后再操作！");*/
+            return new Result().error(MsgEnum.NOTLOGIN);
         }
-        return regRespObj;
+       // return regRespObj;
     }
 
     /*
     审核帖子
      */
     @PostMapping("/shenhe")
-    public @ResponseBody RegRespObj shenhe(Long id,HttpServletRequest request,HttpServletResponse response) throws IOException {
+    public @ResponseBody Result shenhe(Long id,HttpServletRequest request,HttpServletResponse response) throws IOException {
        User user = (User) request.getSession().getAttribute("user");
-       RegRespObj regRespObj = new RegRespObj();
+       //RegRespObj regRespObj = new RegRespObj();
        if(user.getRole().equals("管理员") || user.getRole().equals("社区管理员")){
            topicService.shenhe(id);
-           regRespObj.setStatus(0);
-           regRespObj.setMsg("已审核通过！");
+      /*     regRespObj.setStatus(0);
+           regRespObj.setMsg("已审核通过！");*/
+       return new Result().ok(MsgEnum.SHENHE_SUCCESS);
        }else{
-           regRespObj.setStatus(1);
-           regRespObj.setMsg("没有权限！！！");
+           /*regRespObj.setStatus(1);
+           regRespObj.setMsg("没有权限！！！");*/
+           return new Result().error(MsgEnum.ALLOWLIMIT);
        }
-        return regRespObj;
+        //return regRespObj;
     }
 
     /*
     设置置顶、加精
      */
     @PostMapping("/setstatus")
-    public @ResponseBody RegRespObj setTopAndGood(Long id,Integer rank,String field){
+    public @ResponseBody Result setTopAndGood(Long id,Integer rank,String field){
         topicService.setTopAndGood(id,rank,field);
-        RegRespObj regRespObj = new RegRespObj();
-        regRespObj.setStatus(0);
+        //RegRespObj regRespObj = new RegRespObj();
+/*        regRespObj.setStatus(0);
         regRespObj.setMsg("状态已更改");
-        return regRespObj;
+        return regRespObj;*/
+        return new Result().ok(MsgEnum.STATUS_SUCCESS);
     }
 
     /*
     删除帖子
      */
     @PostMapping("/delete")
-    public @ResponseBody RegRespObj delTopicAndComment(Long id){
+    public @ResponseBody Result delTopicAndComment(Long id){
         topicService.delTopicAndComment(id);
-        RegRespObj regRespObj = new RegRespObj();
+/*        RegRespObj regRespObj = new RegRespObj();
         regRespObj.setStatus(0);
         regRespObj.setMsg("该帖已删除！");
-        return regRespObj;
+        return regRespObj;*/
+        return  new Result().ok(MsgEnum.DELETE_TOPIC);
     }
 
     /*
     点赞
      */
     @PostMapping("/zan")
-  public @ResponseBody RegRespObj jiedaZan(Long id, Boolean ok, HttpServletRequest request){
+  public @ResponseBody Result jiedaZan(Long id, Boolean ok, HttpServletRequest request){
 
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
-        RegRespObj regRespObj = topicService.jiedaZan(user,id,ok);
-        return regRespObj;
+        return topicService.jiedaZan(user,id,ok);
     }
     /*
     采纳评论
      */
     @PostMapping("/accept")
-    public @ResponseBody RegRespObj acceptComment(Long id,HttpServletRequest request){
+    public @ResponseBody Result acceptComment(Long id,HttpServletRequest request){
        User user =  (User)request.getSession().getAttribute("user");
-       RegRespObj regRespObj = topicService.acceptComment(id,user);
-        return regRespObj;
+       return topicService.acceptComment(id,user);
     }
 
     /*
     编辑回复
      */
     @PostMapping("/edit")
-    public @ResponseBody RegRespObj editComment(Long id){
-        RegRespObj regRespObj = new RegRespObj();
-        Rows rows = new Rows();
+    public @ResponseBody Result editComment(Long id){
+        //RegRespObj regRespObj = new RegRespObj();
+        //Rows rows = new Rows(); // id content time
         String content = topicService.getCommentContentById(id);
-        rows.setContent(content);
+/*        rows.setContent(content);
         regRespObj.setStatus(0);
         regRespObj.setRows(rows);
-        return regRespObj;
+        return regRespObj;*/
+        Map map = new HashMap<>();
+        map.put("content",content);
+        return new Result().ok(MsgEnum.OK,map);
     }
 
     /*
     提交评论更改
      */
     @PostMapping("/editsubmit")
-    public @ResponseBody RegRespObj editCommentSub(Long id,String content){
-        RegRespObj regRespObj = topicService.editCommentSub(id,content);
-        return regRespObj;
-
+    public @ResponseBody Result editCommentSub(Long id,String content){
+        return topicService.editCommentSub(id,content);
     }
 
     /*
     删除评论
      */
     @PostMapping("/delcomment")
-    public @ResponseBody RegRespObj delComment(Long id){
-        RegRespObj regRespObj = topicService.delComment(id);
-        return regRespObj;
+    public @ResponseBody Result delComment(Long id){
+        return topicService.delComment(id);
     }
 
 

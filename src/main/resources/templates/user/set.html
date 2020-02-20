@@ -54,11 +54,15 @@
   
   
   <div class="fly-panel fly-panel-user" pad20>
+
+    <div class="fly-msg" style="margin-top: 15px;" th:if="${session.user?.status==0}">
+      您的账号尚未验证激活，这会影响您的帐号使用，<a href="/user/activate">立即去激活？</a>
+    </div>
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title" id="LAY_mine">
         <li class="layui-this" lay-id="info">我的资料</li>
-        <li lay-id="avatar">头像</li>
-        <li lay-id="pass">密码</li>
+        <li lay-id="avatar"  th:if="${session.user?.status == 1}">头像</li>
+        <li lay-id="pass"  th:if="${session.user?.status == 1}">密码</li>
       </ul>
       <div class="layui-tab-content" style="padding: 20px 0;">
         <div class="layui-form layui-form-pane layui-tab-item layui-show">
@@ -72,11 +76,11 @@
             <div class="layui-form-item">
               <label for="L_email" class="layui-form-label">邮箱</label>
               <div class="layui-input-inline">
-                <input type="text" th:if="${info.email != null}"  disabled th:value="${info.email}" class="layui-input" style="cursor:not-allowed !important;">
-                <input id="L_email" name="email" lay-verify="required|email" type="text" th:if="${info.email == null}" class="layui-input">
+                <input type="text" th:if="${info.email != null && session.user.status == 1}"  disabled th:value="${info.email}" class="layui-input" style="cursor:not-allowed !important;">
+                <input id="L_email" name="email" lay-verify="required|email" th:value="${info?.email}" type="text" th:if="${session.user.status == 0}" class="layui-input">
               </div>
-              <div class="layui-form-mid layui-word-aux" th:if="${info.email != null}">邮箱已绑定，不可更改。</div>
-              <div class="layui-form-mid layui-word-aux" th:if="${info.email == null}">请输入邮箱，绑定后不可更改！</div>
+              <div class="layui-form-mid layui-word-aux" th:if="${info.email != null && session.user.status == 1}">邮箱已绑定，不可更改</div>
+              <div class="layui-form-mid layui-word-aux" th:if="${session.user.status == 0}">请正确输入邮箱，用于激活验证</div>
             </div>
             <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">昵称</label>

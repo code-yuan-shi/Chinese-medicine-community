@@ -1,12 +1,12 @@
 package com.bbgu.zmz.community.service;
 
-import com.bbgu.zmz.community.dto.RegRespObj;
 import com.bbgu.zmz.community.dto.ReplyDTO;
+import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.dto.TopicInfoDTO;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.util.StringDate;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -266,8 +266,8 @@ public class TopicService {
     /*
     点赞
      */
-    public RegRespObj jiedaZan(User user,Long id,Boolean ok){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result jiedaZan(User user, Long id, Boolean ok){
+       // RegRespObj regRespObj = new RegRespObj();
         if(user != null)
         {
             if(ok == false)//点赞
@@ -279,8 +279,9 @@ public class TopicService {
                 commentagree.setCommentId(id);
                 commentagree.setUserid(user.getAccountId());
                 commentagreeMapper.insertSelective(commentagree);
-                regRespObj.setStatus(0);
-                regRespObj.setMsg("点赞成功！");
+/*                regRespObj.setStatus(0);
+                regRespObj.setMsg("点赞成功！");*/
+                return new Result().ok(MsgEnum.ZAN_SUCCESS);
             }else{  //取消点赞
                 Comment comment = commentMapper.selectByPrimaryKey(id);
                 comment.setAgreeNum(comment.getAgreeNum() - 1);
@@ -288,21 +289,23 @@ public class TopicService {
                 CommentagreeExample commentagreeExample = new CommentagreeExample();
                 commentagreeExample.createCriteria().andCommentIdEqualTo(id).andUseridEqualTo(user.getAccountId());
                 commentagreeMapper.deleteByExample(commentagreeExample);
-                regRespObj.setStatus(0);
-                regRespObj.setMsg("取消成功！");
+/*                regRespObj.setStatus(0);
+                regRespObj.setMsg("取消成功！");*/
+                return new Result().ok(MsgEnum.ZAN_CANCEL);
             }
         }else{
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("请登陆后再操作！");
+/*            regRespObj.setStatus(1);
+            regRespObj.setMsg("请登陆后再操作！");*/
+            return new Result().error(MsgEnum.NOTLOGIN);
         }
-    return regRespObj;
+   // return regRespObj;
     }
     /*
     采纳评论
      */
 
-    public RegRespObj acceptComment(Long id,User user){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result acceptComment(Long id,User user){
+        //RegRespObj regRespObj = new RegRespObj();
         Comment comment = new Comment();
         comment.setId(id);
         comment.setIsAccept(1);
@@ -312,8 +315,9 @@ public class TopicService {
         topicinfo.setId(comment.getTopicId());
         topicinfo.setIsEnd(1);
         topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
-        regRespObj.setStatus(0);
-        return regRespObj;
+      /*  regRespObj.setStatus(0);
+        return regRespObj;*/
+        return new Result().ok(MsgEnum.OK);
     }
 
     /*
@@ -327,22 +331,23 @@ public class TopicService {
     /*
     提交编辑后的新评论
      */
-    public RegRespObj editCommentSub(Long id,String content){
+    public Result editCommentSub(Long id,String content){
         Comment comment = new Comment();
         comment.setId(id);
         comment.setContent(content);
         comment.setCommentModified(System.currentTimeMillis());
         commentMapper.updateByPrimaryKeySelective(comment);
-        RegRespObj regRespObj = new RegRespObj();
+/*        RegRespObj regRespObj = new RegRespObj();
         regRespObj.setStatus(0);
         regRespObj.setMsg("评论已更新！");
-        return regRespObj;
+        return regRespObj;*/
+        return new Result().ok(MsgEnum.UPDATE_COMMENT);
     }
 
     /*
     删除评论
      */
-    public RegRespObj delComment(Long id) {
+    public Result delComment(Long id) {
         commentMapper.deleteByPrimaryKey(id);
         //删除通知消息
         MessageExample messageExample = new MessageExample();
@@ -352,10 +357,11 @@ public class TopicService {
         CommentagreeExample commentagreeExample = new CommentagreeExample();
         commentagreeExample.createCriteria().andCommentIdEqualTo(id);
         commentagreeMapper.deleteByExample(commentagreeExample);
-        RegRespObj regRespObj = new RegRespObj();
+/*        RegRespObj regRespObj = new RegRespObj();
         regRespObj.setStatus(0);
         regRespObj.setMsg("删除成功！");
-        return regRespObj;
+        return regRespObj;*/
+        return new Result().ok(MsgEnum.DELETE_COMMENT);
     }
     /*
     修改帖子信息

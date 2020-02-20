@@ -1,7 +1,7 @@
 package com.bbgu.zmz.community.service;
 
-import com.bbgu.zmz.community.dto.Data;
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.QiandaoMapper;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.*;
@@ -49,8 +49,8 @@ public class SignService {
        /*
         查询签到活跃榜单
        */
-    public RegRespObj findSign() {
-        RegRespObj regRespObj = new RegRespObj();
+    public Result findSign() {
+        //RegRespObj regRespObj = new RegRespObj();
         QiandaoExample qiandaoExample = new QiandaoExample();
         List<Qiandao> qiandaoListFast = qiandaoMapper.selectByExampleWithRowbounds(qiandaoExample,new RowBounds(0,20));
         qiandaoExample.setOrderByClause("qiandao_create desc");
@@ -103,10 +103,11 @@ public class SignService {
         list.add(qiandaoExtNew);
         list.add(qiandaoExtFast);
         list.add(qiandaoExtTotal);
-        Data data = new Data();
+/*        Data data = new Data();
         data.setList(list);
         regRespObj.setData(data);
-        return regRespObj;
+        return regRespObj;*/
+        return new Result().ok(MsgEnum.OK,list);
 
     }
 

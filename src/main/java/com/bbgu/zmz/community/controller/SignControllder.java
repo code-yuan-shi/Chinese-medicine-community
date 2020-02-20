@@ -1,11 +1,9 @@
 package com.bbgu.zmz.community.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import com.bbgu.zmz.community.dto.Data;
-import com.bbgu.zmz.community.dto.RegRespObj;
+import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.model.Qiandao;
-import com.bbgu.zmz.community.model.QiandaoExample;
 import com.bbgu.zmz.community.model.User;
 import com.bbgu.zmz.community.service.SignService;
 import com.bbgu.zmz.community.util.KissUtils;
@@ -17,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("sign")
@@ -35,10 +30,14 @@ public class SignControllder {
      */
     @PostMapping("/status")
     @ResponseBody
-    public RegRespObj signStatus(HttpServletRequest request) {
-        RegRespObj regRespObj = new RegRespObj();
-        Data data = new Data();
-        regRespObj.setData(data);
+    public Result signStatus(HttpServletRequest request) {
+        //RegRespObj regRespObj = new RegRespObj();
+       // Data data = new Data();
+       // regRespObj.setData(data);
+        Map map = new HashMap();
+        map.put("signed",false);
+        map.put("experience",5);
+        map.put("days",0);
         User user = (User) request.getSession().getAttribute("user");
         if (user != null) {
             List<Qiandao> qiandaoList = signService.findSignUserInfo(user.getAccountId());
@@ -54,47 +53,68 @@ public class SignControllder {
                 //获得签到是几号
                 int lasttime = calendarLastTime.get(Calendar.DATE);
                 if(date == lasttime){
-                    data.setSigned(true);
+ /*                   data.setSigned(true);
+                    data.setExperience(kissnum);
+                    data.setDays(qiandaoList.get(0).getTotal());*/
                     //取得签到获得的奖励数量
                     int kissnum = KissUtils.getKissNum(qiandaoList.get(0).getTotal().intValue());
-                    data.setExperience(kissnum);
-                    data.setDays(qiandaoList.get(0).getTotal());
+                    map.put("signed",true);
+                    map.put("experience",kissnum);
+                    map.put("days",qiandaoList.get(0).getTotal());
                 }else if(date - lasttime == 1){
-                    data.setSigned(false);
-                    int kissnum = KissUtils.getKissNum(1+qiandaoList.get(0).getTotal().intValue());
+                 /*   data.setSigned(false);
                     data.setExperience(kissnum);
-                    data.setDays(qiandaoList.get(0).getTotal());
+                    data.setDays(qiandaoList.get(0).getTotal());*/
+                    int kissnum = KissUtils.getKissNum(1+qiandaoList.get(0).getTotal().intValue());
+                    map.put("signed",false);
+                    map.put("experience",kissnum);
+                    map.put("days",qiandaoList.get(0).getTotal());
                 }else{
-                    data.setSigned(false);
+                    map.put("signed",false);
+                    map.put("experience",5);
+                    map.put("days",0);
+/*                    data.setSigned(false);
                     data.setExperience(5);
-                    data.setDays(0);
+                    data.setDays(0);*/
                 }
             }else {
-                data.setSigned(false);
+                map.put("signed",false);
+                map.put("experience",5);
+                map.put("days",0);
+   /*             data.setSigned(false);
                 data.setExperience(5);
-                data.setDays(0);
+                data.setDays(0);*/
             }
         }
-        return regRespObj;
+        return new Result().ok(MsgEnum.OK,map);
     }
     /*
     签到
      */
     @PostMapping("/in")
     @ResponseBody
-    public RegRespObj signIn(HttpServletRequest request){
-        RegRespObj regRespObj = new RegRespObj();
+    public Result signIn(HttpServletRequest request){
+/*        RegRespObj regRespObj = new RegRespObj();
         Data data = new Data();
         regRespObj.setData(data);
         data.setDays(1);
         data.setExperience(5);
-        data.setSigned(true);
+        data.setSigned(true);*/
+        Map map = new HashMap();
+        map.put("signed",true);
+        map.put("experience",5);
+        map.put("days",1);
         User  user =  (User)request.getSession().getAttribute("user");
         if(user == null)
         {
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("请先登录");
-        }else{
+            /*regRespObj.setStatus(1);
+            regRespObj.setMsg("请先登录");*/
+            return new Result().error(MsgEnum.NOTLOGIN);
+        }else if(user.getStatus() == 0){
+            return new Result().error(MsgEnum.ALLOWLIMIT);
+        }
+
+        else{
             List<Qiandao> qiandaoList = signService.findSignUserInfo(user.getAccountId());
             if(qiandaoList.size() != 0){
                 //当前时间
@@ -123,9 +143,11 @@ public class SignControllder {
                     //更新用户奖励数量
                     signService.updateUserKiss(user.getAccountId(),kissnum);
                     //取得签到总天数
-                    data.setDays(qiandaoList.get(0).getTotal());
+                    //data.setDays(qiandaoList.get(0).getTotal());
+                    map.put("days",qiandaoList.get(0).getTotal());
                     //设置今天获得的签到值
-                    data.setExperience(kissnum);
+                    //data.setExperience(kissnum);
+                    map.put("experience",kissnum);
                 }else{
                     //更新签到时间
                     qiandaoList.get(0).setQiandaoCreate(System.currentTimeMillis());
@@ -146,7 +168,7 @@ public class SignControllder {
                 signService.updateUserKiss(user.getAccountId(),5);
             }
         }
-       return regRespObj;
+       return new Result().ok(MsgEnum.OK,map);
     }
 
     /*
@@ -154,9 +176,8 @@ public class SignControllder {
      */
     @GetMapping("/getSign")
     @ResponseBody
-    public RegRespObj findSign(){
-        RegRespObj regRespObj = signService.findSign();
-        return regRespObj;
+    public Result findSign(){
+        return signService.findSign();
     }
 }
 

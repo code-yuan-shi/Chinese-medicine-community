@@ -182,7 +182,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
         ,done: function(res){
           if(res.status == 0){
             $.post('/user/modifyuseravatar', {
-              avatar: res.url
+              avatar: res.data.url
             }, function(res){
               layer.msg(res.msg, {icon: 1,time:1000},function () {
                 location.reload();
