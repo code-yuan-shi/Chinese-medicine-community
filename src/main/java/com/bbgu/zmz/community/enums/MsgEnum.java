@@ -34,7 +34,7 @@ public enum MsgEnum {
     USER_EXIT(1,"用户已存在！"),
     ALLOW_REG(0,"恭喜,可以注册"),
     ACCOUNTID_NOT_ALLOW_EMPTY(1,"账号不能为空！"),
-    ACCOUNTID_NUM_LIMIT(1,"账号不能少于6位数！"),
+    ACCOUNTID_NUM_LIMIT(1,"账号限制6-12位数！"),
     EMAIL_EXIT(1,"抱歉，该邮箱已被使用！"),
     EMAIL_ALLOW(0,"恭喜，该邮箱可用"),
     EMAIL_NOT_ALLOW_EMPTY(1,"请先输入邮箱！"),

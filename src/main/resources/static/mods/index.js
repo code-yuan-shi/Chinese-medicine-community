@@ -102,6 +102,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
         ,'<span type="code" title="插入代码或引用"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
         ,'<span type="hr" title="插入水平线">hr</span>'
+        ,'<span type="a" title="插入水平线">A</span>'
+        ,'<span type="h1" title="[h1]标题一[/h1]">H1</span>'
+        ,'<span type="h2" title="[h2]标题二[/h2]">H2</span>'
+        ,'<span type="h3" title="[h3]标题三[/h3]">H3</span>'
         ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
       ,'</div>'].join('');
 
@@ -215,6 +219,18 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,hr: function(editor){ //插入水平分割线
           layui.focusInsert(editor[0], '[hr]');
         }
+        ,a:function (editor) {
+          layui.focusInsert(editor[0], '[h1]  [/h1]');
+        }
+        ,h1:function (editor) {
+          layui.focusInsert(editor[0], '[h2]  [/h2]');
+        }
+        ,h2:function (editor) {
+          layui.focusInsert(editor[0], '[h3]  [/h3]');
+        }
+        ,h3:function (editor) {
+          layui.focusInsert(editor[0], '[h4]  [/h4]');
+        }
         ,yulan: function(editor){ //预览
           var content = editor.val();
           
@@ -277,7 +293,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         if(!href) return str;
         var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
         return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
-      }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>\n') //转移HTML代码
+      }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>\n') //转义HTML代码
       .replace(/\n/g, '<p>') //转义换行
           .replace(/\[quote\]([\s\S]*)\[\/quote\]\n*/g, function(str){
             return str.replace(/\[quote\]\n*/g, '<div class="layui-code">')

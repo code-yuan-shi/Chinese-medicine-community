@@ -323,7 +323,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /* Detail页 */
 .detail-box{padding: 20px;}
-.detail h1{font-size: 24px; line-height: 36px;}
+.fly-panel h1{font-size: 24px; line-height: 36px;}
 .fly-detail-info{position: relative; margin: 10px 0 15px;}
 .fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
 .fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
@@ -646,4 +646,24 @@ body .fly-user-main{position: relative; min-height: 600px;}
   border: 1px solid #009688;
   background:none;
   color: #009688;
+}
+.detail-body h1{
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+}
+.detail-body h2{
+  font-weight: bold;
+  line-height: 2.5em;
+  font-size: 1.2em;
+}
+.detail-body h3{
+  font-weight: bold;
+  line-height: 2em;
+  font-size: 1.1em;
+}
+.detail-body h4{
+  font-weight: bold;
+  line-height: 2em;
+  font-size: 1em;
 }

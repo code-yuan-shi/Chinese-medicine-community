@@ -40,21 +40,21 @@
               <div class="layui-form-item">
                 <label for="useremail" class="layui-form-label">邮箱</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="useremail" name="email" required lay-verify="required|email" autocomplete="off" class="layui-input">
+                  <input type="text" id="useremail" name="email" required lay-verify="required|email" autocomplete="off" class="layui-input" maxlength="20">
                 </div>
                 <div class="layui-input-inline"><input id="checkcode" type="button" value="发送验证码" class="layui-btn"></div>
               </div>
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">验证码</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="check" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="text" id="L_vercode" name="check" required lay-verify="required" autocomplete="off" class="layui-input" maxlength="4">
                   <input type="hidden" id="code" name="code" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
                 <label for="L_pass" class="layui-form-label">新密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="L_pass" name="pwd" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="password" id="L_pass" name="pwd" required lay-verify="required|pass" autocomplete="off" class="layui-input" maxlength="16">
                 </div>
               </div>
               <div class="layui-form-item">

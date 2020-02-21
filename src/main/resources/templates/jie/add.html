@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
-  <title>发表问题 编辑问题 公用</title>
+  <title>发表问题 编辑问题</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="keywords" content="fly,layui,前端社区">
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
@@ -59,7 +59,7 @@
                 <div class="layui-col-md9">
                   <label for="L_title" class="layui-form-label">标题</label>
                   <div class="layui-input-block">
-                    <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${topic?.title}">
+                    <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" maxlength="50" th:value="${topic?.title}">
                     <!-- <input type="hidden" name="id" value="{{d.edit.id}}"> -->
                   </div>
                 </div>
@@ -106,7 +106,7 @@
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">人类验证</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="check" required lay-verify="required" placeholder="请填写验证码" autocomplete="off" class="layui-input">
+                  <input type="text" id="L_vercode" name="check" required lay-verify="required" placeholder="请填写验证码" autocomplete="off" class="layui-input" maxlength="4">
                 </div>
                 <div class="layui-form-mid">
                   <img src="/api/check" onClick="this.src=this.src+'?'" alt="看不清？点击更换">

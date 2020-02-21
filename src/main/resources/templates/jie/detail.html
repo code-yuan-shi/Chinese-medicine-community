@@ -183,7 +183,7 @@
             <div class="layui-form-item layui-form-text" th:if="${session.user != null}">
               <a name="comment"></a>
               <div class="layui-input-block">
-                <textarea id="cText" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                <textarea id="cText" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;" maxlength="1024"></textarea>
               </div>
             </div>
             <div class="layui-form-item" th:if="${session.user != null}">
