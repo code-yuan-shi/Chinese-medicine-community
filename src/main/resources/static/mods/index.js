@@ -102,10 +102,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
         ,'<span type="code" title="插入代码或引用"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
         ,'<span type="hr" title="插入水平线">hr</span>'
-        ,'<span type="a" title="插入水平线">A</span>'
-        ,'<span type="h1" title="[h1]标题一[/h1]">H1</span>'
-        ,'<span type="h2" title="[h2]标题二[/h2]">H2</span>'
-        ,'<span type="h3" title="[h3]标题三[/h3]">H3</span>'
+        ,'<span type="a" title="文章标题">A</span>'
+        ,'<span type="h1" title="标题一">H1</span>'
+        ,'<span type="h2" title="标题二">H2</span>'
+        ,'<span type="h3" title="标题三">H3</span>'
         ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
       ,'</div>'].join('');
 
