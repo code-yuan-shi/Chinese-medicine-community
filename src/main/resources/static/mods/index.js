@@ -293,8 +293,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         if(!href) return str;
         var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
         return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
-      }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>\n') //转义HTML代码
-      .replace(/\n/g, '<p>') //转义换行
+      }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>') //转义HTML代码
+      .replace(/\n/g, '<br>') //转义p
           .replace(/\[quote\]([\s\S]*)\[\/quote\]\n*/g, function(str){
             return str.replace(/\[quote\]\n*/g, '<div class="layui-code">')
                 .replace(/\n*\[\/quote\]\n*/g, '</div>');
