@@ -95,7 +95,7 @@ i{font-style: normal;}
 a:hover{color: #009688; transition: all .3s;}
 pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid #009688;  background-color: #f8f8f8; font-family: Courier New; overflow: auto;}
 
-.layui-container{padding: 0;}
+.layui-container{padding: 0;margin-top: 2px;}
 .fly-main{width: 1079px; min-height: 600px; margin: 0 auto 15px;}
 .layui-badge{height: 20px; line-height: 20px; border-radius: 2px;}
 
@@ -176,12 +176,13 @@ pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid 
 .fly-union span a:hover{text-decoration: underline;}
 
 /* 面板 */
-.fly-cate{border-radius: 2px; background-color: #fff; box-shadow: 0 1px 2px 0 rgba(0,0,0,.05); border-bottom: solid 1px #e2e2e2;}
+.fly-cate{    margin-top: 15px;border-radius: 2px; background-color: #fff; box-shadow: 0 1px 2px 0 rgba(0,0,0,.05); border-bottom: solid 1px #e2e2e2;}
 .fly-panel{margin-bottom: 15px; border-radius: 2px; background-color: #fff;  box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);}
 .fly-panel[pad20]{padding: 20px;}
 .fly-panel-title{position: relative; height: 50px; line-height: 50px; padding: 0 15px; border-bottom: 1px dotted #E9E9E9; color: #333; border-radius: 2px 2px 0 0; font-size: 14px;}
-.fly-panel-main{padding: 10px 15px;}
-.fly-panel-main img{width:350px;}
+.fly-panel-main{padding: 10px 15px;width: 100%;}
+.fly-panel-main img{width:91.5%;}
+.fly-cate .layui-badge{background-color: #009688!important;height: 30px;line-height: 30px;}
 
 /* 专栏 */
 .fly-column{height: auto; line-height: 50px;}
@@ -520,6 +521,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
   /*拓展*/
   .fly-user-main>.layui-nav{position: absolute; left: 0; z-index: 1000; height: 102%; padding: 10px 0;}
   .cxt_nav_wp{
+    margin-top: 2px;
     width: 100%;
     height: 36px;
     position: relative;
@@ -528,16 +530,20 @@ body .fly-user-main{position: relative; min-height: 600px;}
     border-bottom: 1px solid #E9E9E9;
     background-color: #fff;
   }
+  .cxt_nav .layui-badge{
+    border: 1px solid #5FB878;
+    background: none;}
   .cxt_nav{
+    margin-top: 2px;
     width: 100%;
-    height: 36px;
+    height: 32px;
     white-space: nowrap;
     clear: both;
     display: block!important;
   }
 
   .cxt_nav .layui-this a{color: #5FB878;}
-  .cxt_nav li{height: 36px;line-height: 36px;width: 25%;text-align: center;display: inline-block;}
+  .cxt_nav li{height: 30px;line-height: 32px;width: 25%;text-align: center;display: inline-block;}
 	.fly-main{width: 100%;}
 
   /* 顶边距 */
@@ -616,4 +622,28 @@ body .fly-user-main{position: relative; min-height: 600px;}
 }
 .jieda-body img{
   width: 250px;
+}
+.fly-detail-info .cate{
+  height: 20px;
+  line-height: 20px;
+  position: relative;
+  display: inline-block;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: center;
+  border: 1px solid #5FB878;
+  background:none;
+  color: #5FB878;
+}
+.fly-detail-info .kind{
+  height: 20px;
+  line-height: 20px;
+  position: relative;
+  display: inline-block;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: center;
+  border: 1px solid #009688;
+  background:none;
+  color: #009688;
 }

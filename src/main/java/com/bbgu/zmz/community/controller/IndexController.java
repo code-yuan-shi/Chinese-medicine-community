@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -24,21 +25,20 @@ public class IndexController {
     private ListService listService;
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model, HttpServletRequest request){
 
        List<TopicInfoDTO> topicInfoDTOList = topicService.topicTop(1,10);  //置顶帖子
         List<TopicInfoDTO> topicInfoDTOList2 = topicService.topicTop(0,20);  //综合帖子
         List<TopicinfoExt> topicinfoExtList = listService.weekTopic();  //本周热议
         List<Category> categoryList = topicService.findCate();  //查询一级分类
         List<Kind> kindList = topicService.findKind();  //查询二级分类
-        List<Topicinfo> topicinfoList = topicService.findTopicStatus();
-        model.addAttribute("kinds",kindList);
-        model.addAttribute("categorys",categoryList);
+        List<Topicinfo> topicinfoList = topicService.findTopicStatus(); //未审核
+        request.getServletContext().setAttribute("kinds",kindList);            //二级分类
+        request.getServletContext().setAttribute("categorys",categoryList);    //一级分类
         model.addAttribute("topictops",topicInfoDTOList);
         model.addAttribute("topicalls",topicInfoDTOList2);
-        model.addAttribute("weektopics",topicinfoExtList);
-        model.addAttribute("notcheck",topicinfoList);
-
+        request.getServletContext().setAttribute("weektopics",topicinfoExtList);  //本周热议
+        request.getServletContext().setAttribute("notcheck",topicinfoList);  //未审核
         return "index";
     }
     @GetMapping("/search")

@@ -54,17 +54,11 @@ public class JieController {
         TopicInfoDTO topicInfoDTO = topicService.showDetail(id); //帖子详情
         List<ReplyDTO> replyDTOList = topicService.findComment(id,page,size,user);//查询用户评论
         ReplyDTO replyDTO = topicService.findAcceptComment(id,user);   //查询是否存在采纳
-        List<TopicinfoExt> topicinfoExtList = listService.weekTopic();  //本周热议
-        List<Category> categoryList = topicService.findCate();
-        List<Kind> kindList = topicService.findKind();
-        model.addAttribute("kinds",kindList);
-        model.addAttribute("categorys",categoryList);
         model.addAttribute("pageid",page);
         model.addAttribute("size",size);
         model.addAttribute("detail",topicInfoDTO);
         model.addAttribute("reply",replyDTOList);
         model.addAttribute("commenta",replyDTO);
-        model.addAttribute("weektopics",topicinfoExtList);
         return "jie/detail";
     }
 

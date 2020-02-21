@@ -12,14 +12,9 @@
 </head>
 <body>
 <div th:insert="~{common/header::head}"></div>
-<div class="cxt_nav_wp">
-  <ul class="cxt_nav layui-clear">
-    <li><a th:href="@{'/category/cate/0'}">All</a></li>
-    <li th:each="cate:${categorys}"><a th:href="@{'/category/cate/'+${cate.id}}">[[${cate.catename}]]</a></li>
-  </ul>
-</div>
-<div th:insert="~{common/category::cate(cates = ${categorys},column = 0)}"></div>
-<div th:insert="~{common/column::col(kinds=${kinds},column = 0,fenlei = 0)}"></div>
+<div th:replace="~{common/mcategory::mcate(column = 0)}"></div>
+<div th:insert="~{common/category::cate(cates =  ${#request.getServletContext().getAttribute('categorys')},column = 0)}"></div>
+<div th:insert="~{common/column::col(kinds= ${#request.getServletContext().getAttribute('kinds')},column = 0,fenlei = 0)}"></div>
   <input type="hidden" th:href="${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + '/'} "
          id="contextPath"/>
 <div class="layui-container">
@@ -28,8 +23,9 @@
       <div class="fly-panel detail-box">
         <h1 th:text="${detail.topicinfo.title}"></h1>
         <div class="fly-detail-info">
+          <span class="cate fly-detail-column" th:text="${detail.category.catename}"></span>
+          <span class="kind fly-detail-column" th:text="${detail.kind.kindname}"></span>
           <span class="layui-badge" th:if="${detail.topicinfo.status == 0}">审核中</span>
-          <span id = 'tiwen' class="layui-badge layui-bg-green fly-detail-column" th:text="${detail.category.catename}"></span>
           <span id="weijie" class="layui-badge" style="background-color: #999;" th:if="${detail.topicinfo?.isEnd == 0}">未结</span>
          <span class="layui-badge" style="background-color: #5FB878;" th:if="${detail.topicinfo?.isEnd == 1}">已结</span>
           
@@ -207,36 +203,7 @@
         </div>
       </div>
     </div>
-    <div class="layui-col-md4">
-      <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">本周热议</dt>
-        <dd th:each="weektopic:${weektopics}">
-          <a th:href="@{'/jie/detail/'+${weektopic.id}}" th:text="${weektopic.title}"></a>
-          <span><i class="iconfont icon-pinglun1"></i> <span th:text="${weektopic.commentNum}"></span></span>
-        </dd>
-
-
-        <!-- 无数据时 -->
-
-        <div class="fly-none" th:if="${weektopics?.size() == 0}">没有相关数据</div>
-
-      </dl>
-
-      <div class="fly-panel">
-        <div class="fly-panel-title">
-          广告区域
-        </div>
-        <div class="fly-panel-main">
-          <a href="http://www.jd.com" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">京东商城</a>
-        </div>
-      </div>
-
-      <div class="fly-panel" style="padding: 20px 0; text-align: center;">
-        <img src="/static/images/weixin.jpg" style="max-width: 100%;" alt="听风">
-        <p style="position: relative; color: #666;">微信扫码关注作者</p>
-      </div>
-
-    </div>
+    <div th:replace="~{common/right::rightcol(notcheck = ${#request.getServletContext().getAttribute('notcheck')},weektopics=${#request.getServletContext().getAttribute('weektopics')})}"></div>
   </div>
 </div>
 

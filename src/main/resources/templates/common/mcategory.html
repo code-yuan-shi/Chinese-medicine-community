@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="cxt_nav_wp" th:fragment="mcate(column)">
+    <ul class="cxt_nav layui-clear">
+        <li th:classappend="${column == 0}?'layui-this':''"><a th:href="@{'/category/cate/0'}">All</a></li>
+        <li th:classappend="${column == cate.id}?'layui-this':''" th:each="cate:${#request.getServletContext().getAttribute('categorys')}"><a th:href="@{'/category/cate/'+${cate.id}}">[[${cate.catename}]]</a></li>
+    </ul>
+</div>
+</html>

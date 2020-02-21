@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -31,16 +32,11 @@ public class CategoryController {
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
                                @RequestParam(value = "size",defaultValue = "10") Integer size,
-                               Model model){
+                               Model model
+                               ){
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,"all"));  //查询一级分类
         Long count = topicService.findCateCount(id,"not");
-        List<Category> categoryList = topicService.findCate();
-        List<Kind> kindList = topicService.findKind();
-        List<TopicinfoExt> topicinfoHotList = listService.weekTopic();  //本周热议
-        model.addAttribute("weektopics",topicinfoHotList);
-        model.addAttribute("kinds",kindList);
-        model.addAttribute("categorys",categoryList);
         model.addAttribute("topics",topicinfoExtList);
         model.addAttribute("column",id);
         model.addAttribute("page",page);
@@ -57,12 +53,6 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,status));  //查询一级分类
         Long count = topicService.findCateCount(id,status);
-        List<Category> categoryList = topicService.findCate();
-        List<Kind> kindList = topicService.findKind();
-        List<TopicinfoExt> topicinfoHotList = listService.weekTopic();  //本周热议
-        model.addAttribute("weektopics",topicinfoHotList);
-        model.addAttribute("kinds",kindList);
-        model.addAttribute("categorys",categoryList);
         model.addAttribute("topics",topicinfoExtList);
         model.addAttribute("column",id);
         model.addAttribute("page",page);
@@ -80,12 +70,6 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,"all"));  //查询二级分类
         Long count = topicService.findKindCount(cid,kid,"not");
-        List<Category> categoryList = topicService.findCate();
-        List<Kind> kindList = topicService.findKind();
-        List<TopicinfoExt> topicinfoHotList = listService.weekTopic();  //本周热议
-        model.addAttribute("weektopics",topicinfoHotList);
-        model.addAttribute("kinds",kindList);
-        model.addAttribute("categorys",categoryList);
         model.addAttribute("topics",topicinfoExtList);
         model.addAttribute("column",cid);
         model.addAttribute("fenlei",kid);
@@ -104,12 +88,6 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,status));  //查询二级分类
         Long count = topicService.findKindCount(cid,kid,status);
-        List<Category> categoryList = topicService.findCate();
-        List<Kind> kindList = topicService.findKind();
-        List<TopicinfoExt> topicinfoHotList = listService.weekTopic();  //本周热议
-        model.addAttribute("weektopics",topicinfoHotList);
-        model.addAttribute("kinds",kindList);
-        model.addAttribute("categorys",categoryList);
         model.addAttribute("topics",topicinfoExtList);
         model.addAttribute("column",cid);
         model.addAttribute("fenlei",kid);
