@@ -60,8 +60,10 @@ public class WebConfig implements WebMvcConfigurer {
                 String osName = props.getProperty("os.name"); //操作系统名称
                 if(osName.indexOf("Win") != -1){
                     registry.addResourceHandler("/upload/**").addResourceLocations("file:D://upload/");
+                    registry.addResourceHandler("/ad/**").addResourceLocations("file:D://ad/");
                 }else{
                     registry.addResourceHandler("/upload/**").addResourceLocations("file:/data/wwwroot/default/upload/");
+                    registry.addResourceHandler("/ad/**").addResourceLocations("file:/data/wwwroot/default/ad/");
                 }
 
           }

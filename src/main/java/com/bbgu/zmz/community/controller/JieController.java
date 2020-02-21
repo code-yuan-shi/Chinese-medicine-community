@@ -112,7 +112,6 @@ public class JieController {
             topicinfo.setUserId(user.getAccountId());
             topicinfo.setTopicCreate(System.currentTimeMillis());
             topicinfo.setTopicModified(topicinfo.getTopicCreate());
-
             if(topicinfo.getExperience() > user.getKissNum()){
  /*               regRespObj.setStatus(1);
                 regRespObj.setMsg("飞吻不够");*/

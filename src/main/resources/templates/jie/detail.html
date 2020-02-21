@@ -57,7 +57,7 @@
             <span th:text="${detail.time}"></span>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" th:attr="data-id=${detail.topicinfo.id}">
-            <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.topicinfo.experience}"></span>飞吻</span>
+            <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.topicinfo.experience}"></span>经验</span>
            <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || detail.user?.accountId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.topicinfo.id}}">编辑此贴</a></span>
           </div>
         </div>

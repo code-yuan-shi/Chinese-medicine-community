@@ -180,8 +180,8 @@ pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid 
 .fly-panel{margin-bottom: 15px; border-radius: 2px; background-color: #fff;  box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);}
 .fly-panel[pad20]{padding: 20px;}
 .fly-panel-title{position: relative; height: 50px; line-height: 50px; padding: 0 15px; border-bottom: 1px dotted #E9E9E9; color: #333; border-radius: 2px 2px 0 0; font-size: 14px;}
-.fly-panel-main{padding: 10px 15px;width: 100%;}
-.fly-panel-main img{width:91.5%;}
+.fly-panel-main{padding: 10px 15px;}
+.fly-panel-main img{width:100%;}
 .fly-cate .layui-badge{background-color: #009688!important;height: 30px;line-height: 30px;}
 
 /* 专栏 */
@@ -300,7 +300,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .fly-rank dd a i{position:absolute; bottom: 0; left: 0; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal;}
 
 /* 静态列表 */
-.fly-list-static li{line-height: 26px; list-style-position: inside; list-style-type: disc; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+.fly-list-static li{line-height: 26px; list-style-position: inside; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
 .fly-list-static li a{color: #01AAED;}
 .fly-list-static li a:hover{opacity: 0.8;}
 

@@ -13,7 +13,7 @@ public enum MsgEnum {
     ALLOWLIMIT(1,"权限不足！"),
     HAVADONE(0,"已取消"),
     DETAIL_SUCCESS(0,"发表成功！"),
-    KISS_NOT_ENOUGHT(1,"飞吻不足！"),
+    KISS_NOT_ENOUGHT(1,"经验不足！"),
     CHANGE(0,"修改成功"),
     CODE_INCORRECT(1,"验证码错误！"),
     REPLY_SUCCESS(0,"回复成功"),
