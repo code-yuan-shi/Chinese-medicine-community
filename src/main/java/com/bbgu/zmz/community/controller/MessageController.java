@@ -29,11 +29,8 @@ public class MessageController {
     @ResponseBody
     public Result getMsgCount(HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
-        //RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Long num = messageService.getUnreadMsgCountByUserID(user.getAccountId());
-           /* regRespObj.setStatus(0);
-            regRespObj.setCount(num.intValue());*/
             Map map = new HashMap();
             map.put("count",num.intValue());
             return new Result().ok(MsgEnum.OK,map);
@@ -52,9 +49,6 @@ public class MessageController {
     public Result readMsg(HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
         messageService.updateUserMsgReadState(user.getAccountId());
-    /*    RegRespObj regRespObj = new RegRespObj();
-        regRespObj.setStatus(0);
-        return  regRespObj;*/
         return new Result().ok(MsgEnum.OK);
     }
         /*
@@ -64,7 +58,8 @@ public class MessageController {
     @ResponseBody
     public Result readMsg(Boolean all,Integer id ,HttpServletRequest request) {
         User user = (User)request.getSession().getAttribute("user");
-        return  messageService.delMessage(all,user.getAccountId(),id);
+         messageService.delMessage(all,user.getAccountId(),id);
+        return new Result().ok(MsgEnum.DELETE_SUCCESS);
     }
 
     /*
@@ -78,16 +73,11 @@ public class MessageController {
             return new Result().error(MsgEnum.ALLOWLIMIT);
         }
         int num = messageService.insMessage(user.getAccountId(),recvUserId,null,2,content,null);
-       // RegRespObj regRespObj = new RegRespObj();
         if(num > 0){
-            /*regRespObj.setStatus(0);
-            regRespObj.setMsg("发送成功！");*/
             Map map = new HashMap();
             map.put("action","");
             return new Result().ok(MsgEnum.MESSAGE_SUCCESS,map);
         }else{
-           /* regRespObj.setStatus(1);
-            regRespObj.setMsg("服务器冒烟了,请稍后再试！");*/
            return new Result().error(MsgEnum.MESSAGE_FAILE);
         }
     }

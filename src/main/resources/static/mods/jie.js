@@ -143,7 +143,7 @@ layui.define('fly', function(exports){
           var zans = othis.find('em').html()|0;
           othis[ok ? 'removeClass' : 'addClass']('zanok');
           othis.find('em').html(ok ? (--zans) : (++zans));
-          //layer.msg(res.msg,{shift:1,time:1*1000});
+          layer.msg(res.msg,{shift:1,time:1*1000});
         } else {
           layer.msg(res.msg);
         }
@@ -171,12 +171,11 @@ layui.define('fly', function(exports){
           id: li.data('id')
         }, function(res){
           if(res.status === 0){
-            $('.jieda-accept').remove();
+            $('.jieda-admin').remove();
             $('#weijie').remove();
             $('#tiwen').after('<span class="layui-badge" style="background-color: #5FB878;">已结</span>');
             li.addClass('jieda-daan');
             li.find('.detail-about').append('<i class="iconfont icon-caina" title="最佳答案"></i>');
-            location.reload();
           } else {
             layer.msg(res.msg);
           }
@@ -246,13 +245,10 @@ layui.define('fly', function(exports){
   });
 
 
-   // 评论分页
+   // 分页功能
     var count = $("#count").val(),
-        id = parseInt($("#topid").val()),
-        contextPath = $("#contextPath").val(),
         pageid = $("#pageid").val(),
         size =  $("#size").val();
-    console.log($("#topid").val());
     laypage.render({
       elem: 'test1'
       ,count: count
@@ -263,23 +259,17 @@ layui.define('fly', function(exports){
       ,jump:function (obj,first) {
          var page = obj.curr;
          if(!first){
-            location.href = contextPath + id +"?page=" + page;
+           if(window.location.href.indexOf("?page=") == -1){
+             location.href = window.location.href +"?page="+ page;
+           }else{
+             location.href = window.location.href.substring(0,window.location.href.lastIndexOf("=")+1) + page;
+           }
          }
       }
     });
-
-
-    //分类分页
-  var count = $("#count").val(),
-      contextPath = $("#contextPath").val(),
-      pageid = $("#pageid").val(),
-      size =  $("#size").val(),
-      column =  $("#column").val(),
-      fenlei =  $("#fenlei").val(),
-      status =  $("#status").val();
-
+    //搜索的分页
   laypage.render({
-    elem: 'catepage'
+    elem: 'searchpage'
     ,count: count
     ,curr:pageid
     ,limit:size
@@ -288,12 +278,14 @@ layui.define('fly', function(exports){
     ,jump:function (obj,first) {
       var page = obj.curr;
       if(!first){
-        location.href = "?page=" + page;
+        if(window.location.href.indexOf("&page=") == -1){
+          location.href = window.location.href +"&page="+ page;
+        }else{
+          location.href = window.location.href.substring(0,window.location.href.lastIndexOf("=")+1) + page;
+        }
       }
     }
   });
-
-
   //定位分页
   if(/\?page=/.test(location.href) && !location.hash){
     var replyTop = $('#flyReply').offset().top - 80;

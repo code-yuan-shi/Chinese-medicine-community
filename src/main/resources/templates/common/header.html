@@ -1,8 +1,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>CodeZone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta name="keywords" content=">CodeZone">
+    <meta name="description" content="CodeZone是编程学习的场所">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/global.css">
+</head>
 <div class="fly-header layui-bg-black" th:fragment="head">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/static/images/code.png" alt="Code社区">
+      <img src="/ad/code.png" alt="Code社区">
     </a>
     <ul class="layui-nav fly-nav-user">
         <div th:if="${session.user == null}">

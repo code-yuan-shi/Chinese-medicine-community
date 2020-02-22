@@ -31,9 +31,6 @@ public class SignControllder {
     @PostMapping("/status")
     @ResponseBody
     public Result signStatus(HttpServletRequest request) {
-        //RegRespObj regRespObj = new RegRespObj();
-       // Data data = new Data();
-       // regRespObj.setData(data);
         Map map = new HashMap();
         map.put("signed",false);
         map.put("experience",5);
@@ -53,18 +50,12 @@ public class SignControllder {
                 //获得签到是几号
                 int lasttime = calendarLastTime.get(Calendar.DATE);
                 if(date == lasttime){
- /*                   data.setSigned(true);
-                    data.setExperience(kissnum);
-                    data.setDays(qiandaoList.get(0).getTotal());*/
                     //取得签到获得的奖励数量
                     int kissnum = KissUtils.getKissNum(qiandaoList.get(0).getTotal().intValue());
                     map.put("signed",true);
                     map.put("experience",kissnum);
                     map.put("days",qiandaoList.get(0).getTotal());
                 }else if(date - lasttime == 1){
-                 /*   data.setSigned(false);
-                    data.setExperience(kissnum);
-                    data.setDays(qiandaoList.get(0).getTotal());*/
                     int kissnum = KissUtils.getKissNum(1+qiandaoList.get(0).getTotal().intValue());
                     map.put("signed",false);
                     map.put("experience",kissnum);
@@ -73,17 +64,11 @@ public class SignControllder {
                     map.put("signed",false);
                     map.put("experience",5);
                     map.put("days",0);
-/*                    data.setSigned(false);
-                    data.setExperience(5);
-                    data.setDays(0);*/
                 }
             }else {
                 map.put("signed",false);
                 map.put("experience",5);
                 map.put("days",0);
-   /*             data.setSigned(false);
-                data.setExperience(5);
-                data.setDays(0);*/
             }
         }
         return new Result().ok(MsgEnum.OK,map);
@@ -94,12 +79,6 @@ public class SignControllder {
     @PostMapping("/in")
     @ResponseBody
     public Result signIn(HttpServletRequest request){
-/*        RegRespObj regRespObj = new RegRespObj();
-        Data data = new Data();
-        regRespObj.setData(data);
-        data.setDays(1);
-        data.setExperience(5);
-        data.setSigned(true);*/
         Map map = new HashMap();
         map.put("signed",true);
         map.put("experience",5);
@@ -107,8 +86,6 @@ public class SignControllder {
         User  user =  (User)request.getSession().getAttribute("user");
         if(user == null)
         {
-            /*regRespObj.setStatus(1);
-            regRespObj.setMsg("请先登录");*/
             return new Result().error(MsgEnum.NOTLOGIN);
         }else if(user.getStatus() == 0){
             return new Result().error(MsgEnum.ALLOWLIMIT);

@@ -62,27 +62,18 @@ public class UserController {
             int code = (int)((Math.random()*9+1)*100000);
             Result result =MailUtil.sendActiveMail(email,"code",code);
             if(result.getStatus()==1){
-/*                regRespObj.setStatus(1);
-                regRespObj.setCode(code);
-                regRespObj.setMsg("网络错误！");*/
                 Map map = new HashMap<>();
                 map.put("code",code);
                 return new Result().error(MsgEnum.INTERNEET_ERROR,map);
             }else{
-          /*      regRespObj.setStatus(0);
-                regRespObj.setCode(code);
-                regRespObj.setMsg("验证码已发送！");*/
                 Map map = new HashMap<>();
                 map.put("code",code);
                 return new Result().ok(MsgEnum.CODE_SUCCESS,map);
             }
 
         }else {
-          /*  regRespObj.setStatus(1);
-            regRespObj.setMsg("账号或者验证邮箱错误！");*/
             return new Result().error(MsgEnum.USER_EMAIL_ERROR);
         }
-      // return regRespObj;
     }
 
     /*
@@ -91,21 +82,14 @@ public class UserController {
     @PostMapping("/repass")
     @ResponseBody
     public Result repass(Long accountId,String check,String code,String pwd) {
-        //RegRespObj regRespObj = new RegRespObj();
        if(check.equals(code)){
             userService.resetUserPwd(accountId,pwd);
-           /* regRespObj.setStatus(0);
-            regRespObj.setMsg("密码已重置,请使用新密码登录！");
-            regRespObj.setAction("/user/login");*/
            Map map = new HashMap();
            map.put("action","/user/login");
            return new Result().ok(MsgEnum.REPASS_SUCCESS,map);
        }else{
-           /*regRespObj.setStatus(1);
-           regRespObj.setMsg("您输入的验证码错误！");*/
            return new Result().error(MsgEnum.CODE_INCORRECT);
        }
-      // return regRespObj;
     }
 
     /*
@@ -119,16 +103,8 @@ public class UserController {
             Long accountid = Long.parseLong(accountId);
             return userService.checkUser(accountid);
         } else if (accountId == "") {
-/*            RegRespObj regRespObj = new RegRespObj();
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("账号不能为空！！！");
-            return regRespObj;*/
             return new Result().error(MsgEnum.ACCOUNTID_NOT_ALLOW_EMPTY);
         } else {
-            /*RegRespObj regRespObj = new RegRespObj();
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("账号不能少于6位数");
-            return regRespObj;*/
             return new Result().error(MsgEnum.ACCOUNTID_NUM_LIMIT);
         }
     }
@@ -142,16 +118,8 @@ public class UserController {
         if (is) {
             return   userService.checkEmail(email);
         } else if (email == "") {
-/*            RegRespObj regRespObj = new RegRespObj();
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("请先输入邮箱！");
-            return regRespObj;*/
         return new Result().error(MsgEnum.EMAIL_NOT_ALLOW_EMPTY);
         } else {
-           /* RegRespObj regRespObj = new RegRespObj();
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("邮箱格式不正确！");
-            return regRespObj;*/
            return new Result().error(MsgEnum.EMAIL_INCORRECT);
         }
     }
@@ -163,33 +131,22 @@ public class UserController {
     @ResponseBody
     public Result doReg(UserExt userext, String check, HttpServletRequest request) throws Exception {
         String saveCheck = (String) request.getSession().getAttribute("check");
-        //RegRespObj regRespObj = new RegRespObj();
         if (check.equals(saveCheck)) {
             if (userext.getPwd().equals(userext.getRepass())) {
                 int code = userService.doReg(userext);
                 if (code == 0) {
-/*                    regRespObj.setStatus(0);
-                    regRespObj.setAction("/");
-                    regRespObj.setMsg("注册成功，激活邮件已经发送至您的邮箱！");*/
                     Map map = new HashMap();
                     map.put("action","/");
                     return new Result().ok(MsgEnum.REG_SUCCESS,map);
                 } else{
-                    /*regRespObj.setStatus(1);
-                    regRespObj.setMsg("邮箱不合法，请更换！");*/
                     return new Result().error(MsgEnum.SEND_EMAIL_FAILE);
                 }
             } else {
- /*               regRespObj.setStatus(1);
-                regRespObj.setMsg("两次输入的密码不一致！");*/
                 return new Result().error(MsgEnum.PWD_ATYPISM);
             }
         } else {
-            /*regRespObj.setStatus(1);
-            regRespObj.setMsg("验证码错误！");*/
             return new Result().error(MsgEnum.CODE_INCORRECT);
         }
-       // return regRespObj;
     }
 
     /*
@@ -199,22 +156,15 @@ public class UserController {
     @PostMapping("resend")
     @ResponseBody
     public Result resendEmail(HttpServletRequest request){
-        //RegRespObj regRespObj = new RegRespObj();
         User user = (User)request.getSession().getAttribute("user");
        int code =  userService.resend(user);
         if (code == 0) {
-/*            regRespObj.setStatus(0);
-            regRespObj.setAction("/");
-            regRespObj.setMsg("已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收！");*/
             Map map = new HashMap();
             map.put("action","/");
             return new Result().ok(MsgEnum.EMAIL_RESEND,map);
         } else{
-           /* regRespObj.setStatus(1);
-            regRespObj.setMsg("邮箱不合法，请更换！");*/
            return new Result().error(MsgEnum.SEND_EMAIL_FAILE);
         }
-       // return regRespObj;
     }
     /*
     激活用户
@@ -242,18 +192,13 @@ public class UserController {
     @PostMapping("dologin")
     public @ResponseBody Result dologin(User user,String url,String check,HttpServletRequest request,HttpServletResponse response){
         String savecheck = (String)request.getSession().getAttribute("check");
-        //RegRespObj regRespObj = new RegRespObj();
         Map map = new HashMap();
        User user1 =  userService.loginCheck(user);
        if(check.equals(savecheck)){
            if(user1 != null && user1.getStatus().equals(1)){
-               /*regRespObj.setStatus(0);
-               regRespObj.setMsg("登录成功！");*/
                if(url.equals("")){
-                   //regRespObj.setAction("/");
                    map.put("action","/");
                }else{
-                   //regRespObj.setAction(url);
                    map.put("action",url);
                }
                request.getSession().setAttribute("user",user1);
@@ -263,9 +208,6 @@ public class UserController {
                response.addCookie(cookie);
                return new Result().ok(MsgEnum.LOGIN_SUCCESS,map);
            }else if(user1 != null && user1.getStatus().equals(0)){
-              /* regRespObj.setStatus(0);
-               regRespObj.setMsg("登录成功！");
-               regRespObj.setAction("/user/activate");*/
                map.put("action","/user/activate");
                request.getSession().setAttribute("user",user1);
                Cookie cookie = new Cookie("token",user1.getToken());
@@ -274,16 +216,11 @@ public class UserController {
                response.addCookie(cookie);
                return new Result().ok(MsgEnum.LOGIN_SUCCESS,map);
            }else{
-               /*regRespObj.setStatus(1);
-               regRespObj.setMsg("用户名或者密码错误！");*/
                return new Result().error(MsgEnum.USER_PWD_INCORRECT);
            }
        }else {
-           /*regRespObj.setStatus(1);
-           regRespObj.setMsg("验证码错误！");*/
            return new Result().error(MsgEnum.CODE_INCORRECT);
        }
-       //return regRespObj;
     }
     /*
     用户中心

@@ -55,7 +55,7 @@
   
   <div class="fly-panel fly-panel-user" pad20>
 	  <div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
-	    <button class="layui-btn layui-btn-danger" id="LAY_delallmsg" th:if="${messageList.size() > 0}">清空全部消息</button>
+	    <button class="layui-btn  layui-btn-sm layui-btn-danger" id="LAY_delallmsg" th:if="${messageList.size() > 0}">清空全部消息</button>
 	    <div  id="LAY_minemsg" style="margin-top: 10px;">
         <div class="fly-none" th:if="${messageList.size() == 0}">您暂时没有最新消息</div>
         <ul class="mine-msg" th:if="${messageList.size()>0}">
@@ -80,10 +80,10 @@
               <a th:if="${msg.type == 2}"  target="_blank">
                 <cite  class="replyContent" th:text="${msg.content}"></cite>
               </a>
-              <button id="reMsg" th:if="${msg.type == 2}" class="layui-btn" >回复</button>
+              <button id="reMsg" th:if="${msg.type == 2}" class="layui-btn layui-btn-normal  layui-btn-xs" >回复</button>
               <input type="hidden" id="userid" th:value="${msg.user.accountId}">
             </blockquote>
-            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+            <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn  layui-btn-xs layui-btn-small layui-btn-danger fly-delete">删除</a></p>
           </li>
         </ul>
       </div>

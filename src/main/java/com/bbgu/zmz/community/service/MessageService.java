@@ -7,6 +7,7 @@ import com.bbgu.zmz.community.mapper.MessageMapper;
 import com.bbgu.zmz.community.mapper.TopicinfoMapper;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.*;
+import com.bbgu.zmz.community.model.MessageExt;
 import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,20 +57,15 @@ public class MessageService {
     删除通知消息
      */
     public Result delMessage(Boolean all, Long userId, Integer id){
-        //RegRespObj regRespObj = new RegRespObj();
         if(all == null){
             messageMapper.deleteByPrimaryKey(id);
-            //regRespObj.setStatus(0);
             return new Result().ok(MsgEnum.OK);
         }else{
             MessageExample messageExample = new MessageExample();
             messageExample.createCriteria().andRecvUserIdEqualTo(userId);
             messageMapper.deleteByExample(messageExample);
-            //regRespObj.setStatus(0);
             return new Result().ok(MsgEnum.OK);
         }
-            //return regRespObj;
-
     }
 
     /*

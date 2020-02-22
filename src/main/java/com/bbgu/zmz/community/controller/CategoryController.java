@@ -1,12 +1,11 @@
 package com.bbgu.zmz.community.controller;
 
 
-import com.bbgu.zmz.community.model.Category;
-import com.bbgu.zmz.community.model.Kind;
 import com.bbgu.zmz.community.model.TopicinfoExt;
 import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.util.StringDate;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("category")
@@ -28,6 +28,7 @@ public class CategoryController {
     @Autowired
     private ListService listService;
 
+
     @GetMapping("cate/{column}")
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
@@ -37,11 +38,13 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,"all"));  //查询一级分类
         Long count = topicService.findCateCount(id,"not");
-        model.addAttribute("topics",topicinfoExtList);
-        model.addAttribute("column",id);
-        model.addAttribute("page",page);
-        model.addAttribute("size",size);
-        model.addAttribute("count",count);
+        Map map = new HashMap<>();
+        map.put("topics",topicinfoExtList);
+        map.put("column",id);
+        map.put("page",page);
+        map.put("size",size);
+        map.put("count",count);
+        model.addAttribute("topicMap",map);
         return "jie/index";
     }
     @GetMapping("cates/{column}/{status}")
@@ -53,12 +56,14 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,status));  //查询一级分类
         Long count = topicService.findCateCount(id,status);
-        model.addAttribute("topics",topicinfoExtList);
-        model.addAttribute("column",id);
-        model.addAttribute("page",page);
-        model.addAttribute("size",size);
-        model.addAttribute("count",count);
-        model.addAttribute("status",status);
+        Map map = new HashMap<>();
+        map.put("topics",topicinfoExtList);
+        map.put("column",id);
+        map.put("page",page);
+        map.put("size",size);
+        map.put("count",count);
+        map.put("status",status);
+        model.addAttribute("topicMap",map);
         return "jie/index";
     }
     @GetMapping("cate/{column}/{kind}")
@@ -70,12 +75,14 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,"all"));  //查询二级分类
         Long count = topicService.findKindCount(cid,kid,"not");
-        model.addAttribute("topics",topicinfoExtList);
-        model.addAttribute("column",cid);
-        model.addAttribute("fenlei",kid);
-        model.addAttribute("page",page);
-        model.addAttribute("size",size);
-        model.addAttribute("count",count);
+        Map map = new HashMap<>();
+        map.put("topics",topicinfoExtList);
+        map.put("column",cid);
+        map.put("page",page);
+        map.put("size",size);
+        map.put("count",count);
+        map.put("fenlei",kid);
+        model.addAttribute("topicMap",map);
         return "jie/index";
     }
     @GetMapping("cate/{column}/{kind}/{status}")
@@ -88,13 +95,15 @@ public class CategoryController {
         Integer offset = (page - 1) * size;
         List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,status));  //查询二级分类
         Long count = topicService.findKindCount(cid,kid,status);
-        model.addAttribute("topics",topicinfoExtList);
-        model.addAttribute("column",cid);
-        model.addAttribute("fenlei",kid);
-        model.addAttribute("page",page);
-        model.addAttribute("size",size);
-        model.addAttribute("count",count);
-        model.addAttribute("status",status);
+        Map map = new HashMap<>();
+        map.put("topics",topicinfoExtList);
+        map.put("column",cid);
+        map.put("page",page);
+        map.put("size",size);
+        map.put("count",count);
+        map.put("fenlei",kid);
+        map.put("status",status);
+        model.addAttribute("topicMap",map);
         return "jie/index";
     }
 

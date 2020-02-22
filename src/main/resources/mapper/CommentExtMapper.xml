@@ -17,5 +17,39 @@
         ORDER BY
         c.comment_create desc
   </select>
+    <select id="getCommentByTid" resultType="commentext">
+        SELECT
+            c.id,
+            c.user_id,
+            c.comment_create,
+            c.content,
+            c.agree_num,
+            c.is_accept,
+            c.topic_id,
+            u.`name`,
+            u.avatar_url,
+            u.role
+        FROM
+            `comment` c
+        LEFT JOIN `user` u ON u.account_id = c.user_id
+        WHERE
+            c.topic_id = #{tid}
+        LIMIT #{offset},#{size}
+    </select>
+
+    <update id="updateAgreeNumAdd" parameterType="long">
+        UPDATE `comment`
+        SET agree_num = agree_num + 1
+        WHERE
+            topic_id = #{tid}
+    </update>
+
+
+    <update id="updateAgreeNumSub" parameterType="long">
+        UPDATE `comment`
+        SET agree_num = agree_num - 1
+        WHERE
+            topic_id = #{tid}
+    </update>
 
 </mapper>

@@ -80,7 +80,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         if(response.getStatus()==500){
             modelAndView.setViewName("/other/404");
-        }else if(response.getStatus()==405){
+        }else if(response.getStatus()==404){
             modelAndView.setViewName("/other/404");
         }
     }

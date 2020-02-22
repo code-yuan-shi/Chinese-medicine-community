@@ -425,8 +425,8 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .fly-home-da .home-jieda{min-height: 500px; padding: 5px 20px;}
 
 /*.home-jieda li{margin-bottom:20px; padding-bottom:10px; line-height:24px; border-bottom: 1px dotted #DFDFDF;}*/
-.home-jieda li{ margin-bottom:20px; line-height:24px;}
-.home-dacontent{margin-top:10px; padding:10px 15px; background-color:#F2F2F5; border-radius:5px; word-wrap: break-word;;}
+.home-jieda li{ margin-bottom:20px;}
+.home-dacontent{margin-top:10px; padding:0px 15px 15px 15px; background-color:#F2F2F5; border-radius:5px; word-wrap: break-word;;}
 .home-dacontent pre{ background-color:#F2F2F5;}
 .home-dacontent img{max-width:100%;}
 .home-jieda li a{padding:0 5px; color:#4F99CF;}
@@ -618,11 +618,9 @@ body .fly-user-main{position: relative; min-height: 600px;}
   display: none;
 }
 .replyContent img{
-  width: 100px;
+  width: 20px;
 }
-.jieda-body img{
-  width: 250px;
-}
+
 .fly-detail-info .cate{
   height: 20px;
   line-height: 20px;

@@ -2,7 +2,7 @@ create table comment
 (
 	id bigint auto_increment,
 	topic_id bigint not null,
-	content varchar(1024),
+    content varchar(2000),
 	type int not null,
 	user_id bigint not null,
 	comment_create bigint not null,

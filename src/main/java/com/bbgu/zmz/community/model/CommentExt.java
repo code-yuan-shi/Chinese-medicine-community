@@ -15,6 +15,9 @@ public class CommentExt {
     private Integer isAccept;
     private String title;
     private String time;
-
-
+    private Boolean zan;
+    private String avatarUrl;
+    private String name;
+    private String role;
+    private Integer count;
 }

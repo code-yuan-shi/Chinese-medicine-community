@@ -1,5 +1,7 @@
 package com.bbgu.zmz.community.service;
 
+import com.bbgu.zmz.community.mapper.TopicinfoExtMapper;
+import com.bbgu.zmz.community.mapper.UserExtMapper;
 import com.bbgu.zmz.community.model.WeekList;
 import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.TopicinfoExt;
@@ -10,15 +12,6 @@ import java.util.List;
 
 @Service
 public class ListService {
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private CommentMapper commentMapper;
-
-    @Autowired
-    private TopicinfoMapper topicinfoMapper;
 
     @Autowired
     private UserExtMapper userExtMapper;

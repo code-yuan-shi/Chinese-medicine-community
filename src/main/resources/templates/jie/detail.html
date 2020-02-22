@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
-  <title th:text="${detail.topicinfo.title}"></title>
+  <title th:text="${detail.title}"></title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="keywords" content=">Code社区">
   <meta name="description" content="Code社区是编程学习交流的场所">
@@ -21,55 +21,55 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8 content detail">
       <div class="fly-panel detail-box">
-        <h1 th:text="${detail.topicinfo.title}"></h1>
+        <h1 th:text="${detail.title}"></h1>
         <div class="fly-detail-info">
-          <span class="cate fly-detail-column" th:text="${detail.category.catename}"></span>
-          <span class="kind fly-detail-column" th:text="${detail.kind.kindname}"></span>
-          <span class="layui-badge" th:if="${detail.topicinfo.status == 0}">审核中</span>
-          <span id="weijie" class="layui-badge" style="background-color: #999;" th:if="${detail.topicinfo?.isEnd == 0}">未结</span>
-         <span class="layui-badge" style="background-color: #5FB878;" th:if="${detail.topicinfo?.isEnd == 1}">已结</span>
+          <span class="cate fly-detail-column" th:text="${detail.catename}"></span>
+          <span class="kind fly-detail-column" th:text="${detail.kindname}"></span>
+          <span class="layui-badge" th:if="${detail.status == 0}">审核中</span>
+          <span id="weijie" class="layui-badge" style="background-color: #999;" th:if="${detail.isEnd == 0}">未结</span>
+         <span class="layui-badge" style="background-color: #5FB878;" th:if="${detail.isEnd == 1}">已结</span>
           
-          <span class="layui-badge layui-bg-black" th:if="${detail.topicinfo?.isTop == 1}">置顶</span>
-          <span class="layui-badge layui-bg-red" th:if="${detail.topicinfo?.isGood == 1}">精帖</span>
-          <div class="fly-admin-box" th:attr="data-id=${detail.topicinfo.id}" th:if="${session.user?.role =='社区管理员'}">
-            <span class="layui-btn layui-btn-xs jie-admin" type="agr" th:if="${detail.topicinfo?.status == 0}">审核</span>
+          <span class="layui-badge layui-bg-black" th:if="${detail.isTop == 1}">置顶</span>
+          <span class="layui-badge layui-bg-red" th:if="${detail.isGood == 1}">精帖</span>
+          <div class="fly-admin-box" th:attr="data-id=${detail.id}" th:if="${session.user?.role =='社区管理员'}">
+            <span class="layui-btn layui-btn-xs jie-admin" type="agr" th:if="${detail.status == 0}">审核</span>
             <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1" th:if="${detail.topicinfo?.isTop == 0}">置顶</span>
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;" th:if="${detail.topicinfo?.isTop == 1}">取消置顶</span>
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1" th:if="${detail.topicinfo?.isGood == 0}">加精</span>
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;" th:if="${detail.topicinfo?.isGood == 1}">取消加精</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1" th:if="${detail.isTop == 0}">置顶</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;" th:if="${detail.isTop == 1}">取消置顶</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1" th:if="${detail.isGood == 0}">加精</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;" th:if="${detail.isGood == 1}">取消加精</span>
           </div>
           <span class="fly-list-nums"> 
-            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> <span th:text="${detail.comment_count}"></span></a>
-            <i class="iconfont" title="人气">&#xe60b;</i> <span th:text="${detail.topicinfo.viewCount}"></span>
+            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> <span th:text="${detail.commentNum}"></span></a>
+            <i class="iconfont" title="人气">&#xe60b;</i> <span th:text="${detail.viewCount}"></span>
           </span>
         </div>
         <div class="detail-about">
-          <a class="fly-avatar" th:href="@{'/user/home/'+${detail.user.accountId}}">
-            <img th:src="${detail.user.avatarUrl}" th:alt="${detail.user.name}">
+          <a class="fly-avatar" th:href="@{'/user/home/'+${detail.userId}}">
+            <img th:src="${detail.avatarUrl}" th:alt="${detail.name}">
           </a>
           <div class="fly-detail-user">
-            <a th:href="@{'/user/home/'+${detail.user.accountId}}" class="fly-link">
-              <cite th:text="${detail.user.name}"></cite>
-              <i class="iconfont icon-renzheng" th:title="${detail.user?.role}"></i>
+            <a th:href="@{'/user/home/'+${detail.userId}}" class="fly-link">
+              <cite th:text="${detail.name}"></cite>
+              <i class="iconfont icon-renzheng" th:title="${detail.role}"></i>
               <!--<i class="layui-badge fly-badge-vip">VIP3</i>-->
             </a>
             <span th:text="${detail.time}"></span>
           </div>
-          <div class="detail-hits" id="LAY_jieAdmin" th:attr="data-id=${detail.topicinfo.id}">
-            <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.topicinfo.experience}"></span>经验</span>
-           <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || detail.user?.accountId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.topicinfo.id}}">编辑此贴</a></span>
+          <div class="detail-hits" id="LAY_jieAdmin" th:attr="data-id=${detail.id}">
+            <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.experience}"></span>经验</span>
+           <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='社区管理员' || detail.userId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.id}}">编辑此贴</a></span>
           </div>
         </div>
 
         <!--内容存放-->
-      <div class="detail-body photos" th:if="${detail.topicinfo.status == 1  || session.user?.role=='社区管理员' || detail.user?.accountId == session.user?.accountId}">
-        [[${detail.topicinfo.content}]]
+      <div class="detail-body photos" th:if="${detail.status == 1  || session.user?.role=='社区管理员' || detail.userId == session.user?.accountId}">
+        [[${detail.content}]]
       </div>
 
 
-        <div th:if="${detail.user?.accountId != session.user?.accountId}">
-          <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.topicinfo?.status == 0 &&  session.user?.role !='社区管理员'}">内容正在审核中！</div>
+        <div th:if="${detail.userId != session.user?.accountId}">
+          <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.status == 0 &&  session.user?.role !='社区管理员'}">内容正在审核中！</div>
         </div>
         <div style="color: #999;">注：内容均由发帖者自由发出，不代表本网站立场。如有侵权，请联系管理员删除。</div>
       </div>
@@ -81,39 +81,39 @@
 
         <ul class="jieda" id="jieda">
           <!--已采纳-->
-          <li th:attr="data-id=${commenta.comment.id},data-userId = ${commenta.comment.userId}" th:if="${commenta?.comment?.isAccept == 1}">
-            <a th:name="${commenta.comment.id}"></a>
+          <li th:attr="data-id=${reply.id},data-userId = ${reply.userId}" th:if="${reply.isAccept == 1}" th:each="reply:${reply}">
+            <a th:name="${reply.id}"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" th:href="@{'/user/home/'+${commenta.user.accountId}}">
-                <img th:src="${commenta.user?.avatarUrl}" th:alt="${commenta.user?.name}">
+              <a class="fly-avatar" th:href="@{'/user/home/'+${reply.userId}}">
+                <img th:src="${reply.avatarUrl}" th:alt="${reply.name}">
               </a>
               <div class="fly-detail-user">
-                <a th:href="@{'/user/home/'+${commenta.user.accountId}}" class="fly-link">
-                  <cite th:text="${commenta.user?.name}"></cite>
-                  <i class="iconfont icon-renzheng" th:title="${commenta.user?.role}"></i>
+                <a th:href="@{'/user/home/'+${reply.userId}}" class="fly-link">
+                  <cite th:text="${reply.name}"></cite>
+                  <i class="iconfont icon-renzheng" th:title="${reply.role}"></i>
                   <!-- <i class="layui-badge fly-badge-vip">VIP3</i>         -->
                 </a>
 
-                <span th:if="${commenta.user?.accountId == detail.user?.accountId}">(楼主)</span>
-                <span style="color:#5FB878" th:if="${commenta.user?.role=='社区管理员'}">(管理员)</span>
+                <span th:if="${reply.userId == detail.userId}">(楼主)</span>
+                <span style="color:#5FB878" th:if="${reply.role=='社区管理员'}">(管理员)</span>
                 <!--  <span style="color:#FF9E3F">（社区之光）</span>-->
-                <span style="color:#999" th:if="${commenta.user?.role=='违规用户'}">（该号已被封）</span>
+                <span style="color:#999" th:if="${reply.role=='违规用户'}">（该号已被封）</span>
 
               </div>
 
               <div class="detail-hits">
-                <span th:text="${#dates.format(commenta.comment.commentCreate,'yyyy-MM-dd HH:mm:ss')}"></span>
+                <span th:text="${#dates.format(reply.commentCreate,'yyyy-MM-dd HH:mm:ss')}"></span>
               </div>
 
-              <i class="iconfont icon-caina" title="最佳答案" th:if="${commenta.comment?.isAccept == 1}"></i>
+              <i class="iconfont icon-caina" title="最佳答案" th:if="${reply.isAccept == 1}"></i>
             </div>
-            <div class="detail-body jieda-body photos" th:text="${commenta.comment.content}"></div>
+            <div class="detail-body jieda-body photos" th:text="${reply.content}"></div>
 
 
             <div class="jieda-reply" th:if="${session.user != null}">
-              <span th:classappend="${commenta.zan == true} ? 'zanok':''" class="jieda-zan" type="zan">
+              <span th:classappend="${reply.zan == true} ? 'zanok':''" class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
-                <em th:text="${commenta.comment.agreeNum}"></em>
+                <em th:text="${reply.agreeNum}"></em>
               </span>
               <span type="reply">
                 <i class="iconfont icon-svgmoban53"></i>
@@ -123,53 +123,53 @@
           </li>
 
           <!--未采纳-->
-          <li th:attr="data-id=${comment.comment.id},data-userId = ${comment.comment.userId}" th:if="${comment.comment.isAccept != 1}" class="jieda-daan" th:each="comment:${reply}">
-            <a th:name="${comment.comment.id}"></a>
+          <li th:attr="data-id=${reply.id},data-userId = ${reply.userId}" th:if="${reply.isAccept != 1}" class="jieda-daan" th:each="reply:${reply}">
+            <a th:name="${reply.id}"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" th:href="@{'/user/home/'+${comment.user.accountId}}">
-                <img th:src="${comment.user?.avatarUrl}" th:alt="${comment.user?.name}">
+              <a class="fly-avatar" th:href="@{'/user/home/'+${reply.userId}}">
+                <img th:src="${reply.avatarUrl}" th:alt="${reply.name}">
               </a>
               <div class="fly-detail-user">
-                <a th:href="@{'/user/home/'+${comment.user.accountId}}" class="fly-link">
-                  <cite th:text="${comment.user?.name}"></cite>
-                  <i class="iconfont icon-renzheng" th:title="${comment.user?.role}"></i>
+                <a th:href="@{'/user/home/'+${reply.userId}}" class="fly-link">
+                  <cite th:text="${reply.name}"></cite>
+                  <i class="iconfont icon-renzheng" th:title="${reply.role}"></i>
                  <!-- <i class="layui-badge fly-badge-vip">VIP3</i>         -->
                 </a>
                 
-                <span th:if="${comment.user?.accountId == detail.user?.accountId}">(楼主)</span>
-                <span style="color:#5FB878" th:if="${comment.user?.role=='社区管理员'}">(管理员)</span>
+                <span th:if="${reply.userId == detail.userId}">(楼主)</span>
+                <span style="color:#5FB878" th:if="${reply.role=='社区管理员'}">(管理员)</span>
               <!--  <span style="color:#FF9E3F">（社区之光）</span>-->
-                <span style="color:#999" th:if="${comment.user?.role=='违规用户'}">（该号已被封）</span>
+                <span style="color:#999" th:if="${reply.role=='违规用户'}">（该号已被封）</span>
 
               </div>
 
               <div class="detail-hits">
-                <span th:text="${comment.time}"></span>
+                <span th:text="${reply.time}"></span>
               </div>
 
-              <i class="iconfont icon-caina" title="最佳答案" th:if="${comment.comment?.isAccept == 1}"></i>
+              <i class="iconfont icon-caina" title="最佳答案" th:if="${reply.isAccept == 1}"></i>
             </div>
-            <div class="detail-body jieda-body photos" th:text="${comment.comment.content}"></div>
-            <input type="hidden" id="count" th:value="${comment?.count}" />
+            <div class="detail-body jieda-body photos" th:text="${reply.content}"></div>
+            <input type="hidden" id="count" th:value="${detail.commentNum}" />
             <div class="jieda-reply" th:if="${session.user != null}">
-              <span th:classappend="${comment.zan == true} ? 'zanok':''" class="jieda-zan" type="zan">
+              <span th:classappend="${reply.zan == true} ? 'zanok':''" class="jieda-zan" type="zan">
                 <i class="iconfont icon-zan"></i>
-                <em th:text="${comment.comment.agreeNum}"></em>
+                <em th:text="${reply.agreeNum}"></em>
               </span>
               <span type="reply">
                 <i class="iconfont icon-svgmoban53"></i>
                 回复
               </span>
               <div class="jieda-admin">
-                <span class="jieda-accept" type="accept" th:if="${detail.user?.accountId == session.user?.accountId && detail.topicinfo.isEnd == 0 || session.user?.role == '社区管理员' && detail.topicinfo.isEnd == 0}">采纳</span>
-                <span type="edit" th:if="${session.user?.role == '社区管理员' || comment.comment.userId == session.user?.accountId}">编辑</span>
-                <span type="del" th:if="${session.user?.role == '社区管理员' || comment.comment.userId == session.user?.accountId}">删除</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.userId == session.user?.accountId && detail.isEnd == 0 || session.user?.role == '社区管理员' && detail.isEnd == 0}">采纳</span>
+                <span type="edit" th:if="${session.user?.role == '社区管理员' || reply.userId == session.user?.accountId}">编辑</span>
+                <span type="del" th:if="${session.user?.role == '社区管理员' || reply.userId == session.user?.accountId}">删除</span>
               </div>
             </div>
           </li>
           <li class="fly-none" th:if="${reply.size() == 0}">消灭零回复</li>
         </ul>
-        <div id="test1" th:each="counts:${reply}" th:if="${counts.count > size}"></div>
+        <div id="test1" th:if="${detail.commentNum > size}"></div>
         <div class="layui-form layui-form-pane">
           <div class="reviewInfo" id="reviewInfo" style="display: none;">
             <div class="content">
@@ -183,18 +183,18 @@
             <div class="layui-form-item layui-form-text" th:if="${session.user != null}">
               <a name="comment"></a>
               <div class="layui-input-block">
-                <textarea id="cText" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;" maxlength="1024"></textarea>
+                <textarea id="cText" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;" maxlength="2000"></textarea>
               </div>
             </div>
             <div class="layui-form-item" th:if="${session.user != null}">
               <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
             </div>
-            <input id="topid" type="hidden" name="topicId" th:value="${detail.topicinfo.id}">
+            <input id="topid" type="hidden" name="topicId" th:value="${detail.id}">
             <input id="pageid" type="hidden" th:value="${pageid}">
             <input id="size" type="hidden" th:value="${size}">
             <input type="hidden" id="commentid" name="id">
             <input type="hidden" id="replyTo" name="replyto">
-            <input type="hidden" id="commentTo" name="recvUserId" th:value="${detail.user.accountId}">
+            <input type="hidden" id="commentTo" name="recvUserId" th:value="${detail.userId}">
             <input type="hidden" id="type" name="type" value="0">
           </form>
         </div>
@@ -240,7 +240,7 @@ layui.use('jquery',function () {
   $("#guanbi").click(function () {
     $(this).parent().parent().hide();
     $("#L_content").text("");
-    $("#commentTo").val("[[${detail.user.accountId}]]");
+    $("#commentTo").val("[[${detail.userId}]]");
     $("#type").val(0);
   })
   $("body").on("click","#details img,.photos img",function(e){

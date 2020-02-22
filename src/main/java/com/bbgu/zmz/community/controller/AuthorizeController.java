@@ -1,6 +1,5 @@
 package com.bbgu.zmz.community.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.bbgu.zmz.community.dto.AccessTokenDTO;
 import com.bbgu.zmz.community.dto.GithubUser;
 import com.bbgu.zmz.community.mapper.UserMapper;
@@ -8,24 +7,15 @@ import com.bbgu.zmz.community.model.User;
 import com.bbgu.zmz.community.model.UserExample;
 import com.bbgu.zmz.community.provider.GithubProvider;
 import com.bbgu.zmz.community.service.UserService;
-import com.bbgu.zmz.community.util.MD5Utils;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,6 +85,10 @@ public class AuthorizeController {
             return "redirect:"+url;
         }
     }
+
+    /*
+    退出登录
+     */
     @GetMapping("/logout")
     public String logout(HttpServletRequest request,HttpServletResponse response){
         request.getSession().removeAttribute("user");

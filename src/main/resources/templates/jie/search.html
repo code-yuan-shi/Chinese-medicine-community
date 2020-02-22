@@ -13,7 +13,9 @@
 <body>
 
 <div th:insert="~{common/header::head}"></div>
-
+<div th:replace="~{common/mcategory::mcate(column = 0)}"></div>
+<div th:insert="~{common/category::cate(cates =  ${#request.getServletContext().getAttribute('categorys')},column = 0)}"></div>
+<div th:insert="~{common/column::col(kinds= ${#request.getServletContext().getAttribute('kinds')},column = 0,fenlei = 0)}"></div>
 
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
@@ -24,7 +26,7 @@
           为您找到以下结果：
         </div>
         <ul class="fly-list">
-          <li th:each="topic:${topics}">
+          <li th:each="topic:${searchMap['topics']}">
             <a th:href="@{'/user/home/'+${topic.userId}}" class="fly-avatar">
               <img th:src="${topic.avatarUrl}" th:alt="${topic.name}">
             </a>
@@ -41,7 +43,7 @@
                 <!--<i class="layui-badge fly-badge-vip">VIP3</i>
                 -->
               </a>
-              <span>[[${#dates.format(topic.topicCreate,'yyyy-MM-dd')}]]</span>
+              <span>[[${#dates.format(topic.topicCreate,'yyyy-MM-dd HH:mm:ss')}]]</span>
 
               <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> [[${topic.experience}]]</span>
              <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${topic.isEnd == 1}">已结</span>
@@ -57,11 +59,11 @@
 
         </ul>
         
-         <div th:if="${topics?.size()==0}" class="fly-none">没有相关数据</div>
-        <div id="searchpage" style="text-align: center"></div>
-        <input type="hidden" id="count" th:value="${count}">
-        <input type="hidden" id="pageid" th:value="${page}">
-        <input type="hidden" id="size" th:value="${size}">
+         <div th:if="${searchMap['topics']?.size()==0}" class="fly-none">没有相关数据</div>
+        <div th:if="${searchMap['count'] > searchMap['topics'].size()}" id="searchpage" style="text-align: center"></div>
+        <input type="hidden" id="count" th:value="${searchMap['count']}">
+        <input type="hidden" id="pageid" th:value="${searchMap['page']}">
+        <input type="hidden" id="size" th:value="${searchMap['size']}">
 
 
       </div>
@@ -88,36 +90,5 @@ layui.config({
   fly: 'index'
 }).use('fly');
 </script>
-<script>
-  layui.use(['jquery','laypage'],function () {
-      var laypage = layui.laypage,
-              $ = layui.jquery;
-    var count = $("#count").val(),
-        size =  $("#size").val(),
-        pageid = $("#pageid").val();
-    console.log(count)
-    console.log(size)
-    laypage.render({
-      elem: 'searchpage'
-      ,count: count
-      ,curr:pageid
-      ,limit:size
-      ,first: '首页'
-      ,last: '尾页'
-      ,jump:function (obj,first) {
-        var page = obj.curr;
-        if(!first){
-          if(window.location.href.indexOf("&page=") == -1){
-            location.href = window.location.href +"&page="+ page;
-          }else{
-            location.href = window.location.href.substring(0,window.location.href.lastIndexOf("=")+1) + page;
-          }
-
-        }
-      }
-    });
-  })
-</script>
-
 </body>
 </html>

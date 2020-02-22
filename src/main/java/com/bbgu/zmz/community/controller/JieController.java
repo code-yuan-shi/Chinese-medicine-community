@@ -2,7 +2,6 @@ package com.bbgu.zmz.community.controller;
 
 import com.bbgu.zmz.community.dto.*;
 import com.bbgu.zmz.community.enums.MsgEnum;
-import com.bbgu.zmz.community.mapper.MessageMapper;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.MessageService;
@@ -44,21 +43,21 @@ public class JieController {
     @GetMapping("/detail/{id}")
     public String jieDetail(@PathVariable(name = "id")  Long id,
                             @RequestParam(name = "page",defaultValue = "1") Integer page,
-                            @RequestParam(name = "size",defaultValue = "10") Integer size,
+                            @RequestParam(name = "size",defaultValue = "5") Integer size,
                             Model model,HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
         Topicinfo topicinfo = new Topicinfo();
         topicinfo.setId(id);
         topicinfo.setViewCount(1);
-        topicService.incView(topicinfo);
-        TopicInfoDTO topicInfoDTO = topicService.showDetail(id); //帖子详情
-        List<ReplyDTO> replyDTOList = topicService.findComment(id,page,size,user);//查询用户评论
-        ReplyDTO replyDTO = topicService.findAcceptComment(id,user);   //查询是否存在采纳
+        topicService.incView(topicinfo);                            //更新浏览数
+        TopicinfoExt TopicinfoExt = topicService.showDetail(id);    //帖子详情
+        List<CommentExt> CommentExtList = topicService.findComment(id,page,size,user);  //查询用户评论
+        //ReplyDTO replyDTO = topicService.findAcceptComment(id,user);   //查询是否存在采纳
         model.addAttribute("pageid",page);
         model.addAttribute("size",size);
-        model.addAttribute("detail",topicInfoDTO);
-        model.addAttribute("reply",replyDTOList);
-        model.addAttribute("commenta",replyDTO);
+        model.addAttribute("detail",TopicinfoExt);
+        model.addAttribute("reply",CommentExtList);
+        model.addAttribute("count",TopicinfoExt.getCommentNum());
         return "jie/detail";
     }
 
@@ -88,11 +87,9 @@ public class JieController {
         List<Category> categoryList = topicService.findCate();
         List<Kind> kindList = topicService.findKind();
         Topicinfo topicinfo = topicService.findTopicById(id);
-
         model.addAttribute("cates",categoryList);
         model.addAttribute("kinds",kindList);
         model.addAttribute("topic",topicinfo);
-
         return "jie/add";
 
     }
@@ -103,7 +100,6 @@ public class JieController {
     @PostMapping("/doadd")
     @ResponseBody
     public Result jieDoAdd(Topicinfo topicinfo, String check, HttpServletRequest request){
-        //RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         String saveCheck = (String)httpSession.getAttribute("check");
@@ -113,8 +109,6 @@ public class JieController {
             topicinfo.setTopicCreate(System.currentTimeMillis());
             topicinfo.setTopicModified(topicinfo.getTopicCreate());
             if(topicinfo.getExperience() > user.getKissNum()){
- /*               regRespObj.setStatus(1);
-                regRespObj.setMsg("飞吻不够");*/
                 return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);
             }else{
                 int result = topicService.addTopic(topicinfo);
@@ -122,10 +116,7 @@ public class JieController {
                 user.setKissNum(user.getKissNum() - topicinfo.getExperience());
                 userService.updateKiss(user);
                 if(result > 0){
-/*                    regRespObj.setStatus(0);
-                    regRespObj.setMsg("发表成功！");
-                    regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);*/
-                    HashMap<String,String> map = new HashMap<>();
+                    Map map = new HashMap<>();
                     map.put("action",request.getServletContext().getContextPath() + "/jie/detail/"+id);
                     return new Result().ok(MsgEnum.DETAIL_SUCCESS,map);
                 }
@@ -135,21 +126,14 @@ public class JieController {
            int result = topicService.addTopic(topicinfo);
            Long id = topicinfo.getId();
            if(result == 10){
-/*               regRespObj.setStatus(0);
-               regRespObj.setMsg("更改成功！");
-               regRespObj.setAction(request.getServletContext().getContextPath() + "/jie/detail/"+id);*/
-               HashMap<String,String> map = new HashMap<>();
+               Map map = new HashMap<>();
                map.put("action",request.getServletContext().getContextPath() + "/jie/detail/"+id);
                return new Result().ok(MsgEnum.CHANGE,map);
            }
         }
     }else{
-        /*regRespObj.setStatus(1);
-        regRespObj.setMsg("验证码错误！");*/
         return new Result().error(MsgEnum.CODE_INCORRECT);
     }
-
-        //return regRespObj;
         return new Result();
     }
 
@@ -160,15 +144,14 @@ public class JieController {
     @ResponseBody
     public Result reply(Comment comment,Long recvUserId,int type,String replyto,HttpServletRequest request){
        Long ids = comment.getId();
-       // RegRespObj regRespObj = new RegRespObj();
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         if(user != null){
             if(user.getStatus() == 0){
                 return new Result().error(MsgEnum.ALLOWLIMIT);
             }
-            TopicInfoDTO topicInfoDTO = topicService.showDetail(comment.getTopicId());
-            if(topicInfoDTO.getTopicinfo().getStatus() == 1){
+            TopicinfoExt TopicinfoExt = topicService.showDetail(comment.getTopicId());
+            if(TopicinfoExt.getStatus() == 1){
                 if(type == 1){
                     String content = replyto +" "+ comment.getContent();
                     comment.setContent(content);
@@ -184,24 +167,16 @@ public class JieController {
                }else{
                    messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),id);
                }
-/*               regRespObj.setStatus(0);
-               regRespObj.setCode(0);
-               regRespObj.setMsg("回复成功！");*/
                 Map map = new HashMap<>();
                 map.put("action","/jie/detail/"+comment.getTopicId());
                 return new Result().ok(MsgEnum.REPLY_SUCCESS,map);
             }else{
-                /*regRespObj.setStatus(1);
-                regRespObj.setMsg("该帖未审核，无法评论！");*/
                 return new Result().error(MsgEnum.NOT_ALLOW_COMMENT);
             }
 
         }else{
-           /* regRespObj.setStatus(1);
-            regRespObj.setMsg("请登录后再操作！");*/
             return new Result().error(MsgEnum.NOTLOGIN);
         }
-       // return regRespObj;
     }
 
     /*
@@ -210,18 +185,12 @@ public class JieController {
     @PostMapping("/shenhe")
     public @ResponseBody Result shenhe(Long id,HttpServletRequest request,HttpServletResponse response) throws IOException {
        User user = (User) request.getSession().getAttribute("user");
-       //RegRespObj regRespObj = new RegRespObj();
        if(user.getRole().equals("管理员") || user.getRole().equals("社区管理员")){
            topicService.shenhe(id);
-      /*     regRespObj.setStatus(0);
-           regRespObj.setMsg("已审核通过！");*/
        return new Result().ok(MsgEnum.SHENHE_SUCCESS);
        }else{
-           /*regRespObj.setStatus(1);
-           regRespObj.setMsg("没有权限！！！");*/
            return new Result().error(MsgEnum.ALLOWLIMIT);
        }
-        //return regRespObj;
     }
 
     /*
@@ -230,10 +199,6 @@ public class JieController {
     @PostMapping("/setstatus")
     public @ResponseBody Result setTopAndGood(Long id,Integer rank,String field){
         topicService.setTopAndGood(id,rank,field);
-        //RegRespObj regRespObj = new RegRespObj();
-/*        regRespObj.setStatus(0);
-        regRespObj.setMsg("状态已更改");
-        return regRespObj;*/
         return new Result().ok(MsgEnum.STATUS_SUCCESS);
     }
 
@@ -243,11 +208,7 @@ public class JieController {
     @PostMapping("/delete")
     public @ResponseBody Result delTopicAndComment(Long id){
         topicService.delTopicAndComment(id);
-/*        RegRespObj regRespObj = new RegRespObj();
-        regRespObj.setStatus(0);
-        regRespObj.setMsg("该帖已删除！");
-        return regRespObj;*/
-        return  new Result().ok(MsgEnum.DELETE_TOPIC);
+        return  new Result().ok(MsgEnum.DELETE_SUCCESS);
     }
 
     /*
@@ -264,9 +225,8 @@ public class JieController {
     采纳评论
      */
     @PostMapping("/accept")
-    public @ResponseBody Result acceptComment(Long id,HttpServletRequest request){
-       User user =  (User)request.getSession().getAttribute("user");
-       return topicService.acceptComment(id,user);
+    public @ResponseBody Result acceptComment(Long id){
+       return topicService.acceptComment(id);
     }
 
     /*
@@ -274,13 +234,7 @@ public class JieController {
      */
     @PostMapping("/edit")
     public @ResponseBody Result editComment(Long id){
-        //RegRespObj regRespObj = new RegRespObj();
-        //Rows rows = new Rows(); // id content time
         String content = topicService.getCommentContentById(id);
-/*        rows.setContent(content);
-        regRespObj.setStatus(0);
-        regRespObj.setRows(rows);
-        return regRespObj;*/
         Map map = new HashMap<>();
         map.put("content",content);
         return new Result().ok(MsgEnum.OK,map);

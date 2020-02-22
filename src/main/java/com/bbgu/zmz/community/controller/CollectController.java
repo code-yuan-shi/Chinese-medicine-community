@@ -29,10 +29,6 @@ public class CollectController {
         if(user.getStatus() != 0){
              return userService.addCollect(user,cid);
         }else{
-/*            RegRespObj regRespObj = new RegRespObj();
-            regRespObj.setStatus(1);
-            regRespObj.setMsg("账号未激活！");
-            return regRespObj;*/
             return new Result().error(MsgEnum.ALLOWLIMIT);
         }
 

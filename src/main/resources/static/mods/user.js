@@ -228,6 +228,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
           id: id
         }, function(res){
           if(res.status === 0){
+            location.reload();
             othis.remove();
             layer.close(index);
             delEnd();

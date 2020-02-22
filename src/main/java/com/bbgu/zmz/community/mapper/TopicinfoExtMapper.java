@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+
 public interface TopicinfoExtMapper {
    int incView(Topicinfo topicinfo);
    List<TopicinfoExt> getTop10Topics();
@@ -81,5 +82,13 @@ public interface TopicinfoExtMapper {
    List<TopicinfoExt> searchTopic(@Param("q") String  q,
                                   @Param("offset") Integer offset,
                                   @Param("size") Integer size);
+
+   //查询置顶帖子
+   List<TopicinfoExt> getTopTopic( @Param("istop") Integer istop,
+                                 @Param("offset") Integer offset,
+                                @Param("size") Integer size);
+
+   //查询帖子详情
+   TopicinfoExt getTopicDetails( @Param("id") Long id);
 }
 

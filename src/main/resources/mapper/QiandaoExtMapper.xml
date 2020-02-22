@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbgu.zmz.community.mapper.QiandaoExtMapper">
+  <resultMap id="BaseResultMap" type="com.bbgu.zmz.community.model.QiandaoExt">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="total" jdbcType="BIGINT" property="total" />
+    <result column="qiandao_create" jdbcType="BIGINT" property="qiandaoCreate" />
+    <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <select id="getNewSign" resultMap="BaseResultMap">
+      SELECT
+          q.user_id,
+          q.qiandao_create,
+          u.avatar_url,
+          u.`name`
+      FROM
+          qiandao q
+      LEFT JOIN `user` u ON q.user_id = u.account_id
+      ORDER BY
+          q.qiandao_create DESC
+      LIMIT 0,20
+    </select>
+  <select id="getTodaySign" resultMap="BaseResultMap">
+    SELECT
+	q.user_id,
+	u.avatar_url,
+	u.`name`,
+	q.qiandao_create
+    FROM
+        qiandao q
+    LEFT JOIN `user` u ON q.user_id = u.account_id
+    WHERE
+        TO_DAYS(
+            from_unixtime(q.qiandao_create / 1000)
+        ) = TO_DAYS(NOW())
+    ORDER BY
+        q.qiandao_create ASC
+    LIMIT 0,20
+  </select>
+  <select id="getTotalSign" resultMap="BaseResultMap">
+        SELECT
+          q.user_id,
+          q.total,
+          q.qiandao_create,
+          u.avatar_url,
+          u.`name`
+      FROM
+          qiandao q
+      LEFT JOIN `user` u ON u.account_id = q.user_id
+      ORDER BY
+          q.total DESC
+      LIMIT 0,20
+  </select>
+</mapper>

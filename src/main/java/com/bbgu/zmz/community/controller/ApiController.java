@@ -32,10 +32,12 @@ public class ApiController {
     @Autowired
     private ListService listService;
 
+    /*
+    上传接口
+     */
     @PostMapping("/upload")
     @ResponseBody
-    public Result upload(@RequestParam MultipartFile file, HttpServletRequest request) throws IOException {
-        //RegRespObj regRespObj = new RegRespObj();
+    public Result upload(@RequestParam MultipartFile file) throws IOException {
         if (file.getSize() > 0) {
             Properties props=System.getProperties(); //获得系统属性集
             String osName = props.getProperty("os.name"); //操作系统名称
@@ -52,32 +54,27 @@ public class ApiController {
             UUID uuid = UUID.randomUUID();
             File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
             file.transferTo(file2);
-            //regRespObj.setUrl( "/upload/" + uuid + file.getOriginalFilename());
-            //regRespObj.setStatus(0);
-            //regRespObj.setMsg("上传成功！");
             Map map = new HashMap();
             map.put("url","/upload/" + uuid + file.getOriginalFilename());
             return new Result().ok(MsgEnum.UPLOAD_SUCCESS,map);
         } else {
             return new Result().error(MsgEnum.UPLOAD_SUCCESS);
-           // regRespObj.setStatus(1);
-            //regRespObj.setMsg("上传失败！");
         }
-        //return regRespObj;
-
     }
 
+    /*
+    回帖周榜
+     */
     @PostMapping("/top")
     @ResponseBody
     public Result weekList(Long limit){
         List<WeekList> weekListList = listService.weekList();
-       /* RegRespObj regRespObj = new RegRespObj();
-        regRespObj.setStatus(0);
-        regRespObj.setWeekList(weekListList);*/
         return new Result().ok(MsgEnum.OK,weekListList);
-        //return  regRespObj;
     }
 
+    /*
+    图片验证码服务
+     */
     @GetMapping("/check")
     public void checkCode(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -136,7 +133,7 @@ public class ApiController {
         g.drawString("" + rands[1],31,31);
         g.drawString("" + rands[2],46,32);
         g.drawString("" + rands[3],58,30);
-        System.out.println(rands);
+        //System.out.println(rands);
     }
     private void drawBackground(Graphics g)
     {

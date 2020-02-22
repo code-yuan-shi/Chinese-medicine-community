@@ -1,5 +1,8 @@
 package com.bbgu.zmz.community.model;
 
+import com.bbgu.zmz.community.model.Comment;
+import com.bbgu.zmz.community.model.Topicinfo;
+import com.bbgu.zmz.community.model.User;
 import lombok.Data;
 
 @Data

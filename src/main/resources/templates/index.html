@@ -27,6 +27,8 @@
           <a href="#"><img src="/ad/03.jpg"/></a>
         </div>
       </div>
+
+      <!--置顶帖子-->
       <div class="fly-panel">
         <div class="fly-panel-title fly-filter">
           <a>置顶</a>
@@ -35,33 +37,33 @@
             <a href="#signin" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
           </span>
         </div>
-        <div class="fly-none" th:if="${topictops?.size()==0}"style="min-height: 50px">没有相关数据</div>
+        <div class="fly-none" th:if="${topictops?.size()==0}"style="min-height: 65px">没有相关数据</div>
         <ul class="fly-list">
           <li th:each="topic:${topictops}">
-            <a th:href="@{'/user/home/'+${topic.user.accountId}}" class="fly-avatar">
-              <img th:src="${topic.user.avatarUrl}" th:alt="${topic.user.name}">
+            <a th:href="@{'/user/home/'+${topic.userId}}" class="fly-avatar">
+              <img th:src="${topic.avatarUrl}" th:alt="${topic.name}">
             </a>
             <h2>
-              <a class="layui-badge" th:text="${topic.category.catename}"></a>
-              <a th:href="@{'/jie/detail/'+${topic.topicinfo.id}}" th:text="${topic.topicinfo.title}"></a>
+              <a class="layui-badge" th:text="${topic.catename}"></a>
+              <a th:href="@{'/jie/detail/'+${topic.id}}" th:text="${topic.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept2">[[${topic.kind.kindname}]]</a>
-              <a th:href="@{'/user/home/'+${topic.user.accountId}}" link>
-                <cite th:text="${topic.user.name}"></cite>
-                <i class="iconfont icon-renzheng" th:title="${topic.user.name}"></i>
+              <a class="layui-badge fly-badge-accept2">[[${topic.kindname}]]</a>
+              <a th:href="@{'/user/home/'+${topic.userId}}" link>
+                <cite th:text="${topic.name}"></cite>
+                <i class="iconfont icon-renzheng" th:title="${topic.role}"></i>
               </a>
               <span  th:text="${topic.time}"></span>
               
-              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> <span th:text="${topic.topicinfo.experience}"></span></span>
-              <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${topic.topicinfo.isEnd == 1}">已结</span>
+              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> <span th:text="${topic.experience}"></span></span>
+              <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${topic.isEnd == 1}">已结</span>
               <span class="fly-list-nums"> 
-                <i class="iconfont icon-pinglun1" title="回答"></i> <span th:text="${topic.comment_count}"></span>
+                <i class="iconfont icon-pinglun1" title="回答"></i> <span th:text="${topic.commentNum}"></span>
               </span>
             </div>
             <div class="fly-list-badge">
-              <span class="layui-badge layui-bg-black" th:if="${topic.topicinfo.isTop == 1}">置顶</span>
-              <span class="layui-badge layui-bg-red" th:if="${topic.topicinfo.isGood == 1}">精帖</span>
+              <span class="layui-badge layui-bg-black" th:if="${topic.isTop == 1}">置顶</span>
+              <span class="layui-badge layui-bg-red" th:if="${topic.isGood == 1}">精帖</span>
             </div>
           </li>
         </ul>
@@ -83,29 +85,29 @@
         <div class="fly-none" th:if="${topicalls?.size()==0}">没有相关数据</div>
         <ul class="fly-list">
           <li th:each="all:${topicalls}">
-            <a th:href="@{'/user/home/'+${all.user.accountId}}" class="fly-avatar">
-              <img th:src="${all.user.avatarUrl}" th:alt="${all.user.name}">
+            <a th:href="@{'/user/home/'+${all.userId}}" class="fly-avatar">
+              <img th:src="${all.avatarUrl}" th:alt="${all.name}">
             </a>
             <h2>
-              <a class="layui-badge" th:text="${all.category.catename}"></a>
-              <a th:href="@{'/jie/detail/'+${all.topicinfo.id}}" th:text="${all.topicinfo.title}"></a>
+              <a class="layui-badge" th:text="${all.catename}"></a>
+              <a th:href="@{'/jie/detail/'+${all.id}}" th:text="${all.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept2">[[${all.kind.kindname}]]</a>
-              <a th:href="@{'/user/home/'+${all.user.accountId}}" link>
-                <cite th:text="${all.user.name}"></cite>
-                <i class="iconfont icon-renzheng" th:title="${all.user.name}"></i>
+              <a class="layui-badge fly-badge-accept2">[[${all.kindname}]]</a>
+              <a th:href="@{'/user/home/'+${all.userId}}" link>
+                <cite th:text="${all.name}"></cite>
+                <i class="iconfont icon-renzheng" th:title="${all.role}"></i>
               </a>
               <span  th:text="${all.time}"></span>
 
-              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> <span th:text="${all.topicinfo.experience}"></span></span>
-              <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${all.topicinfo.isEnd == 1}">已结</span>
+              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> <span th:text="${all.experience}"></span></span>
+              <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${all.isEnd == 1}">已结</span>
               <span class="fly-list-nums">
-                <i class="iconfont icon-pinglun1" title="回答"></i> <span th:text="${all.comment_count}"></span>
+                <i class="iconfont icon-pinglun1" title="回答"></i> <span th:text="${all.commentNum}"></span>
               </span>
             </div>
             <div class="fly-list-badge">
-              <span class="layui-badge layui-bg-red" th:if="${all.topicinfo.isGood == 1}">精帖</span>
+              <span class="layui-badge layui-bg-red" th:if="${all.isGood == 1}">精帖</span>
             </div>
           </li>
 

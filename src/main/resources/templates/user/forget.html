@@ -11,13 +11,7 @@
   <link rel="stylesheet" href="/static/css/global.css">
 </head>
 <body>
-<div class="fly-header layui-bg-black">
-  <div class="layui-container">
-    <a class="fly-logo" href="/">
-      <img src="/static/images/code.png" alt="Code社区">
-    </a>
-  </div>
-</div>
+<div th:replace="~{common/head::smhead}"></div>
 
 <div class="layui-container fly-marginTop">
   <div class="fly-panel fly-panel-user" pad20>
@@ -47,7 +41,7 @@
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">验证码</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="check" required lay-verify="required" autocomplete="off" class="layui-input" maxlength="4">
+                  <input type="text" id="L_vercode" name="check" required lay-verify="required" autocomplete="off" class="layui-input" maxlength="6">
                   <input type="hidden" id="code" name="code" class="layui-input">
                 </div>
               </div>

@@ -4,7 +4,14 @@ package com.bbgu.zmz.community.service;
 import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.mapper.*;
+import com.bbgu.zmz.community.mapper.CollectExtMapper;
+import com.bbgu.zmz.community.mapper.CommentExtMapper;
+import com.bbgu.zmz.community.mapper.TopicinfoExtMapper;
 import com.bbgu.zmz.community.model.*;
+import com.bbgu.zmz.community.model.CollectExt;
+import com.bbgu.zmz.community.model.CommentExt;
+import com.bbgu.zmz.community.model.TopicinfoExt;
+import com.bbgu.zmz.community.model.UserExt;
 import com.bbgu.zmz.community.util.MD5Utils;
 import com.bbgu.zmz.community.util.MailUtil;
 import com.bbgu.zmz.community.util.StringDate;
@@ -58,20 +65,14 @@ public class UserService {
     查询用户是否存在
      */
     public Result checkUser(Long accoundId){
-           //RegRespObj regRespObj = new RegRespObj();
             UserExample userExample = new UserExample();
             userExample.createCriteria().andAccountIdEqualTo(accoundId);
             List<User> userList = userMapper.selectByExample(userExample);
             if (userList.size() != 0) {
-               /* regRespObj.setStatus(1);
-                regRespObj.setMsg("用户已存在！");*/
                return new Result().error(MsgEnum.USER_EXIT);
             } else {
-               /* regRespObj.setStatus(0);
-                regRespObj.setMsg("恭喜，可以注册！");*/
                return  new Result().ok(MsgEnum.ALLOW_REG);
             }
-            //return regRespObj;
     }
 
     /*
@@ -83,15 +84,10 @@ public class UserService {
         userExample.createCriteria().andEmailEqualTo(email);
         List<User> userList = userMapper.selectByExample(userExample);
         if (userList.size() != 0) {
-          /*  regRespObj.setStatus(1);
-            regRespObj.setMsg("抱歉，该邮箱已被使用！");*/
           return new Result().error(MsgEnum.EMAIL_EXIT);
         } else {
-           /* regRespObj.setStatus(0);
-            regRespObj.setMsg("恭喜，该邮箱可用！");*/
            return  new Result().ok(MsgEnum.EMAIL_ALLOW);
         }
-        //return regRespObj;
     }
 
     /*
@@ -215,7 +211,6 @@ public class UserService {
     添加收藏
      */
     public Result addCollect(User user,Long cid){
-        //RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(cid);
             if(topicinfo.getStatus() == 1){
@@ -230,21 +225,14 @@ public class UserService {
                     collect.setCollectCreate(System.currentTimeMillis());
                     collect.setCollectModified(collect.getCollectCreate());
                     collectMapper.insertSelective(collect);
-                    /*regRespObj.setStatus(0);
-                    regRespObj.setMsg("收藏成功！");*/
                     return new Result().ok(MsgEnum.ADDCOLLECT);
                 }else{
-                   /* regRespObj.setStatus(1);
-                    regRespObj.setMsg("已收藏！");*/
                     return new Result().error(MsgEnum.HAVACOLLECT);
                 }
             }else{
-                /*regRespObj.setStatus(1);
-                regRespObj.setMsg("未审核，无法收藏！");*/
                 return new Result().error(MsgEnum.NOTALLOWCOLLECT);
             }
         }
-       // return regRespObj;
         return new Result().error(MsgEnum.NOTLOGIN);
     }
 
@@ -252,25 +240,20 @@ public class UserService {
    取消收藏
     */
     public Result removeCollect(User user,Long cid){
-        //RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Map<String,Long> map = new HashMap<>();
             map.put("topicid",cid);
             map.put("userid",user.getAccountId());
             collectExtMapper.delCollectInfo(map);
-        /*    regRespObj.setStatus(0);
-            regRespObj.setMsg("取消成功！");*/
         return new Result().ok(MsgEnum.HAVADONE);
         }
         return new Result().error(MsgEnum.NOTLOGIN);
-       // return regRespObj;
     }
     /*
     查询收藏
      */
     public Result findCollect(User user,Long cid){
         int count = 0;
-       // RegRespObj regRespObj = new RegRespObj();
         if(user != null){
             Map<String,Long> map = new HashMap<>();
             map.put("topicid",cid);
@@ -280,11 +263,7 @@ public class UserService {
             HashMap<String,Boolean> map1 = new HashMap<>();
             map1.put("collection",count == 1 ? true:false);
             return new Result().ok(MsgEnum.OK,map1);
-/*            Data data = new Data();
-            data.setCollection(count == 1 ? true:false);
-            regRespObj.setData(data);*/
         }
-        //return regRespObj;
         return new Result().error(MsgEnum.NOTLOGIN);
     }
     /*
@@ -308,13 +287,9 @@ public class UserService {
     用户修改我的资料
      */
     public Result modifyUserInfo(User user){
-        //RegRespObj regRespObj = new RegRespObj();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
         userMapper.updateByExampleSelective(user,userExample);
-    /*    regRespObj.setStatus(0);
-        regRespObj.setMsg("修改成功！");
-        return regRespObj;*/
         Map map = new HashMap();
         map.put("action","");
         return new Result().ok(MsgEnum.CHANGE,map);
@@ -324,15 +299,11 @@ public class UserService {
     用户修改头像
      */
     public Result modifyUserAvatar(Long accountId,String avatar){
-        //RegRespObj regRespObj = new RegRespObj();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(accountId);
         User user = new User();
         user.setAvatarUrl(avatar);
         userMapper.updateByExampleSelective(user,userExample);
-       /* regRespObj.setStatus(0);
-        regRespObj.setMsg("修改头像成功！");
-        return regRespObj;*/
         return new Result().ok(MsgEnum.CHANGE);
     }
 
@@ -340,7 +311,6 @@ public class UserService {
     用户修改密码
      */
     public Result modifyUserPassword(String nowpass, String pass,String repass,Long accountId){
-        //RegRespObj regRespObj = new RegRespObj();
         String pwd = MD5Utils.getMd5(nowpass);
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(accountId);
@@ -351,22 +321,15 @@ public class UserService {
                 User user = new User();
                 user.setPwd(MD5Utils.getMd5(pass));
                 userMapper.updateByExampleSelective(user,userExample);
-                /*regRespObj.setStatus(0);
-                regRespObj.setMsg("密码已修改！");*/
                 Map map = new HashMap();
                 map.put("action","");
-                return new Result().ok(MsgEnum.CHANGE);
+                return new Result().ok(MsgEnum.CHANGE,map);
             }else{
-              /*  regRespObj.setStatus(1);
-                regRespObj.setMsg("当前密码验证错误！");*/
               return new Result().error(MsgEnum.OLD_PWD_INCORRECT);
             }
         }else{
-            /*regRespObj.setStatus(1);
-            regRespObj.setMsg("两次输入的密码不一致！");*/
             return new Result().error(MsgEnum.PWD_ATYPISM);
         }
-       // return regRespObj;
     }
     /*
     用户重置密码

@@ -15,12 +15,13 @@
     <result column="IS_TOP" jdbcType="INTEGER" property="isTop" />
     <result column="STATUS" jdbcType="INTEGER" property="status" />
     <result column="EXPERIENCE" jdbcType="BIGINT" property="experience" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="comment_num" jdbcType="BIGINT" property="commentNum" />
-      <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
-      <result column="name" jdbcType="VARCHAR" property="name" />
-      <result column="role" jdbcType="VARCHAR" property="role" />
-      <result column="catename" jdbcType="VARCHAR" property="catename" />
-      <result column="kindname" jdbcType="VARCHAR" property="kindname" />
+    <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="catename" jdbcType="VARCHAR" property="catename" />
+    <result column="kindname" jdbcType="VARCHAR" property="kindname" />
   </resultMap>
   <update id="incView" parameterType="com.bbgu.zmz.community.model.Topicinfo">
     update `topicinfo`
@@ -657,6 +658,78 @@
         where t.title like "%"#{q}"%"
         ORDER BY t.topic_create desc
         LIMIT #{offset},#{size}
+    </select>
+    <select id="getTopTopic"  resultMap="BaseResultMap">
+        SELECT
+            t.id,
+            t.title,
+            t.topic_create,
+            t.experience,
+            t.is_end,
+            t.is_good,
+            t.is_top,
+            t.user_id,
+            u.avatar_url,
+            u.`name`,
+            u.role,
+            c.catename,
+            k.kindname,
+            IFNULL(commentinfo.comment_num, 0) comment_num
+        FROM
+            topicinfo t
+        LEFT JOIN `user` u ON u.account_id = t.user_id
+        LEFT JOIN category c ON c.id = t.category_id
+        LEFT JOIN kind k ON k.id = t.kind_id
+        LEFT JOIN (
+            SELECT
+                c.topic_id,
+                count(*) comment_num
+            FROM
+                `comment` c
+            GROUP BY
+                c.topic_id
+        ) commentinfo ON commentinfo.topic_id = t.id
+        WHERE
+            t.is_top = #{istop}
+        ORDER BY
+            t.topic_create DESC
+        LIMIT #{offset},#{size}
+    </select>
+    <select id="getTopicDetails"  resultMap="BaseResultMap">
+        SELECT
+            t.id,
+            t.title,
+            t.view_count,
+            t.content,
+            t.topic_create,
+            t.experience,
+            t.is_end,
+            t.is_good,
+            t.is_top,
+            t.user_id,
+            t.status,
+            u.avatar_url,
+            u.`name`,
+            u.role,
+            c.catename,
+            k.kindname,
+            IFNULL(commentinfo.comment_num, 0) comment_num
+        FROM
+            topicinfo t
+        LEFT JOIN `user` u ON u.account_id = t.user_id
+        LEFT JOIN category c ON c.id = t.category_id
+        LEFT JOIN kind k ON k.id = t.kind_id
+        LEFT JOIN (
+            SELECT
+                c.topic_id,
+                count(*) comment_num
+            FROM
+                `comment` c
+            GROUP BY
+                c.topic_id
+        ) commentinfo ON commentinfo.topic_id = t.id
+        WHERE
+            t.id = #{id}
     </select>
 
 </mapper>

@@ -25,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/static/**",
                         "/upload/**",
+                        "/ad/**",
                         "/api/top",
                         "/api/check",
                         "/callback",

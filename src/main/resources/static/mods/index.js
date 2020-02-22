@@ -82,7 +82,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         }
       });
     }
-
     //计算字符长度
     ,charLen: function(val){
       var arr = val.split(''), len = 0;
@@ -100,12 +99,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'<span type="face" title="插入表情"><i class="iconfont icon-yxj-expression" style="top: 1px;"></i></span>'
         ,'<span type="picture" title="插入图片：img[src]"><i class="iconfont icon-tupian"></i></span>'
         ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
-        ,'<span type="code" title="插入代码或引用"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
+        ,'<span type="quote" title="引用">“”</span>'
+        ,'<span type="code" title="插入代码"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
         ,'<span type="hr" title="插入水平线">hr</span>'
         ,'<span type="a" title="文章标题">A</span>'
         ,'<span type="h1" title="标题一">H1</span>'
         ,'<span type="h2" title="标题二">H2</span>'
-        ,'<span type="h3" title="标题三">H3</span>'
         ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
       ,'</div>'].join('');
 
@@ -216,6 +215,24 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             layer.close(index);
           });
         }
+        ,quote: function(editor){ //引用
+          layer.prompt({
+            title: '请输入引用内容'
+            ,formType: 2
+            ,maxlength: 10000
+            ,shade: false
+            ,id: 'LAY_flyedit_quote'
+            ,offset: [
+              editor.offset().top - $(window).scrollTop() + 1 + 'px'
+              ,editor.offset().left + 1 + 'px'
+            ]
+            ,area: ['300px', '100px']
+          }, function(val, index, elem){
+            layui.focusInsert(editor[0], '[pre]\n  '+ val + '\n[/pre]\n');
+            layer.close(index);
+            editor.trigger('keyup');
+          });
+        }
         ,hr: function(editor){ //插入水平分割线
           layui.focusInsert(editor[0], '[hr]');
         }
@@ -223,12 +240,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           layui.focusInsert(editor[0], '[h1]  [/h1]');
         }
         ,h1:function (editor) {
-          layui.focusInsert(editor[0], '[h2]  [/h2]');
-        }
-        ,h2:function (editor) {
           layui.focusInsert(editor[0], '[h3]  [/h3]');
         }
-        ,h3:function (editor) {
+        ,h2:function (editor) {
           layui.focusInsert(editor[0], '[h4]  [/h4]');
         }
         ,yulan: function(editor){ //预览
@@ -275,30 +289,72 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
     //内容转义
     ,content: function(content){
+      var util = fly
+          ,item = fly.faces;
 
       //支持的html标签
       var html = function(end){
-        return new RegExp('\\n*\\['+ (end||'') +'(pre|hr|div|span|p|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h1|h2|h3|h4|h5)([\\s\\S]*?)\\]\\n*', 'g');
+        return new RegExp('\\n*\\['+ (end||'') +'(div|span|p|button|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h1|h2|h3|h4|h5)([\\s\\S]*?)\\]\\n*', 'g');
       };
-      content = fly.escape(content||'') //XSS
-      .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
-        return '<img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
-      }).replace(/@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2') //转义@
-      .replace(/face\[([^\s\[\]]+?)\]/g, function(face){  //转义表情
-        var alt = face.replace(/^face/g, '');
-        return '<img alt="'+ alt +'" title="'+ alt +'" src="' + fly.faces[alt] + '">';
-      }).replace(/a\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义链接
-        var href = (str.match(/a\(([\s\S]+?)\)\[/)||[])[1];
-        var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
-        if(!href) return str;
-        var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
-        return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
-      }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>') //转义HTML代码
-      .replace(/\n/g, '<br>') //转义p
+          //XSS
+          content = util.escape(content||'')
+          //转义图片
+          .replace(/img\[([^\s]+?)\]/g, function(img){
+            return '<img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
+          })
+          //转义@
+          .replace(/@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2')
+          //转义表情
+          .replace(/face\[([^\s\[\]]+?)\]/g, function(face){
+            var alt = face.replace(/^face/g, '');
+            return '<img alt="'+ alt +'" title="'+ alt +'" src="' + item[alt] + '">';
+          })
+          //转义脚本
+          .replace(/a(\(javascript:)(.+)(;*\))/g, 'a(javascript:layer.msg(\'非法脚本\');)')
+          //转义链接
+          .replace(/a\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){
+            var href = (str.match(/a\(([\s\S]+?)\)\[/)||[])[1];
+            var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+            if(!href) return str;
+            var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
+            return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
+          })
+          //转义横线
+          .replace(/\[hr\]\n*/g, '<hr>')
+          //转义表格
+          .replace(/\[table\]([\s\S]*)\[\/table\]\n*/g, function(str){
+            return str.replace(/\[(thead|th|tbody|tr|td)\]\n*/g, '<$1>')
+                .replace(/\n*\[\/(thead|th|tbody|tr|td)\]\n*/g, '</$1>')
+
+                .replace(/\[table\]\n*/g, '<table class="layui-table">')
+                .replace(/\n*\[\/table\]\n*/g, '</table>');
+          })
+          //转义 div/span
+          .replace(/\n*\[(div|span)([\s\S]*?)\]([\s\S]*?)\[\/(div|span)\]\n*/g, function(str){
+            return str.replace(/\[(div|span)([\s\S]*?)\]\n*/g, '<$1 $2>')
+                .replace(/\n*\[\/(div|span)\]\n*/g, '</$1>');
+          })
+          //转义列表
+          .replace(/\[ul\]([\s\S]*)\[\/ul\]\n*/g, function(str){
+            return str.replace(/\[li\]\n*/g, '<li>')
+                .replace(/\n*\[\/li\]\n*/g, '</li>')
+
+                .replace(/\[ul\]\n*/g, '<ul>')
+                .replace(/\n*\[\/ul\]\n*/g, '</ul>');
+          })
+          //转义引用
+          .replace(/\[pre\]([\s\S]*)\[\/pre\]\n*/g, function(str){
+            return str.replace(/\[pre\]\n*/g, '<pre>')
+                .replace(/\n*\[\/pre\]\n*/g, '</pre>');
+          })
+          //转义代码
           .replace(/\[quote\]([\s\S]*)\[\/quote\]\n*/g, function(str){
             return str.replace(/\[quote\]\n*/g, '<div class="layui-code">')
                 .replace(/\n*\[\/quote\]\n*/g, '</div>');
           })
+          //转义换行
+          .replace(/\n/g, '<br>')
+          .replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>') //转义HTML代码
       return content;
     }
     
@@ -306,10 +362,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
    ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
       var t1=null;
-      if(layui.cache.user.uid !== -1 && elemUser[0]){
+      if(layui.cache.user.uid !== '-1' && elemUser[0]){
         queryMsgCout();
         var timesRun = 10;
-        t1= window.setInterval(queryMsgCout,10000);
+        t1= window.setInterval(queryMsgCout,5000);
         function queryMsgCout() {
           timesRun++;
           fly.json('/message/nums', {
@@ -385,7 +441,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     var othis = $(this);
     if(othis.hasClass(DISABLED)) return;
 
-    fly.json('sign/in', {
+    fly.json('/sign/in', {
       token: signRender.token || 1
     }, function(res){
       signRender(res.data);
@@ -431,14 +487,14 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   //签到活跃榜
   var tplSigninTop = ['{{# layui.each(d.data, function(index, item){ }}'
     ,'<li>'
-      ,'<a href="/user/home/{{item.user.accountId}}" target="_blank">'
-        ,'<img src="{{item.user.avatarUrl}}">'
-        ,'<cite class="fly-link">{{item.user.name}}</cite>'
+      ,'<a href="/user/home/{{item.userId}}" target="_blank">'
+        ,'<img src="{{item.avatarUrl}}">'
+        ,'<cite class="fly-link">{{item.name}}</cite>'
       ,'</a>'
-      ,'{{# var date = new Date(item.qiandao.qiandaoCreate); if(d.index < 2){ }}'
+      ,'{{# var date = new Date(item.qiandaoCreate); if(d.index < 2){ }}'
         ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }}</span>'
       ,'{{# } else { }}'
-        ,'<span class="fly-grey">已连续签到 <i>{{ item.qiandao.total }}</i> 天</span>'
+        ,'<span class="fly-grey">已连续签到 <i>{{ item.total }}</i> 天</span>'
       ,'{{# } }}'
     ,'</li>'
   ,'{{# }); }}'
@@ -562,12 +618,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
   //新消息通知
   fly.newmsg();
 
+
   //发送激活邮件
   fly.activate = function(){
+    var time = $("#sendtime").val();
     fly.json('/user/resend', {}, function(res){
       if(res.status === 0){
         layer.alert(res.msg, {
           icon: 1
+        },function () {
+          location.href = res.data.action;
         });
       };
     });
@@ -709,52 +769,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
     }
 
   })
-
-/*  //注册账户
-  form.on('submit(reg)', function(data) {
-    $("button").addClass("layui-btn-disabled");
-    $("button").attr('disabled', 'disabled');
-    var action = $(data.form).attr('action');
-    fly.json(action, data.field, function(res){
-
-      layer.msg(res.msg,{icon:1,time:2*1000},function () {
-          location.href = res.data.action;
-      });
-        },{
-          error:function(){
-           // location.reload();
-            $("button").removeClass("layui-btn-disabled");
-            $("button").removeAttr("disabled");
-        }
-        })
-    return false;
-  });*/
-
-/*
-  //账户登录
-  form.on('submit(login)', function(data) {
-    $("button").addClass("layui-btn-disabled");
-    $("button").attr('disabled', 'disabled');
-    var action = $(data.form).attr('action');
-        fly.json(action, data.field, function(res){
-
-          if(res.data.action){
-            layer.msg(res.msg,{icon:1,time:2*1000},function () {
-              location.href = res.data.action;
-            })
-          }
-        },{
-          error:function(){
-            $("button").removeClass("layui-btn-disabled");
-            $("button").removeAttr("disabled");
-          }
-
-    })
-    return false;
-  });
-*/
-
-
 
   exports('fly', fly);
 
