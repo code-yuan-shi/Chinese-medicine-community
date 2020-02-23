@@ -106,7 +106,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'<span type="h1" title="标题一">H1</span>'
         ,'<span type="h2" title="标题二">H2</span>'
         ,'<span type="h3" title="标题三">H3</span>'
-        ,'<span type="h3" title="标题四">H4</span>'
         ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
       ,'</div>'].join('');
 
@@ -186,8 +185,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         }
         ,href: function(editor){ //超链接
           layer.prompt({
-            title: '请输入合法链接'
-            ,placeholder:'以 http(s):// 开头'
+            title: '请输入链接地址'
+            ,placeholder:'请输入链接地址'
             ,shade: false
             ,fixed: false
             ,id: 'LAY_flyedit_href'
@@ -213,7 +212,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             ,id: 'LAY_flyedit_code'
             ,area: ['800px', '360px']
           }, function(val, index, elem){
-            layui.focusInsert(editor[0], '\n[quote]'+val+ '[/quote]\n');
+            layui.focusInsert(editor[0], '[quote]\n'+val+ '\n[/quote]\n');
             layer.close(index);
           });
         }
@@ -224,11 +223,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             ,maxlength: 10000
             ,shade: false
             ,id: 'LAY_flyedit_quote'
-            ,offset: [
-              editor.offset().top - $(window).scrollTop() + 1 + 'px'
-              ,editor.offset().left + 1 + 'px'
-            ]
-            ,area: ['300px', '100px']
+
+            ,area: ['260px', '100px']
           }, function(val, index, elem){
             layui.focusInsert(editor[0], '[pre]\n  '+ val + '\n[/pre]\n');
             layer.close(index);
@@ -236,22 +232,75 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           });
         }
         ,hr: function(editor){ //插入水平分割线
-          layui.focusInsert(editor[0], '[hr]');
+          layui.focusInsert(editor[0], '[hr]\n');
         }
-        ,a:function (editor) {
-          layui.focusInsert(editor[0], '[title]  [/title]');
+        , a: function(editor){ //文章标题
+          layer.prompt({
+            title: '请输入文章标题'
+            ,placeholder:'请输入文章标题'
+            ,maxlength: 50
+            ,shade: false
+            ,fixed: false
+            ,id: 'LAY_flyedit_a'
+            ,offset: [
+              editor.offset().top - $(window).scrollTop() + 'px'
+              ,editor.offset().left + 'px'
+            ]
+          }, function(val, index, elem){
+            layui.focusInsert(editor[0], '[h1]'+ val + '[/h1]\n');
+            layer.close(index);
+          });
         }
-        ,h1:function (editor) {
-          layui.focusInsert(editor[0], '[h1]  [/h1]');
+        ,h1: function(editor){ //标题一
+          layer.prompt({
+            title: '请输入标题一'
+            ,placeholder:'请输入标题一'
+            ,maxlength: 50
+            ,shade: false
+            ,fixed: false
+            ,id: 'LAY_flyedit_h1'
+            ,offset: [
+              editor.offset().top - $(window).scrollTop() + 'px'
+              ,editor.offset().left + 'px'
+            ]
+          }, function(val, index, elem){
+            layui.focusInsert(editor[0], '[h2]'+ val + '[/h2]\n');
+            layer.close(index);
+          });
         }
-        ,h2:function (editor) {
-          layui.focusInsert(editor[0], '[h2]  [/h2]');
-        }
-        ,h3:function (editor) {
-          layui.focusInsert(editor[0], '[h3]  [/h3]');
-        }
-        ,h4:function (editor) {
-          layui.focusInsert(editor[0], '[h4]  [/h4]');
+        ,h2: function(editor){ //标题二
+        layer.prompt({
+          title: '请输入标题二'
+          ,placeholder:'请输入标题二'
+          ,maxlength: 50
+          ,shade: false
+          ,fixed: false
+          ,id: 'LAY_flyedit_h2'
+          ,offset: [
+            editor.offset().top - $(window).scrollTop() + 'px'
+            ,editor.offset().left + 'px'
+          ]
+        }, function(val, index, elem){
+          layui.focusInsert(editor[0], '[h3]'+ val + '[/h3]\n');
+          layer.close(index);
+        });
+      }
+        ,h3: function(editor){ //标题三
+          layer.prompt({
+            title: '请输入标题三'
+            ,placeholder:'请输入标题三'
+            ,maxlength: 50
+            ,shade: false
+            ,fixed: false
+            ,id: 'LAY_flyedit_h3'
+            ,offset: [
+              editor.offset().top - $(window).scrollTop() + 'px'
+              ,editor.offset().left + 'px'
+            ]
+          }, function(val, index, elem){
+            layui.focusInsert(editor[0], '[h4]'+ val + '[/h4]\n');
+            layer.close(index);
+          });
         }
         ,yulan: function(editor){ //预览
           var content = editor.val();
