@@ -58,6 +58,7 @@
             t.title,
             t.topic_create,
             t.view_count,
+            t.is_good,
             IFNULL(commentinfo.comment_num, 0) comment_num
         FROM
             topicinfo t

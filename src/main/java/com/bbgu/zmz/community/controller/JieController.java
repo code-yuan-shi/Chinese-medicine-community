@@ -108,12 +108,13 @@ public class JieController {
             topicinfo.setUserId(user.getAccountId());
             topicinfo.setTopicCreate(System.currentTimeMillis());
             topicinfo.setTopicModified(topicinfo.getTopicCreate());
-            if(topicinfo.getExperience() > user.getKissNum()){
+            User newUser = userService.findUser(user.getAccountId());
+            if(topicinfo.getExperience() > newUser.getKissNum()){
                 return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);
             }else{
                 int result = topicService.addTopic(topicinfo);
                 Long id = topicinfo.getId();
-                user.setKissNum(user.getKissNum() - topicinfo.getExperience());
+                user.setKissNum(newUser.getKissNum() - topicinfo.getExperience());
                 userService.updateKiss(user);
                 if(result > 0){
                     Map map = new HashMap<>();

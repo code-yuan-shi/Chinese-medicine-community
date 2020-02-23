@@ -46,12 +46,13 @@ public enum MsgEnum {
     LOGIN_SUCCESS(0,"登录成功"),
     USER_PWD_INCORRECT(1,"用户名或者密码错误！"),
     OLD_PWD_INCORRECT(1,"原密码错误！"),
-
-
+    REWARD_SUCCESS(0,"打赏成功"),
+    ADMIN(0,"社区管理员"),
+    USER(0,"社区用户"),
+    INPUT_ERROR(1,"输入错误"),
 
 
     ;
-
     private int code;
     private String message;
 

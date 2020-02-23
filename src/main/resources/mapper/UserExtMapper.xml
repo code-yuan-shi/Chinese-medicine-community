@@ -8,4 +8,16 @@
     order by comment_num desc
     limit 0,12
   </select>
+    <update id="rewardUserAdd">
+        UPDATE `user`
+        SET kiss_num = kiss_num + #{kissNum}
+        WHERE
+            account_id = #{userId}
+    </update>
+    <update id="rewardUserSub">
+        UPDATE `user`
+        SET kiss_num = kiss_num - #{kissNum}
+        WHERE
+            account_id = #{userId}
+    </update>
 </mapper>

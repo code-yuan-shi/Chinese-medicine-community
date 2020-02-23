@@ -214,15 +214,28 @@ public class TopicService {
      */
 
     public Result acceptComment(Long id){
+        //更新评论状态
         Comment comment = new Comment();
         comment.setId(id);
         comment.setIsAccept(1);
         commentMapper.updateByPrimaryKeySelective(comment);
+        //获得评论信息
         comment = commentMapper.selectByPrimaryKey(id);
+        //设置帖子已结
         Topicinfo topicinfo = new Topicinfo();
         topicinfo.setId(comment.getTopicId());
         topicinfo.setIsEnd(1);
         topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
+        //获得帖子信息
+        Topicinfo topicinfo1 = topicinfoMapper.selectByPrimaryKey(comment.getTopicId());
+        //获得评论用户信息
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(comment.getUserId());
+        List<User> userList = userMapper.selectByExample(userExample);
+        //更新用户经验
+        User user = new User();
+        user.setKissNum(userList.get(0).getKissNum() + topicinfo1.getExperience());
+        userMapper.updateByExampleSelective(user,userExample);
         return new Result().ok(MsgEnum.OK);
     }
 

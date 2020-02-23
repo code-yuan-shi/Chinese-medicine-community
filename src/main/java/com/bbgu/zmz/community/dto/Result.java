@@ -16,6 +16,11 @@ public class Result {
         this.data = data;
     }
 
+    public Result(MsgEnum msgEnum) {
+        this.msg = msgEnum.getMessage();
+        this.status = msgEnum.getCode();
+    }
+
     public Result(int status, String msg) {
         this.status = status;
         this.msg = msg;

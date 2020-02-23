@@ -1,8 +1,8 @@
 package com.bbgu.zmz.community.service;
 
 
-import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.mapper.CollectExtMapper;
 import com.bbgu.zmz.community.mapper.CommentExtMapper;
@@ -35,6 +35,8 @@ public class UserService {
     private TopicinfoExtMapper topicinfoextMapper;
     @Autowired
     private CommentExtMapper commentExtMapper;
+    @Autowired
+    private UserExtMapper userExtMapper;
 
 
     public void createOrUpdate(User user) {
@@ -396,5 +398,37 @@ public class UserService {
         }
     }
 
+    /*
+    查询用户信息
+     */
+
+    public User findUser(Long id){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(id);
+        List<User> userList = userMapper.selectByExample(userExample);
+        return userList.get(0);
+    }
+
+    /*
+    打赏用户
+     */
+    public Result rewardUser(Long userId,Long kissNum,User rewarduser){
+        if(rewarduser.getRole().equals(new Result(MsgEnum.ADMIN).getMsg())){
+            //如果是管理员
+            userExtMapper.rewardUserAdd(kissNum,userId);
+            return new Result().ok(MsgEnum.REWARD_SUCCESS);
+        }else{
+            User newuser = findUser(rewarduser.getAccountId());
+            if(newuser.getKissNum() >= kissNum){
+                //减去打赏者经验值
+                userExtMapper.rewardUserSub(kissNum, rewarduser.getAccountId());
+                //增加目标用户经验值
+                userExtMapper.rewardUserAdd(kissNum, userId);
+                return new Result().ok(MsgEnum.REWARD_SUCCESS);
+            }else {
+                return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);
+            }
+        }
+    }
 
 }

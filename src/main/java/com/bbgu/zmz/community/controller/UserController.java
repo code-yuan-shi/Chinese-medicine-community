@@ -340,4 +340,20 @@ public class UserController {
     }
 
 
+    /*
+    奖励用户经验
+     */
+    @PostMapping("/reward")
+    @ResponseBody
+    public Result rewardUser(Long userId,Long kissNum,HttpServletRequest request){
+        User user = (User)request.getSession().getAttribute("user");
+        if(user != null){
+            if(kissNum != null){
+                return userService.rewardUser(userId,kissNum,user);
+            }
+            return new Result().error(MsgEnum.INPUT_ERROR);
+        }
+        return new Result().error(MsgEnum.NOTLOGIN);
+    }
+
 }

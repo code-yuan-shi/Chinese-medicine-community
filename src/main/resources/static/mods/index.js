@@ -73,7 +73,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           if(res.status === 0) {
             success && success(res);
           } else {
-            layer.msg(res.msg || res.data.code, {shift: 6});
+            layer.msg(res.msg || res.data.code, {icon: 2});
             options.error && options.error();
           }
         }, error: function(e){
@@ -443,7 +443,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
    ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
       var t1=null;
-      if(layui.cache.user.uid !== '-1' && elemUser[0]){
+      if(layui.cache.user.uid != -1 && elemUser[0]){
         queryMsgCout();
         var timesRun = 10;
         t1= window.setInterval(queryMsgCout,5000);
@@ -506,7 +506,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       ,elemSigninMain = $('.fly-signin-main')
       ,elemSigninDays = $('.fly-signin-days');
 
-  if(elemSigninMain[0] && layui.cache.user.uid !='-1'){
+  if(elemSigninMain[0] && layui.cache.user.uid !=-1){
     fly.json('/sign/status', function(res){
       if(!res.data) return;
       signRender.token = res.data.token;
@@ -515,7 +515,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   }
   $('body').on('click', '#LAY_signin', function(){
-    if(layui.cache.user.uid =='-1'){
+    if(layui.cache.user.uid == -1){
       layer.msg('签到需要登录！');
       return;
     }

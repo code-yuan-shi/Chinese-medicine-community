@@ -36,7 +36,7 @@ layui.define('fly', function(exports){
       layer.tips('下面的信息将便于您获得更好的答案', obj.othis, tips);
       elemQuiz.removeClass('layui-hide');
     } else */if(value === '2'){
-      layer.tips('系统会对【分享】类型的帖子予以飞吻奖励，但我们需要审核，通过后方可展示', obj.othis, tips);
+      layer.tips('管理员会对【分享】类型的帖子予以内容质量经验奖励', obj.othis, tips);
     }
   });
 
@@ -93,6 +93,31 @@ layui.define('fly', function(exports){
         }
       });
       });
+    },reward: function(div){
+      var othis = $(this);
+      layer.prompt({
+        title: '请输入奖励经验值'
+        ,formType:3
+        ,placeholder:'请输入奖励经验值'
+        ,maxlength:5
+        ,shade: false
+        ,fixed: false
+        ,id: 'LAY_flyedit_reward'
+      }, function(val, index, elem){
+        if (isNaN(val)) {
+         layer.tips("只可以输入数字！",elem);
+          return;
+        }
+        fly.json('/user/reward', {
+          userId: othis.attr('userId')
+          ,kissNum:val
+        }, function(res){
+          if(res.status === 0){
+            layer.msg(res.msg,{icon:1,time:1*1000});
+          }
+        });
+        layer.close(index);
+      });
     }
 
     //收藏
@@ -143,7 +168,7 @@ layui.define('fly', function(exports){
           var zans = othis.find('em').html()|0;
           othis[ok ? 'removeClass' : 'addClass']('zanok');
           othis.find('em').html(ok ? (--zans) : (++zans));
-          layer.msg(res.msg,{shift:1,time:1*1000});
+          layer.msg(res.msg,{icon:1,time:1*1000});
         } else {
           layer.msg(res.msg);
         }

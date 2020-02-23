@@ -86,7 +86,7 @@
               </div>-->
               <div class="layui-form-item">
                 <div class="layui-inline">
-                  <label class="layui-form-label">悬赏飞吻</label>
+                  <label class="layui-form-label">悬赏经验</label>
                   <input type="hidden" name="experience" th:value="${topic?.experience}"/>
                   <div class="layui-input-inline" style="width: 190px;" th:if="${topic?.id == null}">
                     <select name="experience">
@@ -100,7 +100,7 @@
                   <div class="layui-input-inline" th:if="${topic?.id != null}">
                     <input type="text" name="experience" th:value="${topic?.experience}" class="layui-input" style="cursor:not-allowed !important;" disabled>
                   </div>
-                  <div class="layui-form-mid layui-word-aux" >发表后无法更改飞吻</div>
+                  <div class="layui-form-mid layui-word-aux" >发表后无法更改悬赏经验</div>
                 </div>
               </div>
               <div class="layui-form-item">
