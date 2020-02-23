@@ -2,10 +2,7 @@ package com.bbgu.zmz.community.service;
 
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.enums.MsgEnum;
-import com.bbgu.zmz.community.mapper.CommentMapper;
-import com.bbgu.zmz.community.mapper.MessageMapper;
-import com.bbgu.zmz.community.mapper.TopicinfoMapper;
-import com.bbgu.zmz.community.mapper.UserMapper;
+import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.model.MessageExt;
 import com.bbgu.zmz.community.util.StringDate;
@@ -20,6 +17,8 @@ import java.util.List;
 @Service
 public class MessageService {
 
+    @Autowired
+    private MessageExtMapper messageExtMapper;
     @Autowired
     private MessageMapper messageMapper;
     @Autowired
@@ -89,7 +88,16 @@ public class MessageService {
      */
     public List<MessageExt> selMessage(Long recvUserId){
 
-        MessageExample messageExample = new MessageExample();
+        List<MessageExt> messageExtList = messageExtMapper.findMessage(recvUserId);
+        for(MessageExt messageExt:messageExtList){
+            if (messageExt.getType() == 1) {
+                int start = messageExt.getContent().indexOf(" ");
+                String str = messageExt.getContent().substring(start + 1);
+                messageExt.setContent(str);
+            }
+            messageExt.setTime(StringDate.getStringDate(new Date(messageExt.getMessageCreate())));
+        }
+        /*MessageExample messageExample = new MessageExample();
         messageExample.createCriteria().andRecvUserIdEqualTo(recvUserId);
         messageExample.setOrderByClause("message_create desc");
         List<Message> messageList = messageMapper.selectByExample(messageExample);  //查询通知列表
@@ -122,7 +130,7 @@ public class MessageService {
             messageExt.setUser(userList.get(0));
             messageExt.setTopicinfo(topicinfo);
             messageExtList.add(messageExt);
-        }
+        }*/
         return messageExtList;
     }
 

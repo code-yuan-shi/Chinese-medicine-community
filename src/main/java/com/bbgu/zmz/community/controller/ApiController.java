@@ -27,7 +27,7 @@ import java.util.List;
 public class ApiController {
     private static final long serialVersionUID = 1L;
     private static int WIDTH = 85; //验证码图片宽度
-    private static int HEIGHT = 42; //验证码图片高度
+    private static int HEIGHT = 38; //验证码图片高度
 
     @Autowired
     private ListService listService;

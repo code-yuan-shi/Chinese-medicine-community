@@ -105,6 +105,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'<span type="a" title="文章标题">A</span>'
         ,'<span type="h1" title="标题一">H1</span>'
         ,'<span type="h2" title="标题二">H2</span>'
+        ,'<span type="h3" title="标题三">H3</span>'
+        ,'<span type="h3" title="标题四">H4</span>'
         ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
       ,'</div>'].join('');
 
@@ -237,12 +239,18 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
           layui.focusInsert(editor[0], '[hr]');
         }
         ,a:function (editor) {
-          layui.focusInsert(editor[0], '[h1]  [/h1]');
+          layui.focusInsert(editor[0], '[title]  [/title]');
         }
         ,h1:function (editor) {
-          layui.focusInsert(editor[0], '[h3]  [/h3]');
+          layui.focusInsert(editor[0], '[h1]  [/h1]');
         }
         ,h2:function (editor) {
+          layui.focusInsert(editor[0], '[h2]  [/h2]');
+        }
+        ,h3:function (editor) {
+          layui.focusInsert(editor[0], '[h3]  [/h3]');
+        }
+        ,h4:function (editor) {
           layui.focusInsert(editor[0], '[h4]  [/h4]');
         }
         ,yulan: function(editor){ //预览
@@ -294,7 +302,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
       //支持的html标签
       var html = function(end){
-        return new RegExp('\\n*\\['+ (end||'') +'(div|span|p|button|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h1|h2|h3|h4|h5)([\\s\\S]*?)\\]\\n*', 'g');
+        return new RegExp('\\n*\\|\\-'+ (end||'') +'(div|span|p|button|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h2|h3|h4|h5)([\\s\\S]*?)\\-\\|\\n*', 'g');
       };
           //XSS
           content = util.escape(content||'')
@@ -347,14 +355,38 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             return str.replace(/\[pre\]\n*/g, '<pre>')
                 .replace(/\n*\[\/pre\]\n*/g, '</pre>');
           })
+          //转义标题
+          .replace(/\[title\]([\s\S]*)\[\/title\]\n*/g, function(str){
+            return str.replace(/\[title\]\n*/g, '<h1>')
+                .replace(/\n*\[\/title\]\n*/g, '</h1><br>');
+          })
+          //转义h1
+          .replace(/\[h1\]([\s\S]*)\[\/h1\]\n*/g, function(str){
+            return str.replace(/\[h1\]\n*/g, '<h2>')
+                .replace(/\n*\[\/h1\]\n*/g, '</h2>');
+          })
+          //转义h2
+          .replace(/\[h2\]([\s\S]*)\[\/h2\]\n*/g, function(str){
+            return str.replace(/\[h2\]\n*/g, '<h3>')
+                .replace(/\n*\[\/h2\]\n*/g, '</h3>');
+          })
+          //转义h3
+          .replace(/\[h3\]([\s\S]*)\[\/h3\]\n*/g, function(str){
+            return str.replace(/\[h3\]\n*/g, '<h4>')
+                .replace(/\n*\[\/h3\]\n*/g, '</h4>');
+          })
+          //转义h4
+          .replace(/\[h4\]([\s\S]*)\[\/h4\]\n*/g, function(str){
+            return str.replace(/\[h4\]\n*/g, '<h5>')
+                .replace(/\n*\[\/h4\]\n*/g, '</h5>');
+          })
           //转义代码
           .replace(/\[quote\]([\s\S]*)\[\/quote\]\n*/g, function(str){
             return str.replace(/\[quote\]\n*/g, '<div class="layui-code">')
                 .replace(/\n*\[\/quote\]\n*/g, '</div>');
           })
           //转义换行
-          .replace(/\n/g, '<br>')
-          .replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>') //转义HTML代码
+          .replace(/\n/g, '<br>');
       return content;
     }
     
@@ -425,7 +457,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       ,elemSigninMain = $('.fly-signin-main')
       ,elemSigninDays = $('.fly-signin-days');
 
-  if(elemSigninMain[0]){
+  if(elemSigninMain[0] && layui.cache.user.uid !='-1'){
     fly.json('/sign/status', function(res){
       if(!res.data) return;
       signRender.token = res.data.token;

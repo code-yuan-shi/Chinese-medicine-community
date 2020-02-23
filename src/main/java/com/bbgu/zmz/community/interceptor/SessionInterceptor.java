@@ -77,10 +77,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-        if(response.getStatus()==500){
-            modelAndView.setViewName("/other/404");
-        }else if(response.getStatus()==404){
+        if(response.getStatus()==500 || response.getStatus()==404 || response.getStatus()==400) {
             modelAndView.setViewName("/other/404");
         }
     }

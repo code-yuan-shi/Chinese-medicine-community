@@ -194,7 +194,7 @@ public class UserController {
         String savecheck = (String)request.getSession().getAttribute("check");
         Map map = new HashMap();
        User user1 =  userService.loginCheck(user);
-       if(check.equals(savecheck)){
+       if(check.toLowerCase().equals(savecheck)){
            if(user1 != null && user1.getStatus().equals(1)){
                if(url.equals("")){
                    map.put("action","/");

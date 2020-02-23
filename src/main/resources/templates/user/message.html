@@ -60,20 +60,20 @@
         <div class="fly-none" th:if="${messageList.size() == 0}">您暂时没有最新消息</div>
         <ul class="mine-msg" th:if="${messageList.size()>0}">
           <li th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
-            <blockquote class="layui-elem-quote" >
-              <a th:href="@{'/user/home/'+${msg.user.accountId}}" target="_blank"><cite>[[${msg.user.name}]]</cite></a>
+            <blockquote class="home-dacontent1" >
+              <a th:href="@{'/user/home/'+${msg.sendUserId}}" target="_blank"><cite>[[${msg.name}]]</cite></a>
               <span th:if="${msg.type == 0}">回复了我的帖子</span>
               <span th:if="${msg.type == 1}">回复了我的回复</span>
-              <a th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}}">
-                <cite th:text="${msg.topicinfo.title}"></cite>
+              <a th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicId}}">
+                <cite th:text="${msg.title}"></cite>
               </a>
-              <a th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.commentId}}">
-                <cite th:text="${msg.comment.content}"></cite>
+              <a th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicId}+'?size=1000#'+${msg.commentId}}">
+                <cite th:text="${msg.oldcontent}"></cite>
               </a>
-              <a  th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.commentId}}">
+              <a  th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicId}+'?size=1000#'+${msg.commentId}}">
                 说：<cite class="replyContent" th:text="${msg.content}"></cite>
               </a>
-              <a  th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicinfo.id}+'?size=1000#'+${msg.newId}}">
+              <a  th:if="${msg.type == 1}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicId}+'?size=1000#'+${msg.newCid}}">
                 说：<cite class="replyContent" th:text="${msg.content}"></cite>
               </a>
               <span th:if="${msg.type == 2}">给我发私信说：</span>
@@ -81,7 +81,7 @@
                 <cite  class="replyContent" th:text="${msg.content}"></cite>
               </a>
               <button id="reMsg" th:if="${msg.type == 2}" class="layui-btn layui-btn-normal  layui-btn-xs" >回复</button>
-              <input type="hidden" id="userid" th:value="${msg.user.accountId}">
+              <input type="hidden" id="userid" th:value="${msg.sendUserId}">
             </blockquote>
             <p><span>[[${msg.time}]]</span><a href="javascript:;" class="layui-btn  layui-btn-xs layui-btn-small layui-btn-danger fly-delete">删除</a></p>
           </li>

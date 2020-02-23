@@ -112,7 +112,7 @@ public class UserService {
             user.setAvatarUrl("/static/images/avatar/1.jpg");
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
-            user.setRole("社区管理员");
+            user.setRole("社区用户");
             Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0);
                if(result.getStatus() != 1){
                    userMapper.insertSelective(user);

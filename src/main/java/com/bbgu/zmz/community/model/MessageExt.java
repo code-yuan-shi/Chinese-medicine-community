@@ -13,6 +13,8 @@ public class MessageExt {
 
     private Long recvUserId;
 
+    private String content;
+
     private Long topicId;
 
     private Long commentId;
@@ -23,16 +25,14 @@ public class MessageExt {
 
     private Long messageCreate;
 
-    private String content;
+    private String name;
 
-    private Topicinfo topicinfo;
-
-    private User user;
-
-    private Comment comment;
+    private String title;
 
     private String time;
 
-    private Long newId;
+    private Long newCid;
+
+    private String oldcontent;
 
 }
