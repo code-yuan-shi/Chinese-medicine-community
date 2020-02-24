@@ -55,12 +55,12 @@ public class UserController {
      */
     @PostMapping("/reset")
     @ResponseBody
-    public Result reset(Long accountId, String email) {
+    public Result reset(Long accountId, String email,String url) {
         //RegRespObj regRespObj = new RegRespObj();
         User user = userService.findUserByEmailAndAccountId(accountId,email);
         if(user != null){
             int code = (int)((Math.random()*9+1)*100000);
-            Result result =MailUtil.sendActiveMail(email,"code",code);
+            Result result =MailUtil.sendActiveMail(email,"code",code,url);
             if(result.getStatus()==1){
                 Map map = new HashMap<>();
                 map.put("code",code);
@@ -129,7 +129,9 @@ public class UserController {
      */
     @PostMapping("/doreg")
     @ResponseBody
-    public Result doReg(UserExt userext, String check, HttpServletRequest request) throws Exception {
+    public Result doReg(UserExt userext, String check,HttpServletRequest request) throws Exception {
+        String url = request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort() + request.getContextPath();
+        userext.setUrl(url);
         String saveCheck = (String) request.getSession().getAttribute("check");
         if (check.equals(saveCheck)) {
             if (userext.getPwd().equals(userext.getRepass())) {
@@ -156,8 +158,9 @@ public class UserController {
     @PostMapping("resend")
     @ResponseBody
     public Result resendEmail(HttpServletRequest request){
+        String url = request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort() + request.getContextPath();
         User user = (User)request.getSession().getAttribute("user");
-       int code =  userService.resend(user);
+       int code =  userService.resend(user,url);
         if (code == 0) {
             Map map = new HashMap();
             map.put("action","/");
@@ -170,11 +173,10 @@ public class UserController {
     激活用户
      */
     @GetMapping("/activemail/{acode}")
-    public String activemail(@PathVariable(name = "acode") String acode, Model model,HttpServletRequest request,HttpServletResponse response){
+    public String activemail(@PathVariable(name = "acode") String acode, Model model){
         int i =userService.activeUser(acode);
         if(i==0) {
             User user = userService.findUserByAccode(acode);
-            request.getSession().setAttribute("user",user);
             model.addAttribute("reginfo", "您的账号已成功激活！");
             return "other/tips";
         }else if(i==1){

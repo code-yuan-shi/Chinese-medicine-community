@@ -1,7 +1,7 @@
 create table topicinfo
 (
     id bigint auto_increment,
-    title varchar(50),
+    title varchar(100),
     content text,
     topic_create bigint,
     topic_modified bigint,

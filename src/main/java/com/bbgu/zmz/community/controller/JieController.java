@@ -103,7 +103,7 @@ public class JieController {
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
         String saveCheck = (String)httpSession.getAttribute("check");
-    if(check.equals(saveCheck)){
+    if(check.toLowerCase().equals(saveCheck)){
         if(topicinfo.getId() == null){  //新增
             topicinfo.setUserId(user.getAccountId());
             topicinfo.setTopicCreate(System.currentTimeMillis());
@@ -143,35 +143,45 @@ public class JieController {
      */
    @PostMapping("/reply")
     @ResponseBody
-    public Result reply(Comment comment,Long recvUserId,int type,String replyto,HttpServletRequest request){
-       Long ids = comment.getId();
+    public Result reply(Comment comment,Long oid,Long recvUserId,int type,String replyto,HttpServletRequest request){
+       //查询当前用户
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
+        //不为空时
         if(user != null){
+            //取得用户状态，未激活不予评论
             if(user.getStatus() == 0){
                 return new Result().error(MsgEnum.ALLOWLIMIT);
             }
+            //取得帖子详细信息
             TopicinfoExt TopicinfoExt = topicService.showDetail(comment.getTopicId());
+            //帖子审核通过时，可以回复
             if(TopicinfoExt.getStatus() == 1){
+                //判断回复类型，如果是楼中楼，对回复内容@上回复名字
                 if(type == 1){
                     String content = replyto +" "+ comment.getContent();
                     comment.setContent(content);
                 }
+                //存储评论信息
                comment.setCommentCreate(System.currentTimeMillis());
                comment.setCommentModified(comment.getCommentCreate());
                comment.setUserId(user.getAccountId());
                comment.setType(0);
-               Long id =topicService.insertComment(comment);
+               //插入评论，返回新评论id
+               Long id = topicService.insertComment(comment);
+               //判断回复类型，0帖子，1楼中楼
                if(type == 1){
-                   //二级回复
-                   messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),ids);
+                   //二级回复，存储回复当前楼中楼的id，方便查询旧评论内容
+                   messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),oid);
                }else{
+                   //一级回复，存储新评论id
                    messageService.insMessage(user.getAccountId(),recvUserId,comment.getTopicId(),type,comment.getContent(),id);
                }
                 Map map = new HashMap<>();
                 map.put("action","/jie/detail/"+comment.getTopicId());
                 return new Result().ok(MsgEnum.REPLY_SUCCESS,map);
             }else{
+                //提示未审核，不给评论
                 return new Result().error(MsgEnum.NOT_ALLOW_COMMENT);
             }
 

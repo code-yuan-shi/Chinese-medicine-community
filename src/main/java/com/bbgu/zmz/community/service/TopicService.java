@@ -9,6 +9,7 @@ import com.bbgu.zmz.community.model.TopicinfoExt;
 import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,6 @@ public class TopicService {
     @Autowired
     private CommentExtMapper commentExtMapper;
 
-
     /*
     获取置顶帖子信息 || 获取最新综合帖子信息
      */
@@ -53,14 +53,14 @@ public class TopicService {
     查询一级分类
      */
     public List<Category> findCate(){
-        List<Category> categoryList = categoryMapper.selectByExample(new CategoryExample());
+        List<Category> categoryList = categoryMapper.selectAll();
         return categoryList;
     }
     /*
     查询二级分类
      */
     public List<Kind> findKind(){
-        List<Kind> kindList = kindMapper.selectByExample( new KindExample());
+        List<Kind> kindList = kindMapper.selectAll();
         return kindList;
     }
     /*
@@ -110,9 +110,9 @@ public class TopicService {
         for(CommentExt commentExt:commentExtList){
             //查询是否点赞
         if(userinfo != null){
-            CommentagreeExample commentagreeExample = new CommentagreeExample();
-            commentagreeExample.createCriteria().andUseridEqualTo(userinfo.getAccountId()).andCommentIdEqualTo(commentExt.getId());
-            List<Commentagree> commentagreeList = commentagreeMapper.selectByExample(commentagreeExample);
+            Example example = new Example(Commentagree.class);
+            example.createCriteria().andEqualTo("userid",userinfo.getAccountId()).andEqualTo("commentId",commentExt.getId());
+            List<Commentagree> commentagreeList = commentagreeMapper.selectByExample(example);
             if(commentagreeList.size()>0){
                 commentExt.setZan(true);
             }else{
@@ -153,24 +153,24 @@ public class TopicService {
         //删除帖子
         topicinfoMapper.deleteByPrimaryKey(id);
         //删除相关评论
-        CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria().andTopicIdEqualTo(id);
-        List<Comment> commentList = commentMapper.selectByExample(commentExample);
-        commentMapper.deleteByExample(commentExample);
+        Example example = new Example(Comment.class);
+        example.createCriteria().andEqualTo("topicId",id);
+        List<Comment> commentList = commentMapper.selectByExample(example);
+        commentMapper.deleteByExample(example);
         //删除相关评论点赞
         for(Comment comment:commentList){
-            CommentagreeExample commentagreeExample = new CommentagreeExample();
-            commentagreeExample.createCriteria().andCommentIdEqualTo(comment.getId());
-            commentagreeMapper.deleteByExample(commentagreeExample);
+            Example exampleCommentAgree = new Example(Commentagree.class);
+            exampleCommentAgree.createCriteria().andEqualTo("commentId",comment.getId());
+            commentagreeMapper.deleteByExample(exampleCommentAgree);
         }
         //删除相关收藏信息
-        CollectExample collectExample = new CollectExample();
-        collectExample.createCriteria().andTopicIdEqualTo(id);
-        collectMapper.deleteByExample(collectExample);
+        Example exampleCollect = new Example(Collect.class);
+        exampleCollect.createCriteria().andEqualTo("topicId",id);
+        collectMapper.deleteByExample(exampleCollect);
         //删除相关通知信息
-        MessageExample messageExample = new MessageExample();
-        messageExample.createCriteria().andTopicIdEqualTo(id);
-        messageMapper.deleteByExample(messageExample);
+        Example exampleMessage = new Example(Message.class);
+        exampleMessage.createCriteria().andEqualTo("topicId",id);
+        messageMapper.deleteByExample(exampleMessage);
     }
     /*
     点赞
@@ -180,9 +180,9 @@ public class TopicService {
         {
             if(ok == false)//点赞
             {
-                CommentagreeExample commentagreeExample = new CommentagreeExample();
-                commentagreeExample.createCriteria().andCommentIdEqualTo(id).andUseridEqualTo(user.getAccountId());
-                List<Commentagree> commentagreeList  =commentagreeMapper.selectByExample(commentagreeExample);
+                Example exampleCommentAgree = new Example(Commentagree.class);
+                exampleCommentAgree.createCriteria().andEqualTo("commentId",id).andEqualTo("userid",user.getAccountId());
+                List<Commentagree> commentagreeList  =commentagreeMapper.selectByExample(exampleCommentAgree);
                 if(commentagreeList.size() == 0){
                     commentExtMapper.updateAgreeNumAdd(id);
                     Commentagree commentagree = new Commentagree();
@@ -194,14 +194,14 @@ public class TopicService {
                     return new Result().error(MsgEnum.ZAN_FAILE);
                 }
             }else{  //取消点赞
-                CommentagreeExample commentagreeExample = new CommentagreeExample();
-                commentagreeExample.createCriteria().andCommentIdEqualTo(id).andUseridEqualTo(user.getAccountId());
-                List<Commentagree> commentagreeList  =commentagreeMapper.selectByExample(commentagreeExample);
+                Example exampleCommentAgree = new Example(Commentagree.class);
+                exampleCommentAgree.createCriteria().andEqualTo("commentId",id).andEqualTo("userid",user.getAccountId());
+                List<Commentagree> commentagreeList  =commentagreeMapper.selectByExample(exampleCommentAgree);
                 if(commentagreeList.size() == 0){
                     return new Result().error(MsgEnum.ZAN_FAILE);
                 }else{
                     commentExtMapper.updateAgreeNumSub(id);
-                    commentagreeMapper.deleteByExample(commentagreeExample);
+                    commentagreeMapper.deleteByExample(exampleCommentAgree);
                     return new Result().ok(MsgEnum.ZAN_CANCEL);
                 }
             }
@@ -229,13 +229,13 @@ public class TopicService {
         //获得帖子信息
         Topicinfo topicinfo1 = topicinfoMapper.selectByPrimaryKey(comment.getTopicId());
         //获得评论用户信息
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(comment.getUserId());
-        List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",comment.getUserId());
+        List<User> userList = userMapper.selectByExample(example);
         //更新用户经验
         User user = new User();
         user.setKissNum(userList.get(0).getKissNum() + topicinfo1.getExperience());
-        userMapper.updateByExampleSelective(user,userExample);
+        userMapper.updateByExampleSelective(user,example);
         return new Result().ok(MsgEnum.OK);
     }
 
@@ -265,13 +265,13 @@ public class TopicService {
     public Result delComment(Long id) {
         commentMapper.deleteByPrimaryKey(id);
         //删除通知消息
-        MessageExample messageExample = new MessageExample();
-        messageExample.createCriteria().andCommentIdEqualTo(id);
-        messageMapper.deleteByExample(messageExample);
+        Example example = new Example(Message.class);
+        example.createCriteria().andEqualTo("commentId",id);
+        messageMapper.deleteByExample(example);
         //删除点赞信息
-        CommentagreeExample commentagreeExample = new CommentagreeExample();
-        commentagreeExample.createCriteria().andCommentIdEqualTo(id);
-        commentagreeMapper.deleteByExample(commentagreeExample);
+        Example exampleCommentAgree = new Example(Commentagree.class);
+        exampleCommentAgree.createCriteria().andEqualTo("commentId",id);
+        commentagreeMapper.deleteByExample(exampleCommentAgree);
         return new Result().ok(MsgEnum.DELETE_SUCCESS);
     }
     /*
@@ -285,175 +285,83 @@ public class TopicService {
     /*
     查询一级分类的帖子
      */
-    public List<TopicinfoExt> findCateTopic(Long categoryId,Integer offset,Integer size,String status){
+    public List<TopicinfoExt> findCateTopic(Long categoryId,String status){
         if(categoryId == 0){
             if(status.equals("all")){
-                return topicinfoExtMapper.getAllTopic(offset,size);
+                return topicinfoExtMapper.getAllTopic();
             }else if(status.equals("isend")){
-                return topicinfoExtMapper.getAllTopicIsEnd(offset,size);
+                return topicinfoExtMapper.getAllTopicIsEnd();
             }else if(status.equals("notend")){
-                return topicinfoExtMapper.getAllTopicNotEnd(offset,size);
+                return topicinfoExtMapper.getAllTopicNotEnd();
             }else if(status.equals("isgood")){
-                return topicinfoExtMapper.getAllTopicIsGood(offset,size);
+                return topicinfoExtMapper.getAllTopicIsGood();
             }else{
-                return topicinfoExtMapper.getAllTopic(offset,size);
+                return topicinfoExtMapper.getAllTopic();
             }
 
         }else {
             if(status.equals("all")){
-                return topicinfoExtMapper.getCateTopic(categoryId,offset,size);
+                return topicinfoExtMapper.getCateTopic(categoryId);
             }else if(status.equals("isend")){
-                return topicinfoExtMapper.getCateTopicIsEnd(categoryId,offset,size);
+                return topicinfoExtMapper.getCateTopicIsEnd(categoryId);
             }else if(status.equals("notend")){
-                return topicinfoExtMapper.getCateTopicNotEnd(categoryId,offset,size);
+                return topicinfoExtMapper.getCateTopicNotEnd(categoryId);
             }else if(status.equals("isgood")){
-                return topicinfoExtMapper.getCateTopicIsGood(categoryId,offset,size);
+                return topicinfoExtMapper.getCateTopicIsGood(categoryId);
             }else{
-                return topicinfoExtMapper.getCateTopic(categoryId,offset,size);
+                return topicinfoExtMapper.getCateTopic(categoryId);
             }
 
         }
-    }
-    /*
-    查询一级分类帖子的总数
-     */
-    public Long findCateCount(Long categoryId,String status){
-        TopicinfoExample topicinfoExample = new TopicinfoExample();
-        if(categoryId == 0){
-            if(status.equals("all")){
-                return topicinfoMapper.countByExample(new TopicinfoExample());
-            }else if(status.equals("isend")){
-                topicinfoExample.createCriteria().andIsEndEqualTo(1);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("notend")){
-                topicinfoExample.createCriteria().andIsEndEqualTo(0);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("isgood")){
-                topicinfoExample.createCriteria().andIsGoodEqualTo(1);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else{
-                return topicinfoMapper.countByExample(new TopicinfoExample());
-            }
-        }else{
-            if(status.equals("all")){
-                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("isend")){
-                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andIsEndEqualTo(1);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("notend")){
-                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andIsEndEqualTo(0);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("isgood")){
-                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andIsGoodEqualTo(1);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else{
-                topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }
-        }
-
     }
 
     /*
     查询二级分类的帖子
      */
-    public List<TopicinfoExt> findKindTopic(Long categoryId,Long kindId,Integer offset,Integer size,String status){
+    public List<TopicinfoExt> findKindTopic(Long categoryId,Long kindId,String status){
         if(categoryId == 0){
             if(status.equals("all")){
-                return topicinfoExtMapper.getAllTopicByKindId(kindId,offset,size);
+                return topicinfoExtMapper.getAllTopicByKindId(kindId);
             }else if(status.equals("isend")){
-                return topicinfoExtMapper.getAllTopicByKindIdIsEnd(kindId,offset,size);
+                return topicinfoExtMapper.getAllTopicByKindIdIsEnd(kindId);
             }else if(status.equals("notend")){
-                return topicinfoExtMapper.getAllTopicByKindIdNotEnd(kindId,offset,size);
+                return topicinfoExtMapper.getAllTopicByKindIdNotEnd(kindId);
             }else if(status.equals("isgood")){
-                return topicinfoExtMapper.getAllTopicByKindIdIsGood(kindId,offset,size);
+                return topicinfoExtMapper.getAllTopicByKindIdIsGood(kindId);
             }else{
-                return topicinfoExtMapper.getAllTopicByKindId(kindId,offset,size);
+                return topicinfoExtMapper.getAllTopicByKindId(kindId);
             }
 
         }else {
             if(status.equals("all")){
-                return topicinfoExtMapper.getKindTopic(categoryId,kindId,offset,size);
+                return topicinfoExtMapper.getKindTopic(categoryId,kindId);
             }else if(status.equals("isend")){
-                return topicinfoExtMapper.getKindTopicIsEnd(categoryId,kindId,offset,size);
+                return topicinfoExtMapper.getKindTopicIsEnd(categoryId,kindId);
             }else if(status.equals("notend")){
-                return topicinfoExtMapper.getKindTopicNotEnd(categoryId,kindId,offset,size);
+                return topicinfoExtMapper.getKindTopicNotEnd(categoryId,kindId);
             }else if(status.equals("isgood")){
-                return topicinfoExtMapper.getKindTopicIsGood(categoryId,kindId,offset,size);
+                return topicinfoExtMapper.getKindTopicIsGood(categoryId,kindId);
             }else{
-                return topicinfoExtMapper.getKindTopic(categoryId,kindId,offset,size);
+                return topicinfoExtMapper.getKindTopic(categoryId,kindId);
             }
         }
 
     }
-    /*
-    查询二级分类帖子的总数
-     */
-    public Long findKindCount(Long categoryId,Long kindId,String status){
-        TopicinfoExample topicinfoExample = new TopicinfoExample();
-        if(categoryId == 0){
-            if(status.equals("all")){
-                topicinfoExample.createCriteria().andKindIdEqualTo(kindId);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("isend")){
-                topicinfoExample.createCriteria().andKindIdEqualTo(kindId).andIsEndEqualTo(1);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("notend")){
-                topicinfoExample.createCriteria().andKindIdEqualTo(kindId).andIsEndEqualTo(0);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else if(status.equals("isgood")){
-                topicinfoExample.createCriteria().andKindIdEqualTo(kindId).andIsGoodEqualTo(1);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }else{
-                topicinfoExample.createCriteria().andKindIdEqualTo(kindId);
-                return topicinfoMapper.countByExample(topicinfoExample);
-            }
 
-        }else{
-           if(status.equals("all")){
-               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId);
-               return topicinfoMapper.countByExample(topicinfoExample);
-           }else if(status.equals("isend")){
-               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId).andIsEndEqualTo(1);
-               return topicinfoMapper.countByExample(topicinfoExample);
-           }else if(status.equals("notend")){
-               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId).andIsEndEqualTo(0);
-               return topicinfoMapper.countByExample(topicinfoExample);
-           }else if(status.equals("isgood")){
-               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId).andIsGoodEqualTo(1);
-               return topicinfoMapper.countByExample(topicinfoExample);
-           }else{
-               topicinfoExample.createCriteria().andCategoryIdEqualTo(categoryId).andKindIdEqualTo(kindId);
-               return topicinfoMapper.countByExample(topicinfoExample);
-           }
-
-        }
-
-    }
     /*
     搜索
      */
-    public List<TopicinfoExt> searchTopic(String q, Integer offset, Integer size){
-        return topicinfoExtMapper.searchTopic(q,offset,size);
-    }
-
-    /*
-    统计搜索总数
-     */
-    public Long searchTopicCount(String q){
-        TopicinfoExample topicinfoExample = new TopicinfoExample();
-        topicinfoExample.createCriteria().andTitleLike("%"+q+"%");
-        return topicinfoMapper.countByExample(topicinfoExample);
+    public List<TopicinfoExt> searchTopic(String q){
+        return topicinfoExtMapper.searchTopic(q);
     }
 
     /*
     查询未审帖子
      */
     public List<Topicinfo> findTopicStatus(){
-        TopicinfoExample topicinfoExample = new TopicinfoExample();
-        topicinfoExample.setOrderByClause("topic_create desc");
-        topicinfoExample.createCriteria().andStatusEqualTo(0);
-        return  topicinfoMapper.selectByExample(topicinfoExample);
+        Example example = new Example(Topicinfo.class);
+        example.setOrderByClause("topic_create desc");
+        example.createCriteria().andEqualTo("status",0);
+        return  topicinfoMapper.selectByExample(example);
     }
 }

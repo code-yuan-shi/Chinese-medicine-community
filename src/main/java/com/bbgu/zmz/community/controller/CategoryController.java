@@ -5,6 +5,9 @@ import com.bbgu.zmz.community.model.TopicinfoExt;
 import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.util.StringDate;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,15 +38,16 @@ public class CategoryController {
                                @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model
                                ){
-        Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,"all"));  //查询一级分类
-        Long count = topicService.findCateCount(id,"not");
+        PageHelper.startPage(page, size);
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,"all"));  //查询一级分类
+        PageInfo<?> pageList = new PageInfo<>(topicinfoExtList);
+        //int count = topicService.findCateCount(id,"not");
         Map map = new HashMap<>();
         map.put("topics",topicinfoExtList);
         map.put("column",id);
         map.put("page",page);
         map.put("size",size);
-        map.put("count",count);
+        map.put("count",pageList.getTotal());
         model.addAttribute("topicMap",map);
         return "jie/index";
     }
@@ -53,9 +57,9 @@ public class CategoryController {
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
                                @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
-        Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,offset,size,status));  //查询一级分类
-        Long count = topicService.findCateCount(id,status);
+        PageHelper.startPage(page, size);
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findCateTopic(id,status));  //查询一级分类
+        long count = new PageInfo<>(topicinfoExtList).getTotal();
         Map map = new HashMap<>();
         map.put("topics",topicinfoExtList);
         map.put("column",id);
@@ -72,9 +76,9 @@ public class CategoryController {
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
                                @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
-        Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,"all"));  //查询二级分类
-        Long count = topicService.findKindCount(cid,kid,"not");
+        PageHelper.startPage(page, size);
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,"all"));  //查询二级分类
+        long count = new PageInfo<>(topicinfoExtList).getTotal();
         Map map = new HashMap<>();
         map.put("topics",topicinfoExtList);
         map.put("column",cid);
@@ -92,9 +96,9 @@ public class CategoryController {
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
                                @RequestParam(value = "size",defaultValue = "10") Integer size,
                                Model model){
-        Integer offset = (page - 1) * size;
-        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,offset,size,status));  //查询二级分类
-        Long count = topicService.findKindCount(cid,kid,status);
+        PageHelper.startPage(page, size);
+        List<TopicinfoExt> topicinfoExtList = transTime(topicService.findKindTopic(cid,kid,status));  //查询二级分类
+        long count = new PageInfo<>(topicinfoExtList).getTotal();
         Map map = new HashMap<>();
         map.put("topics",topicinfoExtList);
         map.put("column",cid);
@@ -116,4 +120,6 @@ public class CategoryController {
         }
         return topicinfoExtList;
     }
+
+
 }

@@ -61,7 +61,9 @@
         <ul class="mine-msg" th:if="${messageList.size()>0}">
           <li th:attr="data-id = ${msg.id}"  th:each="msg:${messageList}">
             <blockquote class="home-dacontent1" >
-              <a th:href="@{'/user/home/'+${msg.sendUserId}}" target="_blank"><cite>[[${msg.name}]]</cite></a>
+              <span th:if="${msg.type == 3}">系统消息：</span>
+              <cite class="replyContent" th:text="${msg.content}" th:if="${msg.type == 3}"></cite>
+              <a th:if="${msg.type != 3}" th:href="@{'/user/home/'+${msg.sendUserId}}" target="_blank"><cite>[[${msg.name}]]</cite></a>
               <span th:if="${msg.type == 0}">回复了我的帖子</span>
               <span th:if="${msg.type == 1}">回复了我的回复</span>
               <a th:if="${msg.type == 0}" target="_blank" th:href="@{'/jie/detail/'+${msg.topicId}}">

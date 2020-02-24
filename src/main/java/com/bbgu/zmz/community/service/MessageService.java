@@ -8,6 +8,7 @@ import com.bbgu.zmz.community.model.MessageExt;
 import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ public class MessageService {
     /*
     获取消息通知
      */
-    public Long getUnreadMsgCountByUserID(Long userId){
-        MessageExample messageExample = new MessageExample();
-        messageExample.createCriteria().andRecvUserIdEqualTo(userId).andIsReadEqualTo(0);
-        Long num =  messageMapper.countByExample(messageExample);
+    public int getUnreadMsgCountByUserID(Long userId){
+        Example example = new Example(Message.class);
+        example.createCriteria().andEqualTo("recvUserId",userId).andEqualTo("isRead",0);
+        int num = messageMapper.selectCountByExample(example);
         return num;
     }
 
@@ -46,10 +47,9 @@ public class MessageService {
     public void updateUserMsgReadState(Long userId){
         Message message = new Message();
         message.setIsRead(1);
-        MessageExample messageExample = new MessageExample();
-        messageExample.createCriteria().andRecvUserIdEqualTo(userId);
-        messageMapper.updateByExampleSelective(message,messageExample);
-
+        Example example = new Example(Message.class);
+        example.createCriteria().andEqualTo("recvUserId",userId);
+        messageMapper.updateByExampleSelective(message,example);
     }
 
     /*
@@ -60,9 +60,9 @@ public class MessageService {
             messageMapper.deleteByPrimaryKey(id);
             return new Result().ok(MsgEnum.OK);
         }else{
-            MessageExample messageExample = new MessageExample();
-            messageExample.createCriteria().andRecvUserIdEqualTo(userId);
-            messageMapper.deleteByExample(messageExample);
+            Example example = new Example(Message.class);
+            example.createCriteria().andEqualTo("recvUserId",userId);
+            messageMapper.deleteByExample(example);
             return new Result().ok(MsgEnum.OK);
         }
     }

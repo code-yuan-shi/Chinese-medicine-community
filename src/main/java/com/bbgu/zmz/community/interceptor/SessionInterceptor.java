@@ -6,11 +6,11 @@ import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.User;
-import com.bbgu.zmz.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +36,9 @@ public class SessionInterceptor implements HandlerInterceptor {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("token")) {
                         String token = cookie.getValue();
-                        UserExample userExample = new UserExample();
-                        userExample.createCriteria().andTokenEqualTo(token);
-                        List<User> users = userMapper.selectByExample(userExample);
+                        Example example = new Example(User.class);
+                        example.createCriteria().andEqualTo("token",token);
+                        List<User> users = userMapper.selectByExample(example);
                         if (users.size() != 0) {
                             request.getSession().setAttribute("user", users.get(0));
                             return true;

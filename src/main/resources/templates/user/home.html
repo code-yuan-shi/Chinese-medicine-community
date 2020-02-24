@@ -41,7 +41,7 @@
   <p class="fly-home-sign" th:if="${userinfo.bio != null}">（[[${userinfo.bio}]]）</p>
 
   <div class="fly-sns" data-user="">
-    <a th:if="${session.user != null}" id = "sendMsg" class="layui-btn layui-btn-normal fly-imActive" data-type="chat">发送私信</a>
+    <a th:if="${session.user != null}" id = "sendMsg" class="layui-btn fly-imActive" data-type="chat">发送私信</a>
   </div>
 
 </div>
@@ -136,10 +136,9 @@ layui.config({
         title: '请输入消息内容',
         area: ['auto', 'auto'] //自定义文本域宽高
       }, function(value, index, elem){
+        layer.close(index);
         fly.json("/message/send", {content:value,recvUserId:userid}, function(res){
-            layer.msg(res.msg,{icon:1,time:2*1000},function () {
-               layer.close(index);
-            })
+            layer.msg(res.msg,{icon:1,time:2*1000});
         },{
           error:function(){
             layer.msg(res.msg,{icon:2,time:2*1000},function () {

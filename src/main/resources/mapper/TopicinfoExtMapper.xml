@@ -109,7 +109,6 @@
         WHERE
         t.category_id = #{categoryId}
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getCateTopicNotEnd" resultMap="BaseResultMap">
         SELECT
@@ -144,7 +143,6 @@
         WHERE
         t.category_id = #{categoryId} and t.is_end = 0
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getCateTopicIsEnd" resultMap="BaseResultMap">
         SELECT
@@ -179,7 +177,6 @@
         WHERE
         t.category_id = #{categoryId} and t.is_end = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getCateTopicIsGood" resultMap="BaseResultMap">
         SELECT
@@ -214,7 +211,6 @@
         WHERE
         t.category_id = #{categoryId} and t.is_good = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopic" resultMap="BaseResultMap">
         SELECT
@@ -247,7 +243,6 @@
         c.topic_id
         ) commentinfo ON commentinfo.topic_id = t.id
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicNotEnd" resultMap="BaseResultMap">
         SELECT
@@ -282,7 +277,6 @@
         WHERE
         t.is_end = 0
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicIsEnd" resultMap="BaseResultMap">
         SELECT
@@ -317,7 +311,6 @@
         WHERE
         t.is_end = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicIsGood" resultMap="BaseResultMap">
         SELECT
@@ -352,7 +345,6 @@
         WHERE
         t.is_good = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicByKindId" resultMap="BaseResultMap">
         SELECT
@@ -386,7 +378,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId}
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicByKindIdNotEnd" resultMap="BaseResultMap">
         SELECT
@@ -420,7 +411,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.is_end = 0
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicByKindIdIsEnd" resultMap="BaseResultMap">
         SELECT
@@ -454,7 +444,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.is_end = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getAllTopicByKindIdIsGood" resultMap="BaseResultMap">
         SELECT
@@ -488,7 +477,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.is_good = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getKindTopic" resultMap="BaseResultMap">
         SELECT
@@ -522,7 +510,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.category_id = #{categoryId}
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getKindTopicNotEnd" resultMap="BaseResultMap">
         SELECT
@@ -556,7 +543,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.category_id = #{categoryId} and t.is_end = 0
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getKindTopicIsEnd" resultMap="BaseResultMap">
         SELECT
@@ -590,7 +576,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.category_id = #{categoryId} and t.is_end = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getKindTopicIsGood" resultMap="BaseResultMap">
         SELECT
@@ -624,7 +609,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.kind_id = #{kindId} and t.category_id = #{categoryId} and t.is_good = 1
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="searchTopic" resultMap="BaseResultMap">
         SELECT
@@ -658,7 +642,6 @@
         ) commentinfo ON commentinfo.topic_id = t.id
         where t.title like "%"#{q}"%"
         ORDER BY t.topic_create desc
-        LIMIT #{offset},#{size}
     </select>
     <select id="getTopTopic"  resultMap="BaseResultMap">
         SELECT

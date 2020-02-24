@@ -30,9 +30,9 @@ public class MessageController {
     public Result getMsgCount(HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
         if(user != null){
-            Long num = messageService.getUnreadMsgCountByUserID(user.getAccountId());
+            int num = messageService.getUnreadMsgCountByUserID(user.getAccountId());
             Map map = new HashMap();
-            map.put("count",num.intValue());
+            map.put("count",num);
             return new Result().ok(MsgEnum.OK,map);
         }else {
             Map map = new HashMap();

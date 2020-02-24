@@ -2,13 +2,15 @@ package com.bbgu.zmz.community.service;
 
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.enums.MsgEnum;
+import com.bbgu.zmz.community.mapper.QiandaoExtMapper;
 import com.bbgu.zmz.community.mapper.QiandaoMapper;
 import com.bbgu.zmz.community.mapper.UserMapper;
-import com.bbgu.zmz.community.mapper.QiandaoExtMapper;
-import com.bbgu.zmz.community.model.*;
+import com.bbgu.zmz.community.model.Qiandao;
 import com.bbgu.zmz.community.model.QiandaoExt;
+import com.bbgu.zmz.community.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -24,9 +26,9 @@ public class SignService {
 
     //获取签到信息
     public List<Qiandao> findSignUserInfo (Long userid){
-        QiandaoExample qiandaoExample = new QiandaoExample();
-        qiandaoExample.createCriteria().andUserIdEqualTo(userid);
-        List<Qiandao> qiandaoList =  qiandaoMapper.selectByExample(qiandaoExample);
+        Example example = new Example(Qiandao.class);
+        example.createCriteria().andEqualTo("userId",userid);
+        List<Qiandao> qiandaoList =  qiandaoMapper.selectByExample(example);
         return qiandaoList;
     }
 
@@ -42,9 +44,9 @@ public class SignService {
 
     //更新用户奖励
     public void updateUserKiss(Long userid,Integer kissnum){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(userid);
-        List<User> users = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",userid);
+        List<User> users = userMapper.selectByExample(example);
         users.get(0).setKissNum(kissnum.longValue() + users.get(0).getKissNum());
         userMapper.updateByPrimaryKeySelective(users.get(0));
     }

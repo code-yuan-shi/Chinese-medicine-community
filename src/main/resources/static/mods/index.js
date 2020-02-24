@@ -732,8 +732,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
   //表单提交
   form.on('submit(*)', function(data){
-    $("button").addClass("layui-btn-disabled");
-    $("button").attr('disabled', 'disabled');
+    $(".rest").addClass("layui-btn-disabled");
+    $(".rest").attr('disabled', 'disabled');
     var action = $(data.form).attr('action'), button = $(data.elem);
     fly.json(action, data.field, function(res){
         if(res.data.action){
@@ -747,8 +747,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         }
     },{
       error:function() {
-        $("button").removeClass("layui-btn-disabled");
-        $("button").removeAttr("disabled");
+        $(".rest").removeClass("layui-btn-disabled");
+        $(".rest").removeAttr("disabled");
       }
     });
     return false;

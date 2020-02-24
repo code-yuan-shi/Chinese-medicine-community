@@ -182,9 +182,9 @@ layui.define('fly', function(exports){
       $("#commentid").val(li.attr("data-id"));
       $("#type").val(1);
       //设置@了谁
-      $("#cText").focus();
+      $("#L_content").focus();
 
-      $("#L_content").text(aite);
+      $("#cText").text(aite);
       $("#replyTo").val(aite);
       $(".reviewInfo").slideDown("fast");
     }

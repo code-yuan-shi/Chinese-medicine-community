@@ -17,6 +17,7 @@ import com.bbgu.zmz.community.util.MailUtil;
 import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -37,13 +38,14 @@ public class UserService {
     private CommentExtMapper commentExtMapper;
     @Autowired
     private UserExtMapper userExtMapper;
+    @Autowired
+    private MessageMapper messageMapper;
 
 
     public void createOrUpdate(User user) {
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
-
-        List<User> users = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",user.getAccountId());
+        List<User> users = userMapper.selectByExample(example);
         if (users.size() == 0){
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
@@ -53,23 +55,22 @@ public class UserService {
         }else{
             User dbUser = users.get(0);
             User updateUser = new User();
+            updateUser.setId(dbUser.getId());
             updateUser.setUserModified(System.currentTimeMillis());
            // updateUser.setAvatarUrl(user.getAvatarUrl());
            // updateUser.setName(user.getName());
             updateUser.setToken(user.getToken());
             //updateUser.setRole(user.getRole());
-            UserExample example = new UserExample();
-            example.createCriteria().andIdEqualTo(dbUser.getId());
-            userMapper.updateByExampleSelective(updateUser,example);
+            userMapper.updateByPrimaryKeySelective(updateUser);
         }
     }
     /*
     查询用户是否存在
      */
     public Result checkUser(Long accoundId){
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andAccountIdEqualTo(accoundId);
-            List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",accoundId);
+            List<User> userList = userMapper.selectByExample(example);
             if (userList.size() != 0) {
                return new Result().error(MsgEnum.USER_EXIT);
             } else {
@@ -82,9 +83,9 @@ public class UserService {
      */
     public Result checkEmail(String email){
         //RegRespObj regRespObj = new RegRespObj();
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andEmailEqualTo(email);
-        List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("email",email);
+        List<User> userList = userMapper.selectByExample(example);
         if (userList.size() != 0) {
           return new Result().error(MsgEnum.EMAIL_EXIT);
         } else {
@@ -107,15 +108,15 @@ public class UserService {
             user.setAccountId(userext.getAccountId());
             user.setName(userext.getName());
             user.setEmail(userext.getEmail());
-            user.setBio("该用户很懒，什么都没有留下！");
+            user.setBio(new Result(MsgEnum.BIO).getMsg());
             user.setPwd(pwd);
             user.setActiveCode(accode);
             user.setActiveTime(actime);
             user.setAvatarUrl("/static/images/avatar/1.jpg");
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
-            user.setRole("社区用户");
-            Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0);
+            user.setRole(new Result(MsgEnum.USER).getMsg());
+            Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0,userext.getUrl());
                if(result.getStatus() != 1){
                    userMapper.insertSelective(user);
                    return 0;
@@ -128,7 +129,7 @@ public class UserService {
     重新发送激活邮件
      */
 
-    public int resend(User user){
+    public int resend(User user,String url){
         Long time = System.currentTimeMillis();
         //创建激活密钥，利用邮箱+密码+时间
         String accode = MD5Utils.getMd5(user.getEmail()+user.getPwd()+time);
@@ -137,7 +138,7 @@ public class UserService {
         //加密密码
         user.setActiveCode(accode);
         user.setActiveTime(actime);
-        Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0);
+        Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0,url);
         if(result.getStatus() != 1){
             userMapper.updateByPrimaryKeySelective(user);
             return 0;
@@ -151,18 +152,21 @@ public class UserService {
      */
 
     public int activeUser(String acode){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andActiveCodeEqualTo(acode);
-        List<User> users = userMapper.selectByExample(userExample);
-        User user = users.get(0);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("activeCode",acode);
+        User user = userMapper.selectOneByExample(example);
         Long now = System.currentTimeMillis();
         Long actime = user.getActiveTime();
         if(user.getStatus().equals(0)){
             if(now < actime){
                 user.setStatus(1);
-                UserExample userExample1 = new UserExample();
-                userExample1.createCriteria().andActiveCodeEqualTo(acode);
-                userMapper.updateByExampleSelective(user,userExample1);
+                userMapper.updateByPrimaryKeySelective(user);
+                Message message = new Message();
+                message.setRecvUserId(user.getAccountId());
+                message.setMessageCreate(System.currentTimeMillis());
+                message.setContent(new Result(MsgEnum.SYSTEM_MESSAGE).getMsg());
+                message.setType(3);
+                messageMapper.insertSelective(message);
                 return 0;  //激活成功
             }else{
                 return 1;    //验证失效
@@ -175,10 +179,9 @@ public class UserService {
     根据授权码查询用户信息
      */
     public User findUserByAccode(String accode){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andActiveCodeEqualTo(accode);
-        List<User> users = userMapper.selectByExample(userExample);
-        User user = users.get(0);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("activeCode",accode);
+        User user = userMapper.selectOneByExample(example);
         return user;
     }
 
@@ -188,9 +191,9 @@ public class UserService {
 
     public User loginCheck(User user){
         String pwd =  MD5Utils.getMd5(user.getPwd());
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId()).andPwdEqualTo(pwd);
-        List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",user.getAccountId()).andEqualTo("pwd",pwd);
+        List<User> userList = userMapper.selectByExample(example);
         if(userList.size() != 0){
             User user1 = userList.get(0);
             String token = UUID.randomUUID().toString();
@@ -272,16 +275,16 @@ public class UserService {
     用户查询我的资料
      */
     public User findUserInfoById(Long accountId){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(accountId);
-        List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",accountId);
+        List<User> userList = userMapper.selectByExample(example);
         return userList.get(0);
     }
 
     public User findUserInfoByName(String name){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andNameEqualTo(name);
-        List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("name",name);
+        List<User> userList = userMapper.selectByExample(example);
         return userList.get(0);
     }
 
@@ -289,9 +292,9 @@ public class UserService {
     用户修改我的资料
      */
     public Result modifyUserInfo(User user){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
-        userMapper.updateByExampleSelective(user,userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",user.getAccountId());
+        userMapper.updateByExampleSelective(user,example);
         Map map = new HashMap();
         map.put("action","");
         return new Result().ok(MsgEnum.CHANGE,map);
@@ -301,35 +304,39 @@ public class UserService {
     用户修改头像
      */
     public Result modifyUserAvatar(Long accountId,String avatar){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",accountId);
         User user = new User();
         user.setAvatarUrl(avatar);
-        userMapper.updateByExampleSelective(user,userExample);
+        userMapper.updateByExampleSelective(user,example);
         return new Result().ok(MsgEnum.CHANGE);
     }
 
     /*
     用户修改密码
      */
-    public Result modifyUserPassword(String nowpass, String pass,String repass,Long accountId){
+    public Result modifyUserPassword(String nowpass, String pass,String repass,Long accountId) {
         String pwd = MD5Utils.getMd5(nowpass);
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(accountId);
-        List<User> userinfos = userMapper.selectByExample(userExample);
-        User userinfo = userinfos.get(0);
-        if(pass.equals(repass)){
-            if(userinfo.getPwd().equals(pwd)){
-                User user = new User();
-                user.setPwd(MD5Utils.getMd5(pass));
-                userMapper.updateByExampleSelective(user,userExample);
-                Map map = new HashMap();
-                map.put("action","");
-                return new Result().ok(MsgEnum.CHANGE,map);
+        String rep = MD5Utils.getMd5(repass);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId", accountId);
+        User userinfo = userMapper.selectOneByExample(example);
+        if (pass.equals(repass)) {  //如果两次输入密码相同
+            if (userinfo.getPwd().equals(pwd)) {   //如果数据库密码相同
+                if(rep.equals(userinfo.getPwd())){
+                    return new Result().error(MsgEnum.OLD_NEW_SAME);
+                }else{
+                    User user = new User();
+                    user.setPwd(MD5Utils.getMd5(pass));
+                    userMapper.updateByExampleSelective(user, example);
+                    Map map = new HashMap();
+                    map.put("action", "");
+                    return new Result().ok(MsgEnum.CHANGE, map);
+                }
             }else{
-              return new Result().error(MsgEnum.OLD_PWD_INCORRECT);
+                return new Result().error(MsgEnum.OLD_PWD_INCORRECT);
             }
-        }else{
+        } else {
             return new Result().error(MsgEnum.PWD_ATYPISM);
         }
     }
@@ -337,11 +344,11 @@ public class UserService {
     用户重置密码
      */
     public void resetUserPwd(Long accountId,String password){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",accountId);
         User user = new User();
         user.setPwd(MD5Utils.getMd5(password));
-        userMapper.updateByExampleSelective(user,userExample);
+        userMapper.updateByExampleSelective(user,example);
     }
 
     /*
@@ -388,14 +395,9 @@ public class UserService {
     重置用户密码
      */
     public User findUserByEmailAndAccountId(Long accountId,String email){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(accountId).andEmailEqualTo(email);
-        List<User> userList =  userMapper.selectByExample(userExample);
-        if(userList.size() != 0){
-            return userList.get(0);
-        }else{
-            return null;
-        }
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",accountId).andEqualTo("email",email);
+        return userMapper.selectOneByExample(example);
     }
 
     /*
@@ -403,9 +405,9 @@ public class UserService {
      */
 
     public User findUser(Long id){
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andAccountIdEqualTo(id);
-        List<User> userList = userMapper.selectByExample(userExample);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("accountId",id);
+        List<User> userList = userMapper.selectByExample(example);
         return userList.get(0);
     }
 

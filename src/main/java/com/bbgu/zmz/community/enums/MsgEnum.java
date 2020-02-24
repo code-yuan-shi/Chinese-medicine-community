@@ -50,6 +50,9 @@ public enum MsgEnum {
     ADMIN(0,"社区管理员"),
     USER(0,"社区用户"),
     INPUT_ERROR(1,"输入错误"),
+    BIO(0,"该用户很懒，什么都没有留下！"),
+    SYSTEM_MESSAGE(0,"欢迎您加入Code社区的大家园！"),
+    OLD_NEW_SAME(1,"新密码和原密码不可以相同！")
 
 
     ;

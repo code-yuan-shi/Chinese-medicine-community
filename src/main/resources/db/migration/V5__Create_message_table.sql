@@ -7,7 +7,7 @@ create table message
       topic_id bigint,
       comment_id bigint,
       type int,
-      is_read int,
+      is_read int default 0,
       message_create bigint,
       constraint message_pk
             primary key (id)

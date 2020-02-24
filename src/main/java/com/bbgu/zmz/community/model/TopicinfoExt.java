@@ -2,9 +2,11 @@ package com.bbgu.zmz.community.model;
 
 import lombok.Data;
 
-@Data
-public class TopicinfoExt {
+import java.io.Serializable;
 
+@Data
+public class TopicinfoExt{
+    private static final long serialVersionUID = 1L;
     private Long id;
     private String title;
     private Long topicCreate;

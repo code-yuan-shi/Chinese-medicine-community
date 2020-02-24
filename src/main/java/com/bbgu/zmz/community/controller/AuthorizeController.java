@@ -4,7 +4,6 @@ import com.bbgu.zmz.community.dto.AccessTokenDTO;
 import com.bbgu.zmz.community.dto.GithubUser;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.User;
-import com.bbgu.zmz.community.model.UserExample;
 import com.bbgu.zmz.community.provider.GithubProvider;
 import com.bbgu.zmz.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -66,9 +66,9 @@ public class AuthorizeController {
                 user.setRole("社区用户");
             }
             userService.createOrUpdate(user);
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andAccountIdEqualTo(githubUser.getId());
-            List<User> users = userMapper.selectByExample(userExample);
+            Example example = new Example(User.class);
+            example.createCriteria().andEqualTo("accountId",githubUser.getId());
+            List<User> users  = userMapper.selectByExample(example);
             request.getSession().setAttribute("user",users.get(0));
             Cookie cookie = new Cookie("token",user.getToken());
             cookie.setMaxAge(60*60*24*7);
