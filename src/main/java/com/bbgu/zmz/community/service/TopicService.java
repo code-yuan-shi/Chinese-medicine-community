@@ -348,7 +348,11 @@ public class TopicService {
     搜索
      */
     public List<TopicinfoExt> searchTopic(String q){
-        return topicinfoExtMapper.searchTopic(q);
+        List<TopicinfoExt> topicinfoExtList = topicinfoExtMapper.searchTopic(q);
+       for(TopicinfoExt topicinfoExt:topicinfoExtList){
+           topicinfoExt.setTime(StringDate.getStringDate(new Date(topicinfoExt.getTopicCreate())));
+       }
+        return topicinfoExtList;
     }
 
     /*
