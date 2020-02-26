@@ -27,7 +27,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("经过了拦截器！");
+        System.out.println("请求路过拦截器！");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if(request.getRequestURI().lastIndexOf("/")==0){

@@ -11,6 +11,8 @@ public class Commentagree {
     @Column(name = "comment_id")
     private Long commentId;
 
+    private Integer status;
+
     /**
      * @return id
      */
@@ -51,5 +53,19 @@ public class Commentagree {
      */
     public void setCommentId(Long commentId) {
         this.commentId = commentId;
+    }
+
+    /**
+     * @return status
+     */
+    public Integer getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status
+     */
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

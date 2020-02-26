@@ -8,5 +8,6 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="userid" jdbcType="BIGINT" property="userid" />
     <result column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
 </mapper>

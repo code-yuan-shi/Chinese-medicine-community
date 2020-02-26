@@ -158,17 +158,18 @@ layui.define('fly', function(exports){
 
   //解答操作
   gather.jiedaActive = {
-    zan: function(li){ //赞
+    zan: function(li){ //点赞
       var othis = $(this), ok = othis.hasClass('zanok');
+
       fly.json('/jie/zan', {
         ok: ok
         ,id: li.data('id')
       }, function(res){
         if(res.status === 0){
           var zans = othis.find('em').html()|0;
+          layer.msg(res.msg);
           othis[ok ? 'removeClass' : 'addClass']('zanok');
           othis.find('em').html(ok ? (--zans) : (++zans));
-          layer.msg(res.msg,{icon:1,time:1*1000});
         } else {
           layer.msg(res.msg);
         }

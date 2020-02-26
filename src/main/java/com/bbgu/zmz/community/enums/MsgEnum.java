@@ -21,7 +21,8 @@ public enum MsgEnum {
     SHENHE_SUCCESS(0,"已审核通过"),
     STATUS_SUCCESS(0,"状态已更改"),
     ZAN_SUCCESS(0,"点赞成功"),
-    ZAN_FAILE(1,"不可以酱紫哦！"),
+    HAVE_ZAN(0,"已经点赞了"),
+    HAVE_ZAN_CANCEL(1,"已经取消了"),
     ZAN_CANCEL(0,"点赞已取消"),
     UPDATE_COMMENT(0,"评论已更新"),
     DELETE_SUCCESS(0,"已删除"),
@@ -52,7 +53,9 @@ public enum MsgEnum {
     INPUT_ERROR(1,"输入错误"),
     BIO(0,"该用户很懒，什么都没有留下！"),
     SYSTEM_MESSAGE(0,"欢迎您加入Code社区的大家园！"),
-    OLD_NEW_SAME(1,"新密码和原密码不可以相同！")
+    OLD_NEW_SAME(1,"新密码和原密码不可以相同！"),
+    ONE_DAY(86400,"24小时"),
+    NOT_ALLOW_ACCESS(1,"不可以酱紫频繁点击！"),
 
 
     ;

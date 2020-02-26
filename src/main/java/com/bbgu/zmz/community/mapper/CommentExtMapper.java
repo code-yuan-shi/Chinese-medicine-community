@@ -3,6 +3,7 @@ package com.bbgu.zmz.community.mapper;
 
 import com.bbgu.zmz.community.model.CommentExt;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,8 +14,4 @@ public interface CommentExtMapper {
                                      @Param("offset") Integer offset,
                                      @Param("size") Integer size
                                      );
-
-    void updateAgreeNumAdd(@Param("tid") Long tid);
-    void updateAgreeNumSub(@Param("tid") Long tid);
-
 }

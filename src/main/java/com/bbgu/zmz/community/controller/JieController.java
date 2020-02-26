@@ -7,6 +7,7 @@ import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.service.UserService;
+import com.bbgu.zmz.community.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,9 @@ public class JieController {
     private ListService listService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private RedisUtil redisUtil;
+
 
     @GetMapping("/index")
     public String jieIndex(){
@@ -60,6 +64,7 @@ public class JieController {
         model.addAttribute("count",TopicinfoExt.getCommentNum());
         return "jie/detail";
     }
+
 
     /*
     跳转发帖页面
@@ -120,6 +125,7 @@ public class JieController {
                     Map map = new HashMap<>();
                     map.put("action",request.getServletContext().getContextPath() + "/jie/detail/"+id);
                     return new Result().ok(MsgEnum.DETAIL_SUCCESS,map);
+
                 }
 
             }
@@ -169,6 +175,7 @@ public class JieController {
                comment.setType(0);
                //插入评论，返回新评论id
                Long id = topicService.insertComment(comment);
+               redisUtil.setHashMapOneValue("agreeCount",id.toString(),"0");
                //判断回复类型，0帖子，1楼中楼
                if(type == 1){
                    //二级回复，存储回复当前楼中楼的id，方便查询旧评论内容
@@ -227,6 +234,7 @@ public class JieController {
      */
     @PostMapping("/zan")
   public @ResponseBody Result jiedaZan(Long id, Boolean ok, HttpServletRequest request){
+
 
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");

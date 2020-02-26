@@ -41,7 +41,7 @@
   <p class="fly-home-sign" th:if="${userinfo.bio != null}">（[[${userinfo.bio}]]）</p>
 
   <div class="fly-sns" data-user="">
-    <a th:if="${session.user != null}" id = "sendMsg" class="layui-btn fly-imActive" data-type="chat">发送私信</a>
+    <a th:if="${session.user != null}" id = "sendMsg" class="layui-btn layui-btn-normal fly-imActive" data-type="chat">发送私信</a>
   </div>
 
 </div>

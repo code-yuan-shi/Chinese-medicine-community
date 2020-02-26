@@ -6,14 +6,13 @@ import com.bbgu.zmz.community.mapper.*;
 import com.bbgu.zmz.community.mapper.TopicinfoExtMapper;
 import com.bbgu.zmz.community.model.*;
 import com.bbgu.zmz.community.model.TopicinfoExt;
+import com.bbgu.zmz.community.util.RedisUtil;
 import com.bbgu.zmz.community.util.StringDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.List;
-
+import java.util.*;
 
 @Service
 public class TopicService {
@@ -37,13 +36,15 @@ public class TopicService {
     private CommentagreeMapper commentagreeMapper;
     @Autowired
     private CommentExtMapper commentExtMapper;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /*
     获取置顶帖子信息 || 获取最新综合帖子信息
      */
-    public List<TopicinfoExt> topicTop(Integer istop,Integer offset,Integer size){
-        List<TopicinfoExt> topicinfoExtList =  topicinfoExtMapper.getTopTopic(istop,offset,size);
-        for(TopicinfoExt topicinfoExt:topicinfoExtList){
+    public List<TopicinfoExt> topicTop(Integer istop, Integer offset, Integer size) {
+        List<TopicinfoExt> topicinfoExtList = topicinfoExtMapper.getTopTopic(istop, offset, size);
+        for (TopicinfoExt topicinfoExt : topicinfoExtList) {
             topicinfoExt.setTime(StringDate.getStringDate(new Date(topicinfoExt.getTopicCreate())));
         }
         return topicinfoExtList;
@@ -52,25 +53,27 @@ public class TopicService {
     /*
     查询一级分类
      */
-    public List<Category> findCate(){
+    public List<Category> findCate() {
         List<Category> categoryList = categoryMapper.selectAll();
         return categoryList;
     }
+
     /*
     查询二级分类
      */
-    public List<Kind> findKind(){
+    public List<Kind> findKind() {
         List<Kind> kindList = kindMapper.selectAll();
         return kindList;
     }
+
     /*
     插入帖子信息
      */
-    public int addTopic(Topicinfo topicinfo){
-        if (topicinfo.getId() != null){
+    public int addTopic(Topicinfo topicinfo) {
+        if (topicinfo.getId() != null) {
             topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
             return 10;
-        }else{
+        } else {
             int result = topicinfoMapper.insertSelective(topicinfo);
             return result;
         }
@@ -79,7 +82,7 @@ public class TopicService {
     /*
     查看帖子详情
      */
-    public TopicinfoExt showDetail(Long id){
+    public TopicinfoExt showDetail(Long id) {
         TopicinfoExt topicinfoExt = topicinfoExtMapper.getTopicDetails(id);
         topicinfoExt.setTime(StringDate.getStringDate(new Date(topicinfoExt.getTopicCreate())));
         return topicinfoExt;
@@ -89,124 +92,117 @@ public class TopicService {
     /*
     更新浏览数
      */
-    public void incView(Topicinfo topicinfo){
+    public void incView(Topicinfo topicinfo) {
         topicinfoExtMapper.incView(topicinfo);
     }
+
     /*
     插入评论
      */
-    public Long insertComment(Comment comment){
+    public Long insertComment(Comment comment) {
         commentMapper.insertSelective(comment);
         Long id = comment.getId();
         return id;
     }
-    /*
-    查询评论
-     */
-    public List<CommentExt> findComment(Long id,Integer page,Integer size,User userinfo){
-        Integer offset = (page -1)*size;
-       List<CommentExt> commentExtList = commentExtMapper.getCommentByTid(id,offset,size);
 
+    /*
+      查询评论
+       */
+    public List<CommentExt>  findComment(Long id,Integer page,Integer size,User userinfo){
+        Integer offset = (page -1)*size;
+        List<CommentExt> commentExtList = commentExtMapper.getCommentByTid(id,offset,size);
+        Map map = new HashMap();
         for(CommentExt commentExt:commentExtList){
             //查询是否点赞
-        if(userinfo != null){
-            Example example = new Example(Commentagree.class);
-            example.createCriteria().andEqualTo("userid",userinfo.getAccountId()).andEqualTo("commentId",commentExt.getId());
-            List<Commentagree> commentagreeList = commentagreeMapper.selectByExample(example);
-            if(commentagreeList.size()>0){
-                commentExt.setZan(true);
-            }else{
-                commentExt.setZan(false);
+            if(userinfo != null){
+                Boolean zan = redisUtil.getSetOneExit("c"+commentExt.getId().toString(),userinfo.getAccountId().toString());
+                if(zan){
+                    commentExt.setZan(true);
+                }else{
+                    commentExt.setZan(false);
+                }
+
+                if (redisUtil.exists("agreeCount")){
+                        commentExt.setAgreeNum(Long.parseLong(redisUtil.getMapOneValue("agreeCount",commentExt.getId().toString())));
+                }else{
+                    map.put(commentExt.getId().toString(),commentExt.getAgreeNum().toString());
+                }
             }
+            //转换时间
+            commentExt.setTime(StringDate.getStringDate(new Date(commentExt.getCommentCreate())));
         }
-        //转换时间
-        commentExt.setTime(StringDate.getStringDate(new Date(commentExt.getCommentCreate())));
-    }
+        redisUtil.setHashMap("agreeCount",map);
         return commentExtList;
     }
 
     /*
     审核帖子
      */
-    public void shenhe(Long id){
+    public void shenhe(Long id) {
         Topicinfo topicinfo = new Topicinfo();
         topicinfo.setId(id);
         topicinfo.setStatus(1);
         topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
     }
+
     /*
     设置置顶、加精状态
      */
-    public void setTopAndGood(Long id,Integer rank,String field){
-        Topicinfo topicinfo =topicinfoMapper.selectByPrimaryKey(id);
-        if(field.equals("stick")){
+    public void setTopAndGood(Long id, Integer rank, String field) {
+        Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(id);
+        if (field.equals("stick")) {
             topicinfo.setIsTop(rank);
-        }else if(field.equals("status")){
+        } else if (field.equals("status")) {
             topicinfo.setIsGood(rank);
         }
         topicinfoMapper.updateByPrimaryKeySelective(topicinfo);
     }
+
     /*
     删除帖子
      */
-    public void delTopicAndComment(Long id){
+    public void delTopicAndComment(Long id) {
         //删除帖子
         topicinfoMapper.deleteByPrimaryKey(id);
         //删除相关评论
         Example example = new Example(Comment.class);
-        example.createCriteria().andEqualTo("topicId",id);
+        example.createCriteria().andEqualTo("topicId", id);
         List<Comment> commentList = commentMapper.selectByExample(example);
         commentMapper.deleteByExample(example);
         //删除相关评论点赞
-        for(Comment comment:commentList){
+        for (Comment comment : commentList) {
             Example exampleCommentAgree = new Example(Commentagree.class);
-            exampleCommentAgree.createCriteria().andEqualTo("commentId",comment.getId());
+            exampleCommentAgree.createCriteria().andEqualTo("commentId", comment.getId());
             commentagreeMapper.deleteByExample(exampleCommentAgree);
         }
         //删除相关收藏信息
         Example exampleCollect = new Example(Collect.class);
-        exampleCollect.createCriteria().andEqualTo("topicId",id);
+        exampleCollect.createCriteria().andEqualTo("topicId", id);
         collectMapper.deleteByExample(exampleCollect);
         //删除相关通知信息
         Example exampleMessage = new Example(Message.class);
-        exampleMessage.createCriteria().andEqualTo("topicId",id);
+        exampleMessage.createCriteria().andEqualTo("topicId", id);
         messageMapper.deleteByExample(exampleMessage);
     }
+
     /*
     点赞
      */
-    public Result jiedaZan(User user, Long id, Boolean ok){
-        if(user != null)
+    public Result jiedaZan(User user, Long id, Boolean ok) {
+        Long SUCEESS = 1L;
+        if (ok == false)//点赞
         {
-            if(ok == false)//点赞
-            {
-                Example exampleCommentAgree = new Example(Commentagree.class);
-                exampleCommentAgree.createCriteria().andEqualTo("commentId",id).andEqualTo("userid",user.getAccountId());
-                List<Commentagree> commentagreeList  =commentagreeMapper.selectByExample(exampleCommentAgree);
-                if(commentagreeList.size() == 0){
-                    commentExtMapper.updateAgreeNumAdd(id);
-                    Commentagree commentagree = new Commentagree();
-                    commentagree.setCommentId(id);
-                    commentagree.setUserid(user.getAccountId());
-                    commentagreeMapper.insertSelective(commentagree);
-                    return new Result().ok(MsgEnum.ZAN_SUCCESS);
-                }else{
-                    return new Result().error(MsgEnum.ZAN_FAILE);
+                Long status = redisUtil.setSet("c" + id.toString(), user.getAccountId().toString());
+                if(SUCEESS.equals(status)){
+                    redisUtil.setHashMapOneValueInc("agreeCount",id.toString(),+1);
                 }
-            }else{  //取消点赞
-                Example exampleCommentAgree = new Example(Commentagree.class);
-                exampleCommentAgree.createCriteria().andEqualTo("commentId",id).andEqualTo("userid",user.getAccountId());
-                List<Commentagree> commentagreeList  =commentagreeMapper.selectByExample(exampleCommentAgree);
-                if(commentagreeList.size() == 0){
-                    return new Result().error(MsgEnum.ZAN_FAILE);
-                }else{
-                    commentExtMapper.updateAgreeNumSub(id);
-                    commentagreeMapper.deleteByExample(exampleCommentAgree);
-                    return new Result().ok(MsgEnum.ZAN_CANCEL);
+                return new Result().ok(MsgEnum.ZAN_SUCCESS);
+        } else {  //取消点赞
+               Long status =  redisUtil.delSet("c" + id.toString(), user.getAccountId().toString());
+                if(SUCEESS.equals(status)){
+                    redisUtil.setHashMapOneValueInc("agreeCount",id.toString(),-1);
                 }
-            }
-        }else{
-            return new Result().error(MsgEnum.NOTLOGIN);
+            return new Result().ok(MsgEnum.ZAN_CANCEL);
         }
     }
     /*

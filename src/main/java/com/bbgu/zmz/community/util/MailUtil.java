@@ -1,6 +1,7 @@
 package com.bbgu.zmz.community.util;
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.enums.MsgEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.Properties;
@@ -16,43 +17,41 @@ public class MailUtil {
     public static String myEmailSMTPHost = "smtp.qq.com";
     public static String receiveMailAccount;
 
-    public static Result sendActiveMail(String receiveMailAccount, String mailActiveCode, int mailCode,String url){
-        //RegRespObj regRespObj = new RegRespObj();
-        // 1. 创建参数配置, 用于连接邮件服务器的参数配置
-        Properties props = new Properties();                    // 参数配置
-        props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
-        props.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
-        props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
-        props.setProperty("mail.smtp.port", "465");
-        props.setProperty("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
-        props.setProperty("mail.smtp.socketFactory.port", "465");
+    public static Result sendActiveMail(String receiveMailAccount, String mailActiveCode, int mailCode,String url) {
+            //RegRespObj regRespObj = new RegRespObj();
+            // 1. 创建参数配置, 用于连接邮件服务器的参数配置
+            Properties props = new Properties();                    // 参数配置
+            props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
+            props.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
+            props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
+            props.setProperty("mail.smtp.port", "465");
+            props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            props.setProperty("mail.smtp.socketFactory.port", "465");
 
-        // 2. 根据配置创建会话对象, 用于和邮件服务器交互
-        Session session = Session.getDefaultInstance(props);
-        //session.setDebug(true);                                 // 设置为debug模式, 可以查看详细的发送 log
+            // 2. 根据配置创建会话对象, 用于和邮件服务器交互
+            Session session = Session.getDefaultInstance(props);
+            //session.setDebug(true);                                 // 设置为debug模式, 可以查看详细的发送 log
 
 
-        try{
-            // 3. 创建一封邮件
-            MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, mailActiveCode,mailCode,url);
+            try {
+                // 3. 创建一封邮件
+                MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, mailActiveCode, mailCode, url);
 
-            // 4. 根据 Session 获取邮件传输对象
-            Transport transport = session.getTransport();
+                // 4. 根据 Session 获取邮件传输对象
+                Transport transport = session.getTransport();
 
-            transport.connect(myEmailAccount, myEmailPassword);
+                transport.connect(myEmailAccount, myEmailPassword);
 
-            // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
-            transport.sendMessage(message, message.getAllRecipients());
+                // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
+                transport.sendMessage(message, message.getAllRecipients());
 
-            // 7. 关闭连接
-            transport.close();
-        }catch (Exception e){
-            return new Result().error(MsgEnum.EMAIL_INCORRECT);
-        }
+                // 7. 关闭连接
+                transport.close();
+            } catch (Exception e) {
+                return new Result().error(MsgEnum.EMAIL_INCORRECT);
+            }
         return new Result().ok(MsgEnum.OK);
     }
-
-
     /**
      * 创建一封只包含文本的简单邮件
      *
