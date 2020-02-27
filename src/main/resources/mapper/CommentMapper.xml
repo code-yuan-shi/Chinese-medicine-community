@@ -7,12 +7,12 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="topic_id" jdbcType="BIGINT" property="topicId" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="comment_create" jdbcType="BIGINT" property="commentCreate" />
     <result column="comment_modified" jdbcType="BIGINT" property="commentModified" />
     <result column="agree_num" jdbcType="BIGINT" property="agreeNum" />
     <result column="is_accept" jdbcType="INTEGER" property="isAccept" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
 </mapper>

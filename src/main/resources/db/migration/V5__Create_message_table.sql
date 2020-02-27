@@ -3,7 +3,7 @@ create table message
       id int auto_increment,
       send_user_id bigint,
       recv_user_id bigint,
-      content varchar(1024),
+      content text,
       topic_id bigint,
       comment_id bigint,
       type int,

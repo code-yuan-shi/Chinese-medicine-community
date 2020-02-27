@@ -10,8 +10,6 @@ public class Comment {
     @Column(name = "topic_id")
     private Long topicId;
 
-    private String content;
-
     private Integer type;
 
     @Column(name = "user_id")
@@ -28,6 +26,8 @@ public class Comment {
 
     @Column(name = "is_accept")
     private Integer isAccept;
+
+    private String content;
 
     /**
      * @return id
@@ -55,20 +55,6 @@ public class Comment {
      */
     public void setTopicId(Long topicId) {
         this.topicId = topicId;
-    }
-
-    /**
-     * @return content
-     */
-    public String getContent() {
-        return content;
-    }
-
-    /**
-     * @param content
-     */
-    public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
     }
 
     /**
@@ -153,5 +139,19 @@ public class Comment {
      */
     public void setIsAccept(Integer isAccept) {
         this.isAccept = isAccept;
+    }
+
+    /**
+     * @return content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * @param content
+     */
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
     }
 }

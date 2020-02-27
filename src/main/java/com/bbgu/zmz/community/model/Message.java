@@ -12,8 +12,6 @@ public class Message {
     @Column(name = "recv_user_id")
     private Long recvUserId;
 
-    private String content;
-
     @Column(name = "topic_id")
     private Long topicId;
 
@@ -27,6 +25,8 @@ public class Message {
 
     @Column(name = "message_create")
     private Long messageCreate;
+
+    private String content;
 
     /**
      * @return id
@@ -68,20 +68,6 @@ public class Message {
      */
     public void setRecvUserId(Long recvUserId) {
         this.recvUserId = recvUserId;
-    }
-
-    /**
-     * @return content
-     */
-    public String getContent() {
-        return content;
-    }
-
-    /**
-     * @param content
-     */
-    public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
     }
 
     /**
@@ -152,5 +138,19 @@ public class Message {
      */
     public void setMessageCreate(Long messageCreate) {
         this.messageCreate = messageCreate;
+    }
+
+    /**
+     * @return content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * @param content
+     */
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
     }
 }

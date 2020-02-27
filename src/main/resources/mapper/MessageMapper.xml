@@ -8,11 +8,11 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="send_user_id" jdbcType="BIGINT" property="sendUserId" />
     <result column="recv_user_id" jdbcType="BIGINT" property="recvUserId" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="topic_id" jdbcType="BIGINT" property="topicId" />
     <result column="comment_id" jdbcType="BIGINT" property="commentId" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="is_read" jdbcType="INTEGER" property="isRead" />
     <result column="message_create" jdbcType="BIGINT" property="messageCreate" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
 </mapper>

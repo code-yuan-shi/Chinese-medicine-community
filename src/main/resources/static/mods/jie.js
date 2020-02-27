@@ -96,16 +96,17 @@ layui.define('fly', function(exports){
     },reward: function(div){
       var othis = $(this);
       layer.prompt({
-        title: '请输入奖励经验值'
+        title: '奖励经验值'
         ,formType:3
-        ,placeholder:'请输入奖励经验值'
         ,maxlength:5
+        ,placeholder:"请输入数量"
         ,shade: false
         ,fixed: false
         ,id: 'LAY_flyedit_reward'
       }, function(val, index, elem){
-        if (isNaN(val)) {
-         layer.tips("只可以输入数字！",elem);
+        var str = /^[0-9]*[1-9][0-9]*$/;
+        if (!str.test(val)) {
+         layer.tips("只可以输入数字！",elem,{tips: 1});
           return;
         }
         fly.json('/user/reward', {

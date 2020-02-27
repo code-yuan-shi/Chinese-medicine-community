@@ -67,7 +67,7 @@ public class ApiController {
      */
     @PostMapping("/top")
     @ResponseBody
-    public Result weekList(Long limit){
+    public Result weekList(){
         List<WeekList> weekListList = listService.weekList();
         return new Result().ok(MsgEnum.OK,weekListList);
     }
