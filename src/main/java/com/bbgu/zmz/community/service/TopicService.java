@@ -88,6 +88,14 @@ public class TopicService {
         return topicinfoExt;
 
     }
+    /*
+    查看相关分类帖子
+     */
+    public List<Topicinfo> classifyTopic(Long catrgoryId){
+        Example example = new Example(Topicinfo.class);
+        example.createCriteria().andEqualTo("categoryId",catrgoryId);
+        return  topicinfoMapper.selectByExample(example);
+    }
 
     /*
     更新浏览数

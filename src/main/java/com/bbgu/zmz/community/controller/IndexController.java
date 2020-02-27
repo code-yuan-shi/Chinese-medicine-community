@@ -59,15 +59,18 @@ public class IndexController {
             Long time = e - s;
             System.out.println("数据从数据库中取出，花费时间为："+time+"ms");
         }
+        //直接查数据库
         List<TopicinfoExt> topicInfoExtListTop = topicService.topicTop(1,0,5);  //置顶帖子
         List<TopicinfoExt> topicInfoExtListAll = topicService.topicTop(0,0,12);  //综合帖子
         List<Topicinfo> topicinfoList = topicService.findTopicStatus(); //未审核
-        request.getServletContext().setAttribute("kinds",kindList);            //二级分类
-        request.getServletContext().setAttribute("categorys",categoryList);    //一级分类
-        request.getServletContext().setAttribute("weektopics",topicinfoExtListWeek);  //本周热议
         request.getServletContext().setAttribute("notcheck",topicinfoList);  //未审核
         model.addAttribute("topictops",topicInfoExtListTop);
         model.addAttribute("topicalls",topicInfoExtListAll);
+        //从缓存中取
+        request.getServletContext().setAttribute("kinds",kindList);            //二级分类
+        request.getServletContext().setAttribute("categorys",categoryList);    //一级分类
+        request.getServletContext().setAttribute("weektopics",topicinfoExtListWeek);  //本周热议
+
         return "index";
     }
     @GetMapping("/search")

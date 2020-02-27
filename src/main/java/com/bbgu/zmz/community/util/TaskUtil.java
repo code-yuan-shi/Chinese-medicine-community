@@ -19,7 +19,7 @@ public class TaskUtil {
 
 
     /**
-     *  每五秒执行一次
+     *  每天0点执行
      */
 
    @Scheduled(cron="0 0 0 * * ?")

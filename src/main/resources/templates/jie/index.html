@@ -20,6 +20,16 @@
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8">
+      <!--轮播广告图-->
+      <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="carousel">
+        <div carousel-item>
+          <a href="#"><img src="/ad/1.jpg"/></a>
+          <a href="#"><img src="/ad/2.jpg"/></a>
+          <a href="#"><img src="/ad/3.jpg"/></a>
+        </div>
+      </div>
+
+      <!--综合-->
       <div class="fly-panel" style="margin-bottom: 0;">
         <div th:if="${topicMap['fenlei'] == null}" class="fly-panel-title fly-filter">
           <a th:classappend="${topicMap['status']=='all'}?'layui-this':''" th:href="@{'/category/cates/'+${topicMap['column']}+'/all'}">综合</a>
@@ -133,6 +143,26 @@ layui.config({
 }).extend({
   fly: 'index'
 }).use('fly');
+</script>
+<script>
+  layui.use(['carousel'], function(){
+    var carousel = layui.carousel;
+    //建造实例
+    carousel.render({
+      elem: '#carousel'
+      ,width: '100%' //设置容器宽度
+      ,arrow: 'always' //始终显示箭头
+      ,height:'250px'
+      //,anim: 'updown' //切换动画方式
+    });
+    carousel.render({
+      elem: '#rightcarousel'
+      ,width: '100%' //设置容器宽度
+      ,arrow: 'always' //始终显示箭头
+      ,height:'250px'
+      //,anim: 'updown' //切换动画方式
+    });
+  });
 </script>
 
 </body>

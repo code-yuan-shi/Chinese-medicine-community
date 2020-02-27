@@ -1,5 +1,6 @@
 package com.bbgu.zmz.community.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.bbgu.zmz.community.dto.*;
 import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.model.*;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,18 +52,20 @@ public class JieController {
                             @RequestParam(name = "size",defaultValue = "5") Integer size,
                             Model model,HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("user");
+        //更新浏览数
         Topicinfo topicinfo = new Topicinfo();
         topicinfo.setId(id);
         topicinfo.setViewCount(1);
-        topicService.incView(topicinfo);                            //更新浏览数
-        TopicinfoExt TopicinfoExt = topicService.showDetail(id);    //帖子详情
+        topicService.incView(topicinfo);
+        TopicinfoExt topicinfoExt = topicService.showDetail(id);    //帖子详情
+        List<Topicinfo> topicinfo1  = topicService.classifyTopic(topicinfoExt.getCategoryId());  //查询相关帖子
         List<CommentExt> CommentExtList = topicService.findComment(id,page,size,user);  //查询用户评论
-        //ReplyDTO replyDTO = topicService.findAcceptComment(id,user);   //查询是否存在采纳
         model.addAttribute("pageid",page);
         model.addAttribute("size",size);
-        model.addAttribute("detail",TopicinfoExt);
+        model.addAttribute("detail",topicinfoExt);
+        model.addAttribute("relatekind",topicinfo1);
         model.addAttribute("reply",CommentExtList);
-        model.addAttribute("count",TopicinfoExt.getCommentNum());
+        model.addAttribute("count",topicinfoExt.getCommentNum());
         return "jie/detail";
     }
 

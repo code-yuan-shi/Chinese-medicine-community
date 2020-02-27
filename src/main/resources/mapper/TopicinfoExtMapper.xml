@@ -692,6 +692,7 @@
             t.is_top,
             t.user_id,
             t.status,
+            t.category_id,
             u.avatar_url,
             u.`name`,
             u.role,
