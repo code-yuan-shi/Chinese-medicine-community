@@ -2,7 +2,6 @@ package com.bbgu.zmz.community.util;
 
 
 import com.bbgu.zmz.community.mapper.CommentMapper;
-import com.bbgu.zmz.community.mapper.CommentagreeMapper;
 import com.bbgu.zmz.community.model.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

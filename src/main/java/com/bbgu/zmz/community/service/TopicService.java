@@ -33,8 +33,6 @@ public class TopicService {
     @Autowired
     private MessageMapper messageMapper;
     @Autowired
-    private CommentagreeMapper commentagreeMapper;
-    @Autowired
     private CommentExtMapper commentExtMapper;
     @Autowired
     private RedisUtil redisUtil;
@@ -177,12 +175,6 @@ public class TopicService {
         example.createCriteria().andEqualTo("topicId", id);
         List<Comment> commentList = commentMapper.selectByExample(example);
         commentMapper.deleteByExample(example);
-        //删除相关评论点赞
-        for (Comment comment : commentList) {
-            Example exampleCommentAgree = new Example(Commentagree.class);
-            exampleCommentAgree.createCriteria().andEqualTo("commentId", comment.getId());
-            commentagreeMapper.deleteByExample(exampleCommentAgree);
-        }
         //删除相关收藏信息
         Example exampleCollect = new Example(Collect.class);
         exampleCollect.createCriteria().andEqualTo("topicId", id);
@@ -272,10 +264,6 @@ public class TopicService {
         Example example = new Example(Message.class);
         example.createCriteria().andEqualTo("commentId",id);
         messageMapper.deleteByExample(example);
-        //删除点赞信息
-        Example exampleCommentAgree = new Example(Commentagree.class);
-        exampleCommentAgree.createCriteria().andEqualTo("commentId",id);
-        commentagreeMapper.deleteByExample(exampleCommentAgree);
         return new Result().ok(MsgEnum.DELETE_SUCCESS);
     }
     /*

@@ -360,7 +360,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             return '<img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
           })
           //转义@
-          .replace(/@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2')
+          .replace(/@@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2')
           //转义表情
           .replace(/face\[([^\s\[\]]+?)\]/g, function(face){
             var alt = face.replace(/^face/g, '');

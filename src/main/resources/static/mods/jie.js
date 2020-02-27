@@ -178,7 +178,7 @@ layui.define('fly', function(exports){
     }
     ,reply: function(li){ //回复
 
-      var aite = '@'+ li.find('.fly-detail-user cite').text().replace(/\s/g, '');
+      var aite = '@@'+ li.find('.fly-detail-user cite').text().replace(/\s/g, '');
       //设置被评论者Id评论
       $("#commentTo").val(li.attr("data-userId"));
       $("#commentid").val(li.attr("data-id"));
