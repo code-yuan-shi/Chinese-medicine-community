@@ -91,6 +91,7 @@ public class TopicService {
      */
     public List<Topicinfo> classifyTopic(Long catrgoryId){
         Example example = new Example(Topicinfo.class);
+        example.setOrderByClause("topic_create desc");
         example.createCriteria().andEqualTo("categoryId",catrgoryId);
         return  topicinfoMapper.selectByExample(example);
     }

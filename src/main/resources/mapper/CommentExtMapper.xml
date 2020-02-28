@@ -34,6 +34,8 @@
         LEFT JOIN `user` u ON u.account_id = c.user_id
         WHERE
             c.topic_id = #{tid}
+        ORDER BY c.comment_create ASC
         LIMIT #{offset},#{size}
+
     </select>
 </mapper>
