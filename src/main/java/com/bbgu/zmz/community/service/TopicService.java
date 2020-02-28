@@ -252,7 +252,9 @@ public class TopicService {
         comment.setContent(content);
         comment.setCommentModified(System.currentTimeMillis());
         commentMapper.updateByPrimaryKeySelective(comment);
-        return new Result().ok(MsgEnum.UPDATE_COMMENT);
+        Map map = new HashMap();
+        map.put("content",content);
+        return new Result().ok(MsgEnum.UPDATE_COMMENT,map);
     }
 
     /*

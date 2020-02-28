@@ -233,7 +233,7 @@ layui.define('fly', function(exports){
             if (res.status == 0){
               layer.msg(res.msg,{icon:1,time:1*1000},function () {
                 layer.close(index);
-                li.find('.detail-body').html(fly.content(value));
+                li.find('.detail-body').html(fly.content(res.data.content));
               })
             }
 

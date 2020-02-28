@@ -56,6 +56,9 @@ public enum MsgEnum {
     OLD_NEW_SAME(1,"新密码和原密码不可以相同！"),
     ONE_DAY(86400,"24小时"),
     NOT_ALLOW_ACCESS(1,"不可以酱紫频繁点击！"),
+    SENSIVETIVE_SUCCESS(0,"添加成功"),
+    SENSIVETIVE_FAILE(1,"不能少于两个字"),
+
 
 
     ;

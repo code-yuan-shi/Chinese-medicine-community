@@ -9,6 +9,7 @@ import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.service.UserService;
 import com.bbgu.zmz.community.util.RedisUtil;
+import com.bbgu.zmz.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -134,6 +135,7 @@ public class JieController {
 
             }
         }else{
+            topicinfo.setStatus(0);
            int result = topicService.addTopic(topicinfo);
            Long id = topicinfo.getId();
            if(result == 10){
@@ -154,6 +156,8 @@ public class JieController {
    @PostMapping("/reply")
     @ResponseBody
     public Result reply(Comment comment,Long oid,Long recvUserId,int type,String replyto,HttpServletRequest request){
+       SensitiveFilter filter = SensitiveFilter.DEFAULT;
+       comment.setContent(filter.filter(comment.getContent(), '*'));
        //查询当前用户
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
@@ -268,7 +272,8 @@ public class JieController {
      */
     @PostMapping("/editsubmit")
     public @ResponseBody Result editCommentSub(Long id,String content){
-        return topicService.editCommentSub(id,content);
+        SensitiveFilter filter = SensitiveFilter.DEFAULT;
+        return topicService.editCommentSub(id, filter.filter(content, '*'));
     }
 
     /*
