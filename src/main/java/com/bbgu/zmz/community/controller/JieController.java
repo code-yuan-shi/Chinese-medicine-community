@@ -1,6 +1,5 @@
 package com.bbgu.zmz.community.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.bbgu.zmz.community.dto.*;
 import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.model.*;
@@ -9,7 +8,7 @@ import com.bbgu.zmz.community.service.MessageService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.service.UserService;
 import com.bbgu.zmz.community.util.RedisUtil;
-import com.bbgu.zmz.community.util.SensitiveFilter;
+import com.bbgu.zmz.community.util.WordFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,8 +154,9 @@ public class JieController {
    @PostMapping("/reply")
     @ResponseBody
     public Result reply(Comment comment,Long oid,Long recvUserId,int type,String replyto,HttpServletRequest request){
-       SensitiveFilter filter = SensitiveFilter.DEFAULT;
-       comment.setContent(filter.filter(comment.getContent(), '*'));
+       comment.setContent(WordFilter.doFilter(comment.getContent()));
+/*       SensitiveFilter filter = SensitiveFilter.DEFAULT;
+       comment.setContent(filter.filter(, '*'));*/
        //查询当前用户
         HttpSession httpSession = request.getSession();
         User user = (User)httpSession.getAttribute("user");
@@ -272,8 +271,9 @@ public class JieController {
      */
     @PostMapping("/editsubmit")
     public @ResponseBody Result editCommentSub(Long id,String content){
-        SensitiveFilter filter = SensitiveFilter.DEFAULT;
-        return topicService.editCommentSub(id, filter.filter(content, '*'));
+
+       // SensitiveFilter filter = SensitiveFilter.DEFAULT;
+        return topicService.editCommentSub(id, WordFilter.doFilter(content));
     }
 
     /*

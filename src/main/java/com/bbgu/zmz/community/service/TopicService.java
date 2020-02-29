@@ -119,6 +119,15 @@ public class TopicService {
         Integer offset = (page -1)*size;
         List<CommentExt> commentExtList = commentExtMapper.getCommentByTid(id,offset,size);
         Map map = new HashMap();
+        if (!redisUtil.exists("agreeCount")){
+            List<Comment> commentList = commentMapper.selectAll();
+            for(Comment comment:commentList){
+                map.put(comment.getId().toString(),comment.getAgreeNum().toString());
+            }
+            System.out.println("点赞数从数据库中取");
+
+        }
+        redisUtil.setHashMap("agreeCount",map);
         for(CommentExt commentExt:commentExtList){
             //查询是否点赞
             if(userinfo != null){
@@ -128,17 +137,11 @@ public class TopicService {
                 }else{
                     commentExt.setZan(false);
                 }
-
-                if (redisUtil.exists("agreeCount")){
-                        commentExt.setAgreeNum(Long.parseLong(redisUtil.getMapOneValue("agreeCount",commentExt.getId().toString())));
-                }else{
-                    map.put(commentExt.getId().toString(),commentExt.getAgreeNum().toString());
-                }
+                commentExt.setAgreeNum(Long.parseLong(redisUtil.getMapOneValue("agreeCount",commentExt.getId().toString())));
             }
             //转换时间
             commentExt.setTime(StringDate.getStringDate(new Date(commentExt.getCommentCreate())));
         }
-        redisUtil.setHashMap("agreeCount",map);
         return commentExtList;
     }
 

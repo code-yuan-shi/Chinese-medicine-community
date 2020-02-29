@@ -24,12 +24,10 @@
     <div class="fly-column-right layui-hide-xs" th:if="${session.user != null}">
       <span class="fly-search"><i class="layui-icon"></i></span>
       <a href="/jie/add" class="layui-btn layui-btn-normal">发表新帖</a>
-      <a href="javascript:void(0)" class="sensivetive" th:if="${session.user?.role=='社区管理员'}">添加敏感词</a>
     </div> 
     <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;" th:if="${session.user != null}">
       <a class="fly-search"><i class="layui-icon"></i></a>
       <a href="/jie/add" class="layui-btn layui-btn-normal">发表新帖</a>
-      <a href="javascript:void(0)" class="sensivetive" th:if="${session.user?.role=='社区管理员'}">添加敏感词</a>
     </div> 
   </div>
 </div>

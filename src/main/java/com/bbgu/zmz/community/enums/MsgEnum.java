@@ -58,6 +58,7 @@ public enum MsgEnum {
     NOT_ALLOW_ACCESS(1,"不可以酱紫频繁点击！"),
     SENSIVETIVE_SUCCESS(0,"添加成功"),
     SENSIVETIVE_FAILE(1,"不能少于两个字"),
+    SEND_MYSELF(1,"不能够发信息给自己！")
 
 
 

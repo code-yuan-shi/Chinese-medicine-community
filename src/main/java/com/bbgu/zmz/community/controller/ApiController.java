@@ -4,7 +4,7 @@ import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.model.WeekList;
 import com.bbgu.zmz.community.service.ListService;
-import com.bbgu.zmz.community.util.SensitiveFilter;
+import com.bbgu.zmz.community.util.WordFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -71,22 +69,6 @@ public class ApiController {
     public Result weekList(){
         List<WeekList> weekListList = listService.weekList();
         return new Result().ok(MsgEnum.OK,weekListList);
-    }
-
-    /*
-    *
-    * 添加敏感词
-    * */
-    @PostMapping("/wordmanage")
-    @ResponseBody
-    public Result addSensitive(String str){
-        SensitiveFilter filter = SensitiveFilter.DEFAULT;
-        Boolean result = filter.put(str);
-        if(result){
-            return new Result().ok(MsgEnum.SENSIVETIVE_SUCCESS);
-        }else{
-            return new Result().error(MsgEnum.SENSIVETIVE_FAILE);
-        }
     }
 
     /*

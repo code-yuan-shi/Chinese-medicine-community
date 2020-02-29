@@ -695,30 +695,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       }
     })
   });
-  ///添加敏感词
-  $('.sensivetive').on('click', function(){
-    layer.prompt({
-      title: '添加敏感词'
-      ,formType:3
-      ,maxlength:5
-      ,placeholder:"请在此输入内容"
-      ,shade: false
-      ,fixed: false
-      ,id: 'LAY_flyedit_sensitive'
-    }, function(val, index, elem){
-      fly.json('/api/wordmanage', {
-        str:val
-      }, function(res){
-        if(res.status === 0){
-          layer.msg(res.msg,{icon:1,time:1*1000});
-        }
-      });
-      layer.close(index);
-    });
-  });
-
-
-
   //新消息通知
   fly.newmsg();
 

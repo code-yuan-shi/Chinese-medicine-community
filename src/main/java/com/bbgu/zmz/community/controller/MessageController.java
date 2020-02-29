@@ -78,10 +78,8 @@ public class MessageController {
             map.put("action","");
             return new Result().ok(MsgEnum.MESSAGE_SUCCESS,map);
         }else{
-           return new Result().error(MsgEnum.MESSAGE_FAILE);
+            return new Result().error(MsgEnum.SEND_MYSELF);
         }
     }
 
-
-
-    }
+}

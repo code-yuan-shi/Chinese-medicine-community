@@ -71,17 +71,21 @@ public class MessageService {
     添加通知信息
      */
     public int insMessage(Long sendUserId, Long recvUserId,Long topicId,Integer type,String content,Long commentId){
-        Message message = new Message();
-        message.setSendUserId(sendUserId);
-        message.setRecvUserId(recvUserId);
-        message.setTopicId(topicId);
-        message.setContent(content);
-        message.setCommentId(commentId);
-        message.setType(type);
-        message.setIsRead(0);
-        message.setMessageCreate(System.currentTimeMillis());
-        return messageMapper.insertSelective(message);
 
+        if(!sendUserId.equals(recvUserId)){
+            Message message = new Message();
+            message.setSendUserId(sendUserId);
+            message.setRecvUserId(recvUserId);
+            message.setTopicId(topicId);
+            message.setContent(content);
+            message.setCommentId(commentId);
+            message.setType(type);
+            message.setIsRead(0);
+            message.setMessageCreate(System.currentTimeMillis());
+            return messageMapper.insertSelective(message);
+        }else{
+            return 0;
+        }
     }
     /*
     查询通知消息
@@ -97,40 +101,6 @@ public class MessageService {
             }
             messageExt.setTime(StringDate.getStringDate(new Date(messageExt.getMessageCreate())));
         }
-        /*MessageExample messageExample = new MessageExample();
-        messageExample.createCriteria().andRecvUserIdEqualTo(recvUserId);
-        messageExample.setOrderByClause("message_create desc");
-        List<Message> messageList = messageMapper.selectByExample(messageExample);  //查询通知列表
-        List<MessageExt> messageExtList = new ArrayList<>();
-        for(Message message:messageList){
-            MessageExt messageExt = new MessageExt();
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andAccountIdEqualTo(message.getSendUserId());
-            List<User> userList = userMapper.selectByExample(userExample);   //获得发送者信息
-            Topicinfo topicinfo = topicinfoMapper.selectByPrimaryKey(message.getTopicId());   //获得帖子信息
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = new Date(message.getMessageCreate());   //转换通知时间
-            if (message.getType() == 1) {
-                CommentExample commentExample = new CommentExample();
-                commentExample.createCriteria().andContentEqualTo(message.getContent());
-                List<Comment> commentList = commentMapper.selectByExample(commentExample); //取得新评论的id
-                Comment comment = commentMapper.selectByPrimaryKey(message.getCommentId());    //获得评论信息
-                messageExt.setNewId(commentList.get(0).getId());
-                messageExt.setComment(comment);
-                int start =  message.getContent().indexOf(" ");
-                String str = message.getContent().substring(start+1);
-                messageExt.setContent(str);
-            }else{
-                messageExt.setContent(message.getContent());
-            }
-            messageExt.setTime(StringDate.getStringDate(date));
-            messageExt.setCommentId(message.getCommentId());
-            messageExt.setId(message.getId());
-            messageExt.setType(message.getType());
-            messageExt.setUser(userList.get(0));
-            messageExt.setTopicinfo(topicinfo);
-            messageExtList.add(messageExt);
-        }*/
         return messageExtList;
     }
 

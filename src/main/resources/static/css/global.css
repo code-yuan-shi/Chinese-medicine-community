@@ -93,7 +93,7 @@ i{font-style: normal;}
 
 /* 辅助 */
 a:hover{color: #01AAED; transition: all .3s;}
-pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid #01AAED;  background-color: #f8f8f8; font-family: Courier New; overflow: auto;}
+pre{padding: 14px 15px 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid #01AAED;  background-color: #f8f8f8; font-family: Courier New; overflow: auto;}
 
 .layui-container{padding: 0;margin-top: 2px;}
 .fly-main{width: 1079px; min-height: 600px; margin: 0 auto 15px;}
