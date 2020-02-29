@@ -2,7 +2,6 @@
 <div class="fly-panel fly-column" th:fragment="col(kinds,column,fenlei)">
   <div class="layui-container">
     <ul class="layui-clear">
-      <li class="layui-hide-xs"><a href="/">首页</a></li>
       <li th:classappend="${fenlei == kind.id}?'layui-this':''" th:each="kind:${kinds}"><a th:href="@{'/category/cate/'+${column}+'/'+${kind.id}}">[[${kind.kindname}]]</a></li>
 <!--      <li><a href="#">提问</a></li>
       <li><a href="#">分享</a></li>

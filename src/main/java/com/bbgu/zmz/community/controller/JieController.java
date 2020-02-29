@@ -57,7 +57,7 @@ public class JieController {
         topicinfo.setViewCount(1);
         topicService.incView(topicinfo);
         TopicinfoExt topicinfoExt = topicService.showDetail(id);    //帖子详情
-        List<Topicinfo> topicinfo1  = topicService.classifyTopic(topicinfoExt.getCategoryId());  //查询相关帖子
+        List<Topicinfo> topicinfo1  = topicService.classifyTopic(topicinfoExt.getCategoryId(),topicinfoExt.getKindId());  //查询相关帖子
         List<CommentExt> CommentExtList = topicService.findComment(id,page,size,user);  //查询用户评论
         model.addAttribute("pageid",page);
         model.addAttribute("size",size);

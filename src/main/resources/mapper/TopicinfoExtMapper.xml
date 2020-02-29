@@ -693,6 +693,7 @@
             t.user_id,
             t.status,
             t.category_id,
+            t.kind_id,
             u.avatar_url,
             u.`name`,
             u.role,

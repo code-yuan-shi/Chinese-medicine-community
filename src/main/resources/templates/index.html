@@ -11,10 +11,10 @@
 </head>
 <body>
 
-<div th:insert="~{common/header::head}"></div>
+<div th:replace="~{common/header::head}"></div>
 <div th:replace="~{common/mcategory::mcate(column = 0)}"></div>
-<div th:insert="~{common/category::cate(cates = ${#request.getServletContext().getAttribute('categorys')},column = 0)}"></div>
-<div th:insert="~{common/column::col(kinds = ${#request.getServletContext().getAttribute('kinds')},column = 0,fenlei = 0)}"></div>
+<div th:replace="~{common/category::cate(cates = ${#request.getServletContext().getAttribute('categorys')},column = 0)}"></div>
+<div th:replace="~{common/column::col(kinds = ${#request.getServletContext().getAttribute('kinds')},column = 0,fenlei = 0)}"></div>
 
 
 <div class="layui-container">

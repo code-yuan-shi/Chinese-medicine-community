@@ -89,10 +89,10 @@ public class TopicService {
     /*
     查看相关分类帖子
      */
-    public List<Topicinfo> classifyTopic(Long catrgoryId){
+    public List<Topicinfo> classifyTopic(Long catrgoryId,Long kindId){
         Example example = new Example(Topicinfo.class);
         example.setOrderByClause("topic_create desc");
-        example.createCriteria().andEqualTo("categoryId",catrgoryId);
+        example.createCriteria().andEqualTo("categoryId",catrgoryId).andEqualTo("kindId",kindId);
         return  topicinfoMapper.selectByExample(example);
     }
 
