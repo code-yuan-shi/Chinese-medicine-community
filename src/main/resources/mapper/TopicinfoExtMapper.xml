@@ -47,7 +47,7 @@
 			GROUP BY
 				c.topic_id
 		) commentinfo ON commentinfo.topic_id = t.id
-		WHERE comment_num != 0
+		WHERE comment_num != 0 and t.status = 1
 		ORDER BY
 			commentinfo.comment_num DESC
 		limit 0,10

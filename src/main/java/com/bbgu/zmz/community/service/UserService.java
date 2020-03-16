@@ -381,12 +381,10 @@ public class UserService {
    public List<CommentExt> findComment(Long userId){
 
        List<CommentExt>  commentExtList =  commentExtMapper.findComment(userId);
-       List<CommentExt> commentExtList1 = new ArrayList<>();
        for (CommentExt commentExt:commentExtList){
            commentExt.setTime(StringDate.getStringDate(new Date(commentExt.getCommentCreate())));
-           commentExtList1.add(commentExt);
        }
-        return commentExtList1;
+        return commentExtList;
     }
 
     /*
@@ -429,6 +427,7 @@ public class UserService {
                 return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);
             }
         }
+
     }
 
 }

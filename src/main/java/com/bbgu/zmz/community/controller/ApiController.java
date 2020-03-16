@@ -4,7 +4,6 @@ import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.model.WeekList;
 import com.bbgu.zmz.community.service.ListService;
-import com.bbgu.zmz.community.util.WordFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +43,7 @@ public class ApiController {
             if(osName.indexOf("Win") != -1){
                  realPath = new String("D://upload/");
             }else{
-                 realPath = new String("/data/wwwroot/default/upload");
+                 realPath = new String("/data/wwwroot/upload");
             }
             File file1 = new File(realPath);
             if (!file1.exists()) {

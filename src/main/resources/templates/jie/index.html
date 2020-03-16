@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
-  <title>CodeZone</title>
+  <title>Code社区</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="keywords" content=">CodeZone">
   <meta name="description" content="CodeZone是编程学习交流的场所">
@@ -59,7 +59,7 @@
               <a th:href="@{'/jie/detail/'+${topic.id}}">[[${topic.title}]]</a>
             </h2>
             <div class="fly-list-info">
-              <a class="layui-badge fly-badge-accept2">[[${topic.kindname}]]<a/>
+              <a class="layui-badge fly-badge-accept2">[[${topic.kindname}]]</a>
               <a th:href="@{'/user/home/'+${topic.userId}}" link>
                 <cite>[[${topic.name}]]</cite>
 
@@ -69,7 +69,7 @@
               </a>
             <!--  <span>[[${#dates.format(topic.topicCreate,'yyyy-MM-dd')}]]</span>-->
                 <span>[[${topic.time}]]</span>
-              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> [[${topic.experience}]]</span>
+              <span class="fly-list-kiss layui-hide-xs" title="悬赏经验"><i class="iconfont icon-kiss"></i> [[${topic.experience}]]</span>
              <span class="layui-badge fly-badge-accept layui-hide-xs" th:if="${topic.isEnd == 1}">已结</span>
               <span class="fly-list-nums">
                 <i class="iconfont icon-pinglun1" title="回答"></i> [[${topic.commentNum}]]

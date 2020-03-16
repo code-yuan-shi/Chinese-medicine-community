@@ -226,7 +226,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
 
             ,area: ['260px', '100px']
           }, function(val, index, elem){
-            layui.focusInsert(editor[0], '[pre]\n  '+ val + '\n[/pre]\n');
+            layui.focusInsert(editor[0], '[pre]\n'+ val + '\n[/pre]\n');
             layer.close(index);
             editor.trigger('keyup');
           });
@@ -572,8 +572,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
         ,'<img src="{{item.avatarUrl}}">'
         ,'<cite class="fly-link">{{item.name}}</cite>'
       ,'</a>'
-      ,'{{# var date = new Date(item.qiandaoCreate); if(d.index < 2){ }}'
-        ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }}</span>'
+      ,'{{# var date = new Date(item.qiandaoCreate); if(d.index == 0){ }}'
+        ,'<span class="fly-grey">签到于 {{ layui.util.toDateString(date) }}</span>'
+      ,'{{# }else if(d.index == 1 ){  }}'
+    ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }}</span>'
       ,'{{# } else { }}'
         ,'<span class="fly-grey">已连续签到 <i>{{ item.total }}</i> 天</span>'
       ,'{{# } }}'

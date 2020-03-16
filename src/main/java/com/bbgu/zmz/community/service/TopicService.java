@@ -92,7 +92,7 @@ public class TopicService {
     public List<Topicinfo> classifyTopic(Long catrgoryId,Long kindId){
         Example example = new Example(Topicinfo.class);
         example.setOrderByClause("topic_create desc");
-        example.createCriteria().andEqualTo("categoryId",catrgoryId).andEqualTo("kindId",kindId);
+        example.createCriteria().andEqualTo("categoryId",catrgoryId).andEqualTo("kindId",kindId).andEqualTo("status",1);
         return  topicinfoMapper.selectByExample(example);
     }
 
@@ -177,7 +177,7 @@ public class TopicService {
         //删除相关评论
         Example example = new Example(Comment.class);
         example.createCriteria().andEqualTo("topicId", id);
-        List<Comment> commentList = commentMapper.selectByExample(example);
+        //List<Comment> commentList = commentMapper.selectByExample(example);
         commentMapper.deleteByExample(example);
         //删除相关收藏信息
         Example exampleCollect = new Example(Collect.class);

@@ -1,16 +1,13 @@
 package com.bbgu.zmz.community.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.CacheControl;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
+
 import org.springframework.web.servlet.config.annotation.*;
 
-import java.nio.charset.Charset;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
+
 
 
 @Configuration
@@ -21,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     private SessionInterceptor sessionInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry){
-        registry.addInterceptor(sessionInterceptor).addPathPatterns("/**")
+       registry.addInterceptor(sessionInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(
                         "/static/**",
                         "/upload/**",
@@ -53,7 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/activate",
                         "/collection/find"
                         );
-    }
+}
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
                 registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
@@ -63,8 +60,8 @@ public class WebConfig implements WebMvcConfigurer {
                     registry.addResourceHandler("/upload/**").addResourceLocations("file:D://upload/");
                     registry.addResourceHandler("/ad/**").addResourceLocations("file:D://ad/");
                 }else{
-                    registry.addResourceHandler("/upload/**").addResourceLocations("file:/data/wwwroot/default/upload/");
-                    registry.addResourceHandler("/ad/**").addResourceLocations("file:/data/wwwroot/default/ad/");
+                    registry.addResourceHandler("/upload/**").addResourceLocations("file:/data/wwwroot/upload/");
+                    registry.addResourceHandler("/ad/**").addResourceLocations("file:/data/wwwroot/ad/");
                 }
 
           }

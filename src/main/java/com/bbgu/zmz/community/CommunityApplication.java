@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import tk.mybatis.spring.annotation.MapperScan;
 
@@ -14,6 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan("com.bbgu.zmz.community.mapper")
 @EnableScheduling
 public class CommunityApplication  extends SpringBootServletInitializer {
+
 
     public static void main(String[] args) {
         SpringApplication.run(CommunityApplication.class, args);

@@ -55,10 +55,8 @@ public class StringDate {
                     }
                     else
                     {
-                        String dateTmp = date.toLocaleString();
-                        String[] array = dateTmp.split(" ");
-                        strTemp = array[0];
-
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        strTemp = simpleDateFormat.format(date);
                     }
                 }
             }

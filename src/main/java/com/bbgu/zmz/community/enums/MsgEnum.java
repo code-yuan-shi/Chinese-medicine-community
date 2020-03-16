@@ -48,7 +48,7 @@ public enum MsgEnum {
     USER_PWD_INCORRECT(1,"用户名或者密码错误！"),
     OLD_PWD_INCORRECT(1,"原密码错误！"),
     REWARD_SUCCESS(0,"打赏成功"),
-    ADMIN(0,"社区管理员"),
+    ADMIN(0,"管理员"),
     USER(0,"社区用户"),
     INPUT_ERROR(1,"输入错误"),
     BIO(0,"该用户很懒，什么都没有留下！"),
@@ -58,7 +58,9 @@ public enum MsgEnum {
     NOT_ALLOW_ACCESS(1,"不可以酱紫频繁点击！"),
     SENSIVETIVE_SUCCESS(0,"添加成功"),
     SENSIVETIVE_FAILE(1,"不能少于两个字"),
-    SEND_MYSELF(1,"不能够发信息给自己！")
+    SEND_MYSELF(1,"不能够发信息给自己！"),
+    REQUEST_FAST(1,"请求过于频繁！"),
+    REDIS_FAILE(1,"Reids服务未开启")
 
 
 

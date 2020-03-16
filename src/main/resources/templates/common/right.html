@@ -11,7 +11,7 @@
     <div class="fly-none" th:if="${weektopics?.size()==0}">没有相关数据</div>
   </dl>
 
-  <a name="signin"></a>
+
   <!--待审核区域与温馨通道-->
   <div class="fly-panel">
     <h3 class="fly-panel-title">[[${session.user?.role == '社区管理员'}?'待审帖子':'温馨通道']]</h3>
@@ -34,6 +34,15 @@
     <div class="fly-none" style="min-height: 80px; min-width:90px;font-size: 14px;" th:if="${notcheck?.size()==0 && session.user?.role == '社区管理员'} ">没有相关数据</div>
   </div>
 
+  <a name="signin"></a>
+  <!--轮播广告图-->
+  <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="rightcarousel">
+    <div carousel-item>
+      <a href="#"><img src="/ad/4.jpg"/></a>
+      <a href="#"><img src="/ad/5.jpg"/></a>
+      <a href="#"><img src="/ad/6.jpg"/></a>
+    </div>
+  </div>
 
 
   <!--签到-->
@@ -60,14 +69,6 @@
   </div>
 
 
-  <!--轮播广告图-->
-  <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="rightcarousel">
-    <div carousel-item>
-      <a href="#"><img src="/ad/4.jpg"/></a>
-      <a href="#"><img src="/ad/5.jpg"/></a>
-      <a href="#"><img src="/ad/6.jpg"/></a>
-    </div>
-  </div>
 
 
 

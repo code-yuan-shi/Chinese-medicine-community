@@ -163,7 +163,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       dataType: 'jsonp',  // 请求方式为jsonp
       success: function(data) {
         console.log(data);
-        $('#L_city').val(data.content.address_detail.city||'');
+        $('#L_city').val(data.content.address||'');
       }
     })
   }
