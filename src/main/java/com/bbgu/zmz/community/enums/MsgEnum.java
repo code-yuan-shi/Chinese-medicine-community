@@ -62,8 +62,6 @@ public enum MsgEnum {
     REQUEST_FAST(1,"请求过于频繁！"),
     REDIS_FAILE(1,"Reids服务未开启")
 
-
-
     ;
     private int code;
     private String message;
