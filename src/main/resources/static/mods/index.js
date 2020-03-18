@@ -134,7 +134,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             type: 1
             ,id: 'fly-jie-upload'
             ,title: '插入图片'
-            ,area: 'auto'
             ,shade: false
             ,area: 'auto'
             ,fixed: false
@@ -148,11 +147,13 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
                 ,'<label class="layui-form-label">URL</label>'
                 ,'<div class="layui-input-inline">'
                     ,'<input required name="image" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
-                  ,'</div>'
-                  ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>本地选择</button>'
+              ,'</div>'
+                  ,'<button type="button" class="layui-btn layui-btn-normal" id="uploadImg"><i class="layui-icon">&#xe67c;</i>本地上传</button>&nbsp;'
+                  ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+                  ,'<img style="width: 15%" class="layui-upload-img" id="demo1">'
               ,'</li>'
               ,'<li class="layui-form-item" style="text-align: center;">'
-                ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+
               ,'</li>'
             ,'</ul>'].join('')
             ,success: function(layero, index){
@@ -162,14 +163,21 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
               upload.render({
                 elem: '#uploadImg'
                 ,url: '/api/upload'
-                ,size: 1024*20
+                ,size: 2048
+                ,before: function(obj){
+                  //预读本地文件示例，不支持ie8
+                  obj.preview(function(index, file, result){
+                    $('#demo1').attr('src', result); //图片链接（base64）
+                  });
+                }
                 ,done: function(res){
                   if(res.status == 0){
                     layer.msg(res.msg,{icon:1,time:1*1000},function () {
                       image.val(res.data.url);
                     })
                   } else {
-                    layer.msg(res.msg, {icon: 5});
+                    $('#demo1').removeAttr('src'); //图片链接（base64）
+                    layer.msg(res.msg, {icon: 5,time:1000});
                   }
                 }
               });

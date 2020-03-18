@@ -2,9 +2,11 @@ package com.bbgu.zmz.community.baidu.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.aip.contentcensor.AipContentCensor;
+import com.baidu.aip.contentcensor.EImgType;
 import com.bbgu.zmz.community.baidu.dto.BaiduCheck;
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.enums.MsgEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -28,6 +30,16 @@ public class BaiduAiService {
                 temp += str;
             }
             return new Result(1, temp);
+        }
+        return null;
+    }
+
+    public Result checkImg(byte[] imgByte) {
+        AipContentCensor client = new AipContentCensor(APP_ID, API_KEY, SECRET_KEY);
+        String json = client.imageCensorUserDefined(imgByte,null).toString();
+        BaiduCheck baiduCheck = JSONObject.parseObject(json, BaiduCheck.class);
+        if (baiduCheck.getConclusionType() != 1) {
+            return new Result(1, "上传失败：" + baiduCheck.getData().get(0).getMsg());
         }
         return null;
     }

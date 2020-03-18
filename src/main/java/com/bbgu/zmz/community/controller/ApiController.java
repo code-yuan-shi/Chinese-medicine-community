@@ -1,5 +1,6 @@
 package com.bbgu.zmz.community.controller;
 
+import com.bbgu.zmz.community.baidu.service.BaiduAiService;
 import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.dto.Result;
 import com.bbgu.zmz.community.model.WeekList;
@@ -29,6 +30,8 @@ public class ApiController {
 
     @Autowired
     private ListService listService;
+    @Autowired
+    private BaiduAiService baiduService;
 
     /*
     上传接口
@@ -37,26 +40,33 @@ public class ApiController {
     @ResponseBody
     public Result upload(@RequestParam MultipartFile file) throws IOException {
         if (file.getSize() > 0) {
-            Properties props=System.getProperties(); //获得系统属性集
-            String osName = props.getProperty("os.name"); //操作系统名称
-            String realPath = "";
-            if(osName.indexOf("Win") != -1){
-                 realPath = new String("D://upload/");
+            Result result = baiduService.checkImg(file.getBytes());
+            if(result ==null){
+                Properties props=System.getProperties(); //获得系统属性集
+                String osName = props.getProperty("os.name"); //操作系统名称
+                String realPath = "";
+                if(osName.indexOf("Win") != -1){
+                    realPath = new String("D://upload/");
+                }else{
+                    realPath = new String("/data/wwwroot/upload");
+                }
+                File file1 = new File(realPath);
+                if (!file1.exists()) {
+                    file1.mkdirs();
+                }
+                UUID uuid = UUID.randomUUID();
+                File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
+                System.out.println(file2.getPath());
+                file.transferTo(file2);
+                Map map = new HashMap();
+                map.put("url","/upload/" + uuid + file.getOriginalFilename());
+                return new Result().ok(MsgEnum.UPLOAD_SUCCESS,map);
             }else{
-                 realPath = new String("/data/wwwroot/upload");
+                return result;
             }
-            File file1 = new File(realPath);
-            if (!file1.exists()) {
-                file1.mkdirs();
-            }
-            UUID uuid = UUID.randomUUID();
-            File file2 = new File(realPath + File.separator + uuid + file.getOriginalFilename());
-            file.transferTo(file2);
-            Map map = new HashMap();
-            map.put("url","/upload/" + uuid + file.getOriginalFilename());
-            return new Result().ok(MsgEnum.UPLOAD_SUCCESS,map);
+
         } else {
-            return new Result().error(MsgEnum.UPLOAD_SUCCESS);
+            return new Result().error(MsgEnum.UPLOAD_FAILE);
         }
     }
 
