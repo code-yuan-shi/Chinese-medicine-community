@@ -28,10 +28,10 @@
           <span class="layui-badge" th:if="${detail.status == 0}">审核中</span>
           <span id="weijie" class="layui-badge" style="background-color: #999;" th:if="${detail.isEnd == 0}">未结</span>
          <span class="layui-badge" style="background-color: #5FB878;" th:if="${detail.isEnd == 1}">已结</span>
-          
+
           <span class="layui-badge layui-bg-black" th:if="${detail.isTop == 1}">置顶</span>
           <span class="layui-badge layui-bg-red" th:if="${detail.isGood == 1}">精帖</span>
-          <div class="fly-admin-box" th:attr="data-id=${detail.id}" th:if="${session.user?.role =='社区管理员' || session.user?.role =='管理员' }">
+          <div class="fly-admin-box" th:attr="data-id=${detail.id}" th:if="${session.user?.role =='社区管理员' || session.user?.role =='系统管理员' }">
             <span class="layui-btn layui-btn-xs jie-admin" type="agr" th:if="${detail.status == 0}">审核</span>
             <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1" th:if="${detail.isTop == 0}">置顶</span>
@@ -39,7 +39,7 @@
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1" th:if="${detail.isGood == 0}">加精</span>
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;" th:if="${detail.isGood == 1}">取消加精</span>
           </div>
-          <div class="fly-admin-box" th:attr="data-id=${detail.id}" th:if="${session.user?.accountId != detail.userId && session.user != null}">
+          <div class="fly-admin-box" th:attr="data-id=${detail.id}" th:if="${session.user?.accountId != detail.userId}">
             <span class="layui-btn layui-btn-xs jie-admin" type="reward" th:attr="userId=${detail.userId}">打赏</span>
           </div>
 
@@ -62,18 +62,22 @@
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" th:attr="data-id=${detail.id}">
             <span style="padding-right: 10px; color: #FF7200">悬赏：<span th:text="${detail.experience}"></span>经验</span>
-           <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='管理员' ||session.user?.role =='社区管理员' || detail.userId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.id}}">编辑此贴</a></span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="del" th:if="${session.user?.accountId == detail.userId}">删除</span>
+           <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${session.user?.role =='系统管理员' ||session.user?.role =='社区管理员' || detail.userId == session.user?.accountId}"><a th:href="@{'/jie/add/'+${detail.id}}">编辑此贴</a></span>
           </div>
         </div>
 
         <!--内容存放-->
-      <div class="detail-body photos" th:if="${detail.status == 1  || session.user?.role=='社区管理员' || session.user?.role=='管理员' || detail.userId == session.user?.accountId}">
+      <div class="detail-body photos" th:if="${detail.status == 1  || session.user?.role=='社区管理员' || session.user?.role=='系统管理员' || detail.userId == session.user?.accountId}">
         [[${detail.content}]]
       </div>
 
 
         <div th:if="${detail.userId != session.user?.accountId}">
-          <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.status == 0 &&  session.user?.role !='社区管理员' || detail.status == 0 &&  session.user?.role !='管理员'}">内容正在审核中！</div>
+          <div style="min-height: 300px" class="detail-body photos fly-none" th:if="${detail.status == 0 && session.user?.role=='社区用户'}">内容正在审核中！</div>
+        </div>
+        <div th:if="${session.user == null}">
+          <div style="min-height: 300px" class="detail-body photos fly-none">内容正在审核中！</div>
         </div>
         <div style="color: #999;">注：内容均由发帖者自由发出，不代表本网站立场。如有侵权，请联系管理员删除。</div>
       </div>
@@ -99,7 +103,7 @@
                 </a>
 
                 <span th:if="${reply.userId == detail.userId}">(楼主)</span>
-                <span style="color:#5FB878" th:if="${reply.role=='社区管理员' || reply.role=='管理员'}">(管理员)</span>
+                <span style="color:#5FB878" th:if="${reply.role=='社区管理员' || reply.role=='系统管理员'}">(管理员)</span>
                 <!--  <span style="color:#FF9E3F">（社区之光）</span>-->
                 <span style="color:#999" th:if="${reply.role=='违规用户'}">（该号已被封）</span>
 
@@ -141,7 +145,7 @@
                 </a>
                 
                 <span th:if="${reply.userId == detail.userId}">(楼主)</span>
-                <span style="color:#5FB878" th:if="${reply.role=='社区管理员'|| reply.role=='管理员'}">(管理员)</span>
+                <span style="color:#5FB878" th:if="${reply.role=='社区管理员'|| reply.role=='系统管理员'}">(管理员)</span>
               <!--  <span style="color:#FF9E3F">（社区之光）</span>-->
                 <span style="color:#999" th:if="${reply.role=='违规用户'}">（该号已被封）</span>
 
@@ -165,9 +169,9 @@
                 回复
               </span>
               <div class="jieda-admin">
-                <span class="jieda-accept" type="accept" th:if="${detail.userId == session.user?.accountId && detail.isEnd == 0 || session.user?.role == '社区管理员' && detail.isEnd == 0 || session.user?.role == '管理员' && detail.isEnd == 0}">采纳</span>
-                <span type="edit" th:if="${session.user?.role == '管理员' || session.user?.role == '社区管理员' || reply.userId == session.user?.accountId}">编辑</span>
-                <span type="del" th:if="${session.user?.role == '管理员' || session.user?.role == '社区管理员' || reply.userId == session.user?.accountId}">删除</span>
+                <span class="jieda-accept" type="accept" th:if="${detail.userId == session.user?.accountId && detail.isEnd == 0 || session.user?.role == '社区管理员' && detail.isEnd == 0 || session.user?.role == '系统管理员' && detail.isEnd == 0}">采纳</span>
+                <span type="edit" th:if="${session.user?.role == '系统管理员' || session.user?.role == '社区管理员' || reply.userId == session.user?.accountId}">编辑</span>
+                <span type="del" th:if="${session.user?.role == '系统管理员' || session.user?.role == '社区管理员' || reply.userId == session.user?.accountId}">删除</span>
               </div>
             </div>
           </li>

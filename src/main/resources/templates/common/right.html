@@ -14,8 +14,8 @@
 
   <!--待审核区域与温馨通道-->
   <div class="fly-panel">
-    <h3 class="fly-panel-title">[[${session.user?.role == '社区管理员'}?'待审帖子':'温馨通道']]</h3>
-    <ul th:if="${session.user?.role != '社区管理员'}" class="fly-panel-main fly-list-static">
+    <h3 class="fly-panel-title">[[${session.user?.role == '社区管理员' || session.user?.role == '系统管理员'}?'待审帖子':'温馨通道']]</h3>
+    <ul th:if="${session.user?.role == '社区用户' || session.user == null}" class="fly-panel-main fly-list-static">
       <li>
         <a href="http://qzhu.bysjy.com.cn/" target="_blank">北部湾大学云就业平台</a>
       </li>
@@ -26,12 +26,12 @@
         <a href="https://www.cnki.net/" target="_blank">中国知网</a>
       </li>
     </ul>
-    <ul th:if="${session.user?.role == '社区管理员'}" class="fly-panel-main fly-list-static">
+    <ul th:if="${session.user?.role == '社区管理员' || session.user?.role == '系统管理员'}" class="fly-panel-main fly-list-static">
       <li th:each="check:${notcheck}">
         <a th:href="@{'/jie/detail/'+${check.id}}" target="_blank">[[${check.title}]]</a>
       </li>
     </ul>
-    <div class="fly-none" style="min-height: 80px; min-width:90px;font-size: 14px;" th:if="${notcheck?.size()==0 && session.user?.role == '社区管理员'} ">没有相关数据</div>
+    <div class="fly-none" style="min-height: 80px; min-width:90px;font-size: 14px;" th:if="${notcheck?.size()==0 && session.user?.role == '社区管理员' || notcheck?.size()==0 && session.user?.role == '系统管理员'} ">没有相关数据</div>
   </div>
 
   <a name="signin"></a>

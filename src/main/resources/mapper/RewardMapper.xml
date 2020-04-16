@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbgu.zmz.community.mapper.RewardMapper">
+  <resultMap id="BaseResultMap" type="com.bbgu.zmz.community.model.Reward">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="reward_user_id" jdbcType="BIGINT" property="rewardUserId" />
+    <result column="receive_user_id" jdbcType="BIGINT" property="receiveUserId" />
+    <result column="reward_num" jdbcType="BIGINT" property="rewardNum" />
+    <result column="reward_create" jdbcType="BIGINT" property="rewardCreate" />
+  </resultMap>
+</mapper>

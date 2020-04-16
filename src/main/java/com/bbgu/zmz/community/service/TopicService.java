@@ -148,7 +148,7 @@ public class TopicService {
     /*
     审核帖子
      */
-    public void shenhe(Long id) {
+    public void shenHe(Long id) {
         Topicinfo topicinfo = new Topicinfo();
         topicinfo.setId(id);
         topicinfo.setStatus(1);
@@ -281,7 +281,7 @@ public class TopicService {
     }
 
     /*
-    查询一级分类的帖子
+    查询板块下的帖子
      */
     public List<TopicinfoExt> findCateTopic(Long categoryId,String status){
         if(categoryId == 0){

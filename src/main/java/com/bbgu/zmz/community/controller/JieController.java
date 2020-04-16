@@ -120,6 +120,7 @@ public class JieController {
             topicinfo.setTopicCreate(System.currentTimeMillis());
             topicinfo.setTopicModified(topicinfo.getTopicCreate());
             User newUser = userService.findUser(user.getAccountId());
+            //判断用户经验是否足够
             if(topicinfo.getExperience() > newUser.getKissNum()){
                 return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);
             }else{
@@ -154,7 +155,7 @@ public class JieController {
     /*
     回复帖子
      */
-   @PostMapping("/reply")
+    @PostMapping("/reply")
     @ResponseBody
     public Result reply(Comment comment,Long oid,Long recvUserId,int type,String replyto,HttpServletRequest request) {
        Result result = baiduAiService.checkText(comment.getContent());
@@ -214,8 +215,8 @@ public class JieController {
     @PostMapping("/shenhe")
     public @ResponseBody Result shenhe(Long id,HttpServletRequest request,HttpServletResponse response) throws IOException {
        User user = (User) request.getSession().getAttribute("user");
-       if(user.getRole().equals("管理员") || user.getRole().equals("社区管理员")){
-           topicService.shenhe(id);
+       if(user.getRole().equals("系统管理员") || user.getRole().equals("社区管理员")){
+           topicService.shenHe(id);
        return new Result().ok(MsgEnum.SHENHE_SUCCESS);
        }else{
            return new Result().error(MsgEnum.ALLOWLIMIT);

@@ -38,8 +38,12 @@ public class UserService {
     private UserExtMapper userExtMapper;
     @Autowired
     private MessageMapper messageMapper;
+    @Autowired
+    private RewardMapper rewardMapper;
 
-
+    /*
+    存储或更新三方登录帐户信息
+     */
     public void createOrUpdate(User user) {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("accountId",user.getAccountId());
@@ -114,7 +118,9 @@ public class UserService {
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
             user.setRole(new Result(MsgEnum.USER).getMsg());
+            //发送激活邮件
             Result result = MailUtil.sendActiveMail(user.getEmail(),accode,0,userext.getUrl());
+            // result == 1 发送失败
                if(result.getStatus() != 1){
                    userMapper.insertSelective(user);
                    return 0;
@@ -414,7 +420,14 @@ public class UserService {
         if(rewarduser.getRole().equals(new Result(MsgEnum.ADMIN).getMsg())){
             //如果是管理员
             userExtMapper.rewardUserAdd(kissNum,userId);
+            Reward reward = new Reward();
+            reward.setReceiveUserId(userId);
+            reward.setRewardUserId(rewarduser.getAccountId());
+            reward.setRewardNum(kissNum);
+            reward.setRewardCreate(System.currentTimeMillis());
+            rewardMapper.insertSelective(reward);
             return new Result().ok(MsgEnum.REWARD_SUCCESS);
+
         }else{
             User newuser = findUser(rewarduser.getAccountId());
             if(newuser.getKissNum() >= kissNum){
@@ -422,6 +435,12 @@ public class UserService {
                 userExtMapper.rewardUserSub(kissNum, rewarduser.getAccountId());
                 //增加目标用户经验值
                 userExtMapper.rewardUserAdd(kissNum, userId);
+                Reward reward = new Reward();
+                reward.setReceiveUserId(userId);
+                reward.setRewardUserId(rewarduser.getAccountId());
+                reward.setRewardNum(kissNum);
+                reward.setRewardCreate(System.currentTimeMillis());
+                rewardMapper.insertSelective(reward);
                 return new Result().ok(MsgEnum.REWARD_SUCCESS);
             }else {
                 return new Result().error(MsgEnum.KISS_NOT_ENOUGHT);

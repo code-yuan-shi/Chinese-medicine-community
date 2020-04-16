@@ -231,7 +231,7 @@ public class UserController {
     @GetMapping("set")
     public String userSet(HttpServletRequest request,Model model){
         User user = (User)request.getSession().getAttribute("user");
-        User userinfo = userService.findUserInfoById(user.getAccountId());
+        User userinfo = userService.findUserInfoById(user.getAccountId());  //查询用户基本资料
         request.getSession().setAttribute("user",userinfo);
         model.addAttribute("info",userinfo);
         return "user/set";
@@ -308,7 +308,7 @@ public class UserController {
     public String userIndex(HttpServletRequest request,Model model){
         User user = (User)request.getSession().getAttribute("user");
         List<TopicinfoExt> topicinfoExtList =userService.getUserTopic(user.getAccountId()); //用户发表的帖子
-        List<CollectExt>  collectExtList = userService.getUserCollectTopic(user.getAccountId());
+        List<CollectExt>  collectExtList = userService.getUserCollectTopic(user.getAccountId());  //用户收藏的帖子
         model.addAttribute("topics",topicinfoExtList);
         model.addAttribute("collects",collectExtList);
 

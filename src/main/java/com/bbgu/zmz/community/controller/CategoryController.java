@@ -31,7 +31,9 @@ public class CategoryController {
     @Autowired
     private ListService listService;
 
-
+    /*
+    获取板块的所有帖子信息
+     */
     @GetMapping("cate/{column}")
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,

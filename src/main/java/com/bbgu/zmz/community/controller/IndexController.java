@@ -9,6 +9,9 @@ import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+@Api(value = "首页", tags = {"首页展示的相关接口"})
 @Controller
 public class IndexController {
 
@@ -31,6 +36,7 @@ public class IndexController {
     @Autowired
     private RedisUtil redisUtil;
 
+    @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "GET")
     @GetMapping("/")
     public String index(Model model, HttpServletRequest request){
         //直接查数据库
@@ -50,10 +56,15 @@ public class IndexController {
 
         return "index";
     }
+    @ApiOperation(value = "搜索帖子", notes = "搜索帖子", httpMethod = "GET")
     @GetMapping("/search")
-    public String searchResult(@RequestParam(value = "q") String q,
-                               @RequestParam(value = "page",defaultValue = "1") Integer page,
-                               @RequestParam(value = "size",defaultValue = "5") Integer size,
+    public String searchResult(
+            @ApiParam(name = "q", value = "标题关键字", required = true)
+            @RequestParam(value = "q") String q,
+            @ApiParam(name = "page", value = "当前页", required = true)
+            @RequestParam(value = "page",defaultValue = "1") Integer page,
+            @ApiParam(name = "size", value = "分页数量", required = true)
+            @RequestParam(value = "size",defaultValue = "5") Integer size,
                                Model model){
         PageHelper.startPage(page, size);
         List<TopicinfoExt> topicInfoExtList = topicService.searchTopic(q);

@@ -26,7 +26,7 @@
         <div class="fly-panel-title fly-filter">
           <a>置顶</a>
           <span class="layui-hide-sm layui-show-xs-block fly-right">
-            <a href="#check"  style="color: #5FB878;" th:if="${session.user?.role=='社区管理员'}">去审核</a>
+            <a href="#check"  style="color: #5FB878;" th:if="${session.user?.role=='社区管理员' || session.user?.role=='系统管理员'}">去审核</a>
             <a href="#signin" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
           </span>
         </div>
