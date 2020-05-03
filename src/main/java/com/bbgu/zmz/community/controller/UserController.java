@@ -198,17 +198,21 @@ public class UserController {
        User user1 =  userService.loginCheck(user);
        if(check.toLowerCase().equals(savecheck)){
            if(user1 != null && user1.getStatus().equals(1)){
-               if(url.equals("")){
-                   map.put("action","/");
+               if(user1.getRole().equals(MsgEnum.VIOLATION.getMessage())){
+                   return new Result().error(MsgEnum.VIOLATIONUUSER);
                }else{
-                   map.put("action",url);
+                   if(url.equals("")){
+                       map.put("action","/");
+                   }else{
+                       map.put("action",url);
+                   }
+                   request.getSession().setAttribute("user",user1);
+                   Cookie cookie = new Cookie("token",user1.getToken());
+                   cookie.setMaxAge(60*60*24*7);
+                   cookie.setPath("/");
+                   response.addCookie(cookie);
+                   return new Result().ok(MsgEnum.LOGIN_SUCCESS,map);
                }
-               request.getSession().setAttribute("user",user1);
-               Cookie cookie = new Cookie("token",user1.getToken());
-               cookie.setMaxAge(60*60*24*7);
-               cookie.setPath("/");
-               response.addCookie(cookie);
-               return new Result().ok(MsgEnum.LOGIN_SUCCESS,map);
            }else if(user1 != null && user1.getStatus().equals(0)){
                map.put("action","/user/activate");
                request.getSession().setAttribute("user",user1);

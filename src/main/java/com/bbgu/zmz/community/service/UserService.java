@@ -51,9 +51,16 @@ public class UserService {
         if (users.size() == 0){
             user.setUserCreate(System.currentTimeMillis());
             user.setUserModified(user.getUserCreate());
-            user.setPwd(MD5Utils.getMd5("123456"));
+            user.setPwd(MD5Utils.getMd5(user.getAccountId().toString()));
             user.setBio("该用户很懒，什么都没有留下！");
+            user.setSex(1);
             userMapper.insertSelective(user);
+            Message message = new Message();
+            message.setRecvUserId(user.getAccountId());
+            message.setMessageCreate(System.currentTimeMillis());
+            message.setContent(new Result(MsgEnum.SYSTEM_MESSAGE).getMsg());
+            message.setType(3);
+            messageMapper.insertSelective(message);
         }else{
             User dbUser = users.get(0);
             User updateUser = new User();

@@ -50,6 +50,8 @@ public enum MsgEnum {
     REWARD_SUCCESS(0,"打赏成功"),
     ADMIN(0,"系统管理员"),
     USER(0,"社区用户"),
+    VIOLATION(0,"违规用户"),
+    VIOLATIONUUSER(1,"用户违规，已被禁止登录！"),
     INPUT_ERROR(1,"输入错误"),
     BIO(0,"该用户很懒，什么都没有留下！"),
     SYSTEM_MESSAGE(0,"欢迎您加入Code社区的大家园！"),
