@@ -6,6 +6,7 @@ import com.bbgu.zmz.community.model.TopicinfoExt;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface TopicinfoExtMapper {
@@ -60,5 +61,8 @@ public interface TopicinfoExtMapper {
 
    //查询帖子详情
    TopicinfoExt getTopicDetails( @Param("id") Long id);
+
+   //增加用户经验
+   void incExperience(Map map);
 }
 

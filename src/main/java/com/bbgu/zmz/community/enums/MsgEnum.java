@@ -16,7 +16,7 @@ public enum MsgEnum {
     KISS_NOT_ENOUGHT(1,"经验不足！"),
     CHANGE(0,"修改成功"),
     CODE_INCORRECT(1,"验证码错误！"),
-    REPLY_SUCCESS(0,"回复成功"),
+    REPLY_SUCCESS(0,"回复成功，获得5点经验值"),
     NOT_ALLOW_COMMENT(1,"该帖未审核，无法评论！"),
     SHENHE_SUCCESS(0,"已审核通过"),
     STATUS_SUCCESS(0,"状态已更改"),

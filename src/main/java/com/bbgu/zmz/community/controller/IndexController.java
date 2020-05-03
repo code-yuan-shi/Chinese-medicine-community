@@ -41,7 +41,7 @@ public class IndexController {
     public String index(Model model, HttpServletRequest request){
         //直接查数据库
         List<TopicinfoExt> topicInfoExtListTop = topicService.topicTop(1,0,5);  //置顶帖子
-        List<TopicinfoExt> topicInfoExtListAll = topicService.topicTop(0,0,12);  //综合帖子
+        List<TopicinfoExt> topicInfoExtListAll = topicService.topicTop(0,0,18);  //综合帖子
         List<TopicinfoExt> topicinfoExtListWeek = listService.weekTopic();  //本周热议
         List<Category> categoryList = topicService.findCate();  //查询一级分类
         List<Kind> kindList = topicService.findKind();  //查询二级分类

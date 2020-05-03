@@ -98,6 +98,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       var html = ['<div class="layui-unselect fly-edit">'
         ,'<span type="face" title="插入表情"><i class="iconfont icon-yxj-expression" style="top: 1px;"></i></span>'
         ,'<span type="picture" title="插入图片：img[src]"><i class="iconfont icon-tupian"></i></span>'
+        ,'<span type="file" title="添加附件"><i class="layui-icon">&#xe655;</i></span>'
         ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
         ,'<span type="quote" title="引用">“”</span>'
         ,'<span type="code" title="插入代码"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
@@ -135,7 +136,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             ,id: 'fly-jie-upload'
             ,title: '插入图片'
             ,shade: false
-            ,area: 'auto'
+            ,area: ['525px','235px']
             ,fixed: false
             ,offset: [
               editor.offset().top - $(window).scrollTop() + 'px'
@@ -198,6 +199,68 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
             }
           });
         }
+        ,file: function(editor){ //添加文件
+          layer.open({
+            type: 1
+            ,id: 'fly-jie-upload'
+            ,title: '上传文件'
+            ,shade: false
+            ,area: ['auto','auto']
+            ,fixed: false
+            ,offset: [
+              editor.offset().top - $(window).scrollTop() + 'px'
+              ,editor.offset().left + 'px'
+            ]
+            ,skin: 'layui-layer-border'
+            ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
+              ,'<li class="layui-form-item">'
+              ,'<label class="layui-form-label">文件名</label>'
+              ,'<div class="layui-input-inline">'
+              ,'<input required name="fileName" placeholder="仅支持zip|rar|7z" class="layui-input" disabled>'
+              ,'</div>'
+              ,'<button type="button" class="layui-btn layui-btn-normal" id="uploadFile">点击上传</button>&nbsp;'
+              ,'</li>'
+              ,'<div class="layui-progress" lay-showpercent="true" lay-filter="demo">'
+              ,'<div class="layui-progress-bar" lay-percent="0%"></div>'
+              ,'</div>'
+              ,'<br><li class="layui-form-item" style="text-align: center;">'
+              ,'<button type="button" lay-submit lay-filter="uploadFile" class="layui-btn">确认</button>'
+              ,'</li>'
+              ,'</ul>'].join('')
+            ,success: function(layero, index){
+              var fileName =  layero.find('input[name="fileName"]');
+
+              //执行上传实例
+              upload.render({
+                elem: '#uploadFile'
+                ,url: '/api/uploadFile'
+                ,accept:'file'
+                ,exts: 'zip|rar|7z'
+                ,size: 1024*10
+                ,progress: function(n, elem) {
+                  console.log(n)
+                  element.progress('demo',  n+"%")
+                }
+                ,done: function(res){
+                  if(res.status == 0){
+                    layer.msg(res.msg,{icon:1,time:1*1000},function () {
+                      fileName.val(res.data.url);
+                    })
+                  } else {
+                    layer.msg(res.msg, {icon: 5,time:1000});
+                  }
+                }
+              });
+
+              form.on('submit(uploadFile)', function(data){
+                var field = data.field;
+                if(!field.fileName) return fileName.focus();
+                layui.focusInsert(editor[0], ' a('+ "http://101.200.47.40:8000/api/download?fileName="+ field.fileName +')['+field.fileName + ']\n');
+                layer.close(index);
+              });
+            }
+          });
+        }
         ,href: function(editor){ //超链接
           layer.prompt({
             title: '请输入链接地址'
@@ -214,7 +277,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
               layer.tips('以“http(s)://”开头', elem, {tips:1})
               return;
             }
-            layui.focusInsert(editor[0], ' a('+ val +')['+ val + '] ');
+            layui.focusInsert(editor[0], ' a('+ val +')['+ val + ']\n');
             layer.close(index);
           });
         }
@@ -634,7 +697,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
       layer.open({
         type: 1
         ,title: '签到活跃榜 - TOP 20'
-        ,area: '300px'
+        ,area: ['auto', 'auto']
         ,shade: 0.8
         ,shadeClose: true
         ,id: 'layer-pop-signintop'

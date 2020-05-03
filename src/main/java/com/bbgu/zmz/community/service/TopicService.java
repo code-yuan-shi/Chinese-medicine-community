@@ -109,6 +109,10 @@ public class TopicService {
     public Long insertComment(Comment comment) {
         commentMapper.insertSelective(comment);
         Long id = comment.getId();
+        Map map = new HashMap();
+        map.put("kissNum",5);
+        map.put("accountId",comment.getUserId());
+        topicinfoExtMapper.incExperience(map);
         return id;
     }
 

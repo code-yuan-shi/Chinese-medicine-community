@@ -23,9 +23,9 @@
       <!--轮播广告图-->
       <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="carousel">
         <div carousel-item>
-          <a href="#"><img src="/ad/1.jpg"/></a>
-          <a href="#"><img src="/ad/2.jpg"/></a>
-          <a href="#"><img src="/ad/3.jpg"/></a>
+          <a th:each="left:${#request.getServletContext().getAttribute('LEFT')}" href="#"><img th:src="${left.image}"/></a>
+          <!--<a href="#"><img src="/ad/2.jpg"/></a>
+          <a href="#"><img src="/ad/3.jpg"/></a>-->
         </div>
       </div>
 
@@ -121,7 +121,7 @@
 
       </div>
     </div>
-    <div th:replace="~{common/right::rightcol(notcheck = ${#request.getServletContext().getAttribute('notcheck')},weektopics=${#request.getServletContext().getAttribute('weektopics')})}"></div>
+    <div th:replace="~{common/right::rightcol(notcheck = ${#request.getServletContext().getAttribute('notcheck')},weektopics=${#request.getServletContext().getAttribute('weektopics')},adright=${#request.getServletContext().getAttribute('RIGHT')})}"></div>
   </div>
 </div>
 

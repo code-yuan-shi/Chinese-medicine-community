@@ -113,7 +113,7 @@
 
       </div>
     </div>
-    <div th:replace="~{common/right::rightcol(notcheck = ${#request.getServletContext().getAttribute('notcheck')},weektopics=${#request.getServletContext().getAttribute('weektopics')})}"></div>
+    <div th:replace="~{common/right::rightcol(notcheck = ${#request.getServletContext().getAttribute('notcheck')},weektopics=${#request.getServletContext().getAttribute('weektopics')},adright=${#request.getServletContext().getAttribute('RIGHT')})}"></div>
   </div>
 </div>
 

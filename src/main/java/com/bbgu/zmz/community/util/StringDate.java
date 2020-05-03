@@ -55,7 +55,7 @@ public class StringDate {
                     }
                     else
                     {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                         strTemp = simpleDateFormat.format(date);
                     }
                 }

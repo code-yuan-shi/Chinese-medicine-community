@@ -27,6 +27,23 @@ public class RedisUtil {
         }
     }
 
+
+    /**
+     * 向Redis中存对象，永久有效
+     */
+    public String setObject(String key, Object object) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            return jedis.set(key.getBytes(),SerializeUtil.serizlize(object));
+        } catch (Exception e) {
+            return "0";
+        } finally {
+            returnResource(jedisPool, jedis);
+        }
+    }
+
+
     /**
      * 向Redis中存值，设置有效时间
      */
@@ -101,6 +118,23 @@ public class RedisUtil {
             returnResource(jedisPool, jedis);
         }
         return value;
+    }
+
+    /**
+     * 根据传入Key获取指定Value
+     */
+    public Object getObject(String key) {
+        Jedis jedis = null;
+        byte[] value;
+        try {
+            jedis = jedisPool.getResource();
+            value = jedis.get(key.getBytes());
+        } catch (Exception e) {
+            return "0";
+        } finally {
+            returnResource(jedisPool, jedis);
+        }
+        return SerializeUtil.deserialize(value);
     }
 
     /**

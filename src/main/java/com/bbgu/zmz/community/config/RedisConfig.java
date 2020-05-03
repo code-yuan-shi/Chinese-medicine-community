@@ -1,4 +1,4 @@
-package com.bbgu.zmz.community.interceptor;
+package com.bbgu.zmz.community.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

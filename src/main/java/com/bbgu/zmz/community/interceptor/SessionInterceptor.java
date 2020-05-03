@@ -3,9 +3,11 @@ package com.bbgu.zmz.community.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.bbgu.zmz.community.dto.Result;
+import com.bbgu.zmz.community.enums.AdPosEnum;
 import com.bbgu.zmz.community.enums.MsgEnum;
 import com.bbgu.zmz.community.mapper.UserMapper;
 import com.bbgu.zmz.community.model.User;
+import com.bbgu.zmz.community.service.AdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,6 +25,8 @@ import java.util.List;
 public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private AdService adService;
 
 
     @Override
@@ -30,6 +34,9 @@ public class SessionInterceptor implements HandlerInterceptor {
         System.out.println("请求路过拦截器！");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        for(AdPosEnum adPos:AdPosEnum.values()){
+            request.getServletContext().setAttribute(adPos.name(),adService.list(adPos.name()));
+        }
         if(request.getRequestURI().lastIndexOf("/")==0){
             Cookie[] cookies = request.getCookies();
             if(cookies != null && cookies.length != 0) {

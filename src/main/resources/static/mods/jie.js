@@ -313,10 +313,13 @@ layui.define('fly', function(exports){
       }
     }
   });
+
   //定位分页
-  if(/\?page=/.test(location.href) && !location.hash){
+  if(/\?page\=/.test(location.href) && !location.hash){
     var replyTop = $('#flyReply').offset().top - 80;
-    $('html,body').scrollTop(replyTop);
+    console.log(replyTop);
+    $("html,body").animate({"scrollTop":replyTop});
+    // $(window).scrollTop(replyTop);
   }
 
   $('.fly-filter a').on('click', function(){

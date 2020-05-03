@@ -154,8 +154,6 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   });
 
   //根据ip获取城市
-
-
   if($('#L_city').val() === ''){
     $.ajax({
       url: 'http://api.map.baidu.com/location/ip?ak=h6TnjYGdeBYuGtsT0FD2BWZY5YG7viGC',

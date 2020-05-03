@@ -130,7 +130,7 @@ public class UserController {
     @PostMapping("/doreg")
     @ResponseBody
     public Result doReg(UserExt userext, String check,HttpServletRequest request) throws Exception {
-        String url = request.getScheme()+"://"+request.getServerName()+ request.getContextPath();
+        String url = request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort() + request.getContextPath();
         userext.setUrl(url);
         String saveCheck = (String) request.getSession().getAttribute("check");
         if (check.equals(saveCheck)) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbgu.zmz.community.mapper.AdMapper">
+  <resultMap id="BaseResultMap" type="com.bbgu.zmz.community.model.Ad">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="ad_start" jdbcType="BIGINT" property="adStart" />
+    <result column="ad_end" jdbcType="BIGINT" property="adEnd" />
+    <result column="ad_create" jdbcType="BIGINT" property="adCreate" />
+    <result column="ad_modified" jdbcType="BIGINT" property="adModified" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="pos" jdbcType="VARCHAR" property="pos" />
+  </resultMap>
+</mapper>

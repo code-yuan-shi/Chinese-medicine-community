@@ -37,7 +37,7 @@ public class CategoryController {
     @GetMapping("cate/{column}")
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @RequestParam(value = "page",defaultValue = "1") Integer page,
-                               @RequestParam(value = "size",defaultValue = "10") Integer size,
+                               @RequestParam(value = "size",defaultValue = "18") Integer size,
                                Model model
                                ){
         PageHelper.startPage(page, size);

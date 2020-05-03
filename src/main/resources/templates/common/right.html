@@ -1,5 +1,5 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="layui-col-md4" th:fragment="rightcol(notcheck,weektopics)">
+<div class="layui-col-md4" th:fragment="rightcol(notcheck,weektopics,adright)">
   <a name="check"></a>
   <!--本周热议-->
   <dl class="fly-panel fly-list-one">
@@ -38,9 +38,9 @@
   <!--轮播广告图-->
   <div class="layui-anim layui-anim-upbit layui-carousel fly-panel" id="rightcarousel">
     <div carousel-item>
-      <a href="#"><img src="/ad/4.jpg"/></a>
-      <a href="#"><img src="/ad/5.jpg"/></a>
-      <a href="#"><img src="/ad/6.jpg"/></a>
+      <a th:each="right:${adright}" href="#"><img th:src="${right.image}"/></a>
+     <!-- <a href="#"><img src="/ad/5.jpg"/></a>
+      <a href="#"><img src="/ad/6.jpg"/></a>-->
     </div>
   </div>
 

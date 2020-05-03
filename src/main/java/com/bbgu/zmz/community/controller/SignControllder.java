@@ -56,6 +56,7 @@ public class SignControllder {
                     map.put("experience",kissnum);
                     map.put("days",qiandaoList.get(0).getTotal());
                 }else if(date - lasttime == 1){
+                    //获得连续签到信息
                     int kissnum = KissUtils.getKissNum(1+qiandaoList.get(0).getTotal().intValue());
                     map.put("signed",false);
                     map.put("experience",kissnum);

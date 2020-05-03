@@ -18,6 +18,9 @@ public class BaiduAiService {
     public static final String API_KEY = "ElUC4sTMVzG71v9P6oV1OlOA";
     public static final String SECRET_KEY = "U4PDMrzV3Tj8zG2hmYOK0GdgVFaoMM2T";
 
+    /*
+    文本审核
+     */
     public Result checkText(String text) {
         AipContentCensor client = new AipContentCensor(APP_ID, API_KEY, SECRET_KEY);
         String json = client.textCensorUserDefined(text).toString();
@@ -34,6 +37,9 @@ public class BaiduAiService {
         return null;
     }
 
+    /*
+    图片审核
+     */
     public Result checkImg(byte[] imgByte) {
         AipContentCensor client = new AipContentCensor(APP_ID, API_KEY, SECRET_KEY);
         String json = client.imageCensorUserDefined(imgByte,null).toString();

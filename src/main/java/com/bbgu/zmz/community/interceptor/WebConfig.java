@@ -27,8 +27,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/check",
                         "/callback",
                         "/logout",
-                        "/category/**",
-                        "/search",
                         "/jie/detail/*",
                         "/message/nums",
                         "/sign/status",

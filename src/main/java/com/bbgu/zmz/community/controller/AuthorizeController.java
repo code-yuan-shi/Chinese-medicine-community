@@ -42,17 +42,18 @@ public class AuthorizeController {
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code,
-                           @RequestParam(name="state") String url,
+                           @RequestParam(name="state") String state,
                            HttpServletRequest request,HttpServletResponse response){
+        System.out.println(state);
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setCode(code);
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
         accessTokenDTO.setRedirect_uri(redirectUri);
-        accessTokenDTO.setState(url);
+        accessTokenDTO.setState(state);
         String accessToken = githubProvider.getAccessTokenDTO(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-        if(githubUser !=null && githubUser.getId() != null){
+        if(githubUser != null && githubUser.getId() != null){
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
@@ -73,16 +74,9 @@ public class AuthorizeController {
             Cookie cookie = new Cookie("token",user.getToken());
             cookie.setMaxAge(60*60*24*7);
             response.addCookie(cookie);
-            int index = url.lastIndexOf("/");
-            String str = url.substring(index+1);
-            if(str.equals("reg") || str.equals("login") || str.equals("github")){
-                return "redirect:/";
-            }else{
-                return "redirect:"+url;
-            }
-
+            return "redirect:/";
         }else{
-            return "redirect:"+url;
+            return "redirect:/user/login";
         }
     }
 

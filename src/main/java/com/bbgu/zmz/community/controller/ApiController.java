@@ -34,11 +34,11 @@ public class ApiController {
     private BaiduAiService baiduService;
 
     /*
-    上传接口
+    图片
      */
     @PostMapping("/upload")
     @ResponseBody
-    public Result upload(@RequestParam MultipartFile file) throws IOException {
+    public Result uploadImg(@RequestParam MultipartFile file) throws IOException {
         if (file.getSize() > 0) {
             Result result = baiduService.checkImg(file.getBytes());
             if(result ==null){
@@ -59,7 +59,7 @@ public class ApiController {
                 System.out.println(file2.getPath());
                 file.transferTo(file2);
                 Map map = new HashMap();
-                map.put("url","/upload/" + uuid + file.getOriginalFilename());
+                map.put("url","/upload/" + uuid +file.getOriginalFilename());
                 return new Result().ok(MsgEnum.UPLOAD_SUCCESS,map);
             }else{
                 return result;
@@ -68,6 +68,71 @@ public class ApiController {
         } else {
             return new Result().error(MsgEnum.UPLOAD_FAILE);
         }
+    }
+
+        /*
+    上传接口
+     */
+    @PostMapping("/uploadFile")
+    @ResponseBody
+    public Result uploadFile(@RequestParam MultipartFile file) throws IOException {
+        if (file.getSize() > 0) {
+            Properties props=System.getProperties(); //获得系统属性集
+            String osName = props.getProperty("os.name"); //操作系统名称
+            String realPath = "";
+            if(osName.indexOf("Win") != -1){
+                realPath = new String("D://upload/");
+            }else{
+                realPath = new String("/data/wwwroot/upload");
+            }
+            File file1 = new File(realPath);
+            if (!file1.exists()) {
+                file1.mkdirs();
+            }
+            File file2 = new File(realPath + File.separator + file.getOriginalFilename());
+            System.out.println(file2.getPath());
+            file.transferTo(file2);
+            Map map = new HashMap();
+            map.put("url",file.getOriginalFilename());
+            return new Result().ok(MsgEnum.UPLOAD_SUCCESS,map);
+        } else {
+            return new Result().error(MsgEnum.UPLOAD_FAILE);
+        }
+    }
+
+
+    /*
+    下载接口
+   */
+    @GetMapping("/download")
+    @ResponseBody
+    public String downloadFile(@RequestParam("fileName") String fileName,HttpServletResponse response) throws IOException {
+        if(fileName != null){
+            Properties props=System.getProperties(); //获得系统属性集
+            String osName = props.getProperty("os.name"); //操作系统名称
+            File file = new File("");
+            if(osName.indexOf("Win") != -1){
+                file = new File("D://upload/" + fileName);
+            }else{
+                file = new File("/data/wwwroot/upload/"+fileName);
+            }
+            if(file.exists()){
+                response.setContentType("application/force-download");
+                response.addHeader("Content-Disposition","attachment;fileName="+fileName);
+                byte[] buffer = new byte[1024];
+                FileInputStream fis =  new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                OutputStream os = response.getOutputStream();
+                int i = bis.read(buffer);
+                while(i != -1){
+                    os.write(buffer,0,i);
+                    i = bis.read(buffer);
+                }
+                return "download success";
+            }
+
+        }
+        return "failure";
     }
 
     /*
