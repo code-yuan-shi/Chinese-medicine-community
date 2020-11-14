@@ -255,7 +255,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util','laypage'],
               form.on('submit(uploadFile)', function(data){
                 var field = data.field;
                 if(!field.fileName) return fileName.focus();
-                layui.focusInsert(editor[0], ' a('+ "http://101.200.47.40:8000/api/download?fileName="+ field.fileName +')['+field.fileName + ']\n');
+                layui.focusInsert(editor[0], '[pre]a('+ "http://101.200.47.40:8000/api/download?fileName="+ field.fileName +')['+field.fileName + '][/pre]\n');
                 layer.close(index);
               });
             }

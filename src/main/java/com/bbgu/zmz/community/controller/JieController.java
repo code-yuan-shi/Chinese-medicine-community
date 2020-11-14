@@ -257,6 +257,7 @@ public class JieController {
      */
     @PostMapping("/accept")
     public @ResponseBody Result acceptComment(Long id){
+
        return topicService.acceptComment(id);
     }
 

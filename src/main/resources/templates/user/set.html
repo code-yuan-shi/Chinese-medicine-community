@@ -77,7 +77,7 @@
               <label for="L_email" class="layui-form-label">邮箱</label>
               <div class="layui-input-inline">
                 <input type="text" th:if="${info.email != null && session.user.status == 1}"  disabled th:value="${info.email}" class="layui-input" style="cursor:not-allowed !important;">
-                <input id="L_email" name="email" lay-verify="required|email" th:value="${info?.email}" type="text" th:if="${info.email == null}" class="layui-input" maxlength="20">
+                <input id="L_email" name="email" lay-verify="required|email" type="text" th:value="${info?.email}" th:if="${info.email == null || session.user.status == 0}" class="layui-input" maxlength="20">
               </div>
               <div class="layui-form-mid layui-word-aux" th:if="${info.email != null && session.user.status == 1}">邮箱已绑定，不可更改</div>
               <div class="layui-form-mid layui-word-aux" th:if="${session.user.status == 0}">请正确输入邮箱，用于激活验证</div>

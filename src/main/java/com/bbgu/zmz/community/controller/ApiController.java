@@ -136,6 +136,39 @@ public class ApiController {
     }
 
     /*
+    读取文件接口
+    */
+    @GetMapping("/readFile")
+    @ResponseBody
+    public String readFile(@RequestParam("fileName") String fileName,HttpServletResponse response) throws IOException {
+        if(fileName != null){
+            Properties props=System.getProperties(); //获得系统属性集
+            String osName = props.getProperty("os.name"); //操作系统名称
+            File file = new File("");
+            if(osName.indexOf("Win") != -1){
+                file = new File("D://upload/" + fileName);
+            }else{
+                file = new File("/data/wwwroot/upload/"+fileName);
+            }
+            if(file.exists()){
+                response.setContentType("application/pdf");
+                response.addHeader("Content-Disposition","inline;filename="+fileName);
+                byte[] buffer = new byte[1024];
+                FileInputStream fis =  new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                OutputStream os = response.getOutputStream();
+                int i = bis.read(buffer);
+                while(i != -1){
+                    os.write(buffer,0,i);
+                    i = bis.read(buffer);
+                }
+                return "download success";
+            }
+
+        }
+        return "failure";
+    }
+    /*
     回帖周榜
      */
     @PostMapping("/top")

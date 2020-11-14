@@ -12,8 +12,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class MailUtil {
-    public static String myEmailAccount = "721791701@qq.com";
-    public static String myEmailPassword = "azizsjwhglarbcgg";
+    public static String myEmailAccount = "320291272@qq.com";
+    public static String myEmailPassword = "ouerlpjweexocadg";
     public static String myEmailSMTPHost = "smtp.qq.com";
     public static String receiveMailAccount;
 

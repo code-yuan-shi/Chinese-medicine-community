@@ -119,6 +119,7 @@ public class UserService {
             user.setEmail(userext.getEmail());
             user.setBio(new Result(MsgEnum.BIO).getMsg());
             user.setPwd(pwd);
+            user.setSex(1);
             user.setActiveCode(accode);
             user.setActiveTime(actime);
             user.setAvatarUrl("/static/images/avatar/1.jpg");
@@ -199,11 +200,12 @@ public class UserService {
     /*
     用户登录验证
      */
-
     public User loginCheck(User user){
         String pwd =  MD5Utils.getMd5(user.getPwd());
         Example example = new Example(User.class);
-        example.createCriteria().andEqualTo("accountId",user.getAccountId()).andEqualTo("pwd",pwd);
+        example.createCriteria()
+                .andEqualTo("accountId",user.getAccountId())
+                .andEqualTo("pwd",pwd);
         List<User> userList = userMapper.selectByExample(example);
         if(userList.size() != 0){
             User user1 = userList.get(0);

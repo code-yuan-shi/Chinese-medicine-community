@@ -173,10 +173,11 @@ public class UserController {
     激活用户
      */
     @GetMapping("/activemail/{acode}")
-    public String activemail(@PathVariable(name = "acode") String acode, Model model){
+    public String activemail(@PathVariable(name = "acode") String acode, Model model,HttpServletRequest request){
         int i =userService.activeUser(acode);
         if(i==0) {
             User user = userService.findUserByAccode(acode);
+            request.getSession().setAttribute("user",user);
             model.addAttribute("reginfo", "您的账号已成功激活！");
             return "other/tips";
         }else if(i==1){
@@ -192,7 +193,9 @@ public class UserController {
     用户登录验证
      */
     @PostMapping("dologin")
-    public @ResponseBody Result dologin(User user,String url,String check,HttpServletRequest request,HttpServletResponse response){
+    public @ResponseBody Result dologin(User user,String url,String check,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response){
         String savecheck = (String)request.getSession().getAttribute("check");
         Map map = new HashMap();
        User user1 =  userService.loginCheck(user);
@@ -261,7 +264,8 @@ public class UserController {
     //修改密码
     @PostMapping("modifypass")
     @ResponseBody
-    public Result modifyUserPassword(String nowpass,String pass,String repass,HttpServletRequest request){
+    public Result modifyUserPassword(String nowpass,String pass,
+                                     String repass,HttpServletRequest request){
         User userinfo = (User)request.getSession().getAttribute("user");
         return userService.modifyUserPassword(nowpass,pass,repass,userinfo.getAccountId());
     }

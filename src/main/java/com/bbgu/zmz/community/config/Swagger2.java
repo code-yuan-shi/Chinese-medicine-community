@@ -38,7 +38,7 @@ public class Swagger2 {
                         "721791701@qq.com"))        // 联系人信息
                 .description("Code社区接口api文档")  // 详细信息
                 .version("1.0.1")   // 文档版本号
-                .termsOfServiceUrl("https://101.200.47.40:8000") // 网站地址
+                .termsOfServiceUrl("http://localhost:8080/swagger-ui.html") // 网站地址
                 .build();
     }
 

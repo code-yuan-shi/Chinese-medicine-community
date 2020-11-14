@@ -18,7 +18,7 @@ public class RedisConfig {
         jedisPoolConfig.setBlockWhenExhausted(false);
         // 是否启用pool的jmx管理功能, 默认tru
         jedisPoolConfig.setJmxEnabled(true);
-        JedisPool jedisPool = new JedisPool(jedisPoolConfig, "101.200.47.40", 6379,30000,"123456",0);
+        JedisPool jedisPool = new JedisPool(jedisPoolConfig, "127.0.0.1", 6379,3000,"123456",1);
         System.out.println("JedisPool注入成功...");
         return jedisPool;
     }

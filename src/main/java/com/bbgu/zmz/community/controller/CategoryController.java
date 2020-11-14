@@ -5,10 +5,8 @@ import com.bbgu.zmz.community.model.TopicinfoExt;
 import com.bbgu.zmz.community.service.ListService;
 import com.bbgu.zmz.community.service.TopicService;
 import com.bbgu.zmz.community.util.StringDate;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,6 +51,8 @@ public class CategoryController {
         model.addAttribute("topicMap",map);
         return "jie/index";
     }
+
+
     @GetMapping("cates/{column}/{status}")
     public String findCateInfo(@PathVariable(name = "column")  Long id,
                                @PathVariable(name = "status")  String status,
